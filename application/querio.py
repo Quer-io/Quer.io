@@ -1,7 +1,10 @@
-__name__ = "main"
+import ml
 
-def main ():
-    print("Hello world")
 
-if __name__ == 'main':
+def main():
+    predicted_income = ml.predict_income(30)
+    print(predicted_income)
+
+
+if __name__ == '__main__':
     main()

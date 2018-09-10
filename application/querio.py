@@ -1,10 +1,7 @@
-import ml
-
+from ui import interface
 
 def main():
-    predicted_income = ml.predict_income(30)
-    print(predicted_income)
-
+    interface.baseUi()
 
 if __name__ == '__main__':
     main()

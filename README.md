@@ -12,12 +12,10 @@ See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentati
 
 ## Installation
 
-### Virtual environment
-This project contains a virtual environment. It can be activated by running the the following command from project root:
+### Libraries
+Every time a new library is used, the name of the library needs to be added to requirements.txt. Every time you run the project with new libraries the following command is needed. It will install all the necessary libraries to your machine:
 
-`source venv/bin/activate`
-
-After this all the imports that have been installed to the virtual enviroment can be used. You can exit the virtual environment by running `deactivate` from the command line
+`pip install -r requirements.txt`
 
 ### Tests
 Currently the project contains tests that are done using the [unittest](https://docs.python.org/3/library/unittest.html) library. Tests can be run by the following command from the project root

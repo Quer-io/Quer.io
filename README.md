@@ -12,6 +12,8 @@ See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentati
 
 ## Installation
 
+See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install PostgreSQL database dumps as local databases.
+
 ### Libraries
 Every time a new library is used, the name of the library needs to be added to requirements.txt. Every time you run the project with new libraries the following command is needed. It will install all the necessary libraries to your machine:
 

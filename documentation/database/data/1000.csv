@@ -1,0 +1,1001 @@
+age;income;height;profession;github_stars
+37;2166;153;Cost Accountant;177
+37;2642;166;Information Systems Manager;194
+49;12096;209;Geologist I;90
+62;3766;209;Computer Systems Analyst IV;74
+38;5298;199;Financial Advisor;97
+65;11021;156;Tax Accountant;22
+42;289;145;Electrical Engineer;200
+52;12584;171;Dental Hygienist;14
+29;10156;172;Systems Administrator I;179
+62;7270;194;Assistant Media Planner;15
+25;6909;199;Actuary;109
+57;14432;191;Recruiter;57
+34;11817;205;Nuclear Power Engineer;88
+33;3377;199;Help Desk Technician;8
+40;5673;180;Analyst Programmer;4
+16;3150;207;Legal Assistant;129
+53;12130;166;Marketing Assistant;37
+23;7876;165;Director of Sales;169
+26;14865;195;Database Administrator II;62
+22;2192;195;Human Resources Manager;148
+30;3809;185;Analog Circuit Design manager;129
+33;8185;208;Paralegal;75
+50;1144;176;Senior Editor;55
+54;14663;141;General Manager;9
+49;2410;203;Senior Quality Engineer;0
+31;7484;192;Director of Sales;49
+51;12438;205;Data Coordiator;50
+41;1911;159;Project Manager;105
+53;12160;142;Biostatistician III;82
+28;1931;186;Operator;39
+43;5137;161;Programmer IV;101
+46;9467;191;Research Nurse;125
+53;5609;187;Nurse Practicioner;51
+35;8662;177;Tax Accountant;45
+50;4668;201;Programmer II;64
+54;12974;173;Structural Engineer;190
+50;8642;198;Physical Therapy Assistant;180
+35;8773;142;Analyst Programmer;13
+67;9159;173;Internal Auditor;190
+41;5757;204;Business Systems Development Analyst;13
+37;3946;191;Developer I;116
+62;5440;158;Cost Accountant;101
+65;923;165;Sales Representative;53
+16;11966;190;Accountant II;135
+49;8663;183;Senior Quality Engineer;174
+31;4766;192;Assistant Manager;160
+35;14907;143;Actuary;59
+35;10678;182;Legal Assistant;92
+55;11941;171;Accountant II;5
+38;12237;154;Software Consultant;191
+19;2217;172;Senior Sales Associate;190
+44;7418;207;Programmer Analyst I;175
+25;13591;143;Developer I;54
+46;4366;202;VP Accounting;45
+64;4234;151;Internal Auditor;156
+29;12593;157;Staff Accountant II;119
+22;13850;147;Director of Sales;104
+45;5771;151;Geologist I;45
+53;4295;189;Project Manager;63
+18;1819;167;Account Executive;151
+45;12171;154;Software Test Engineer III;103
+29;3996;190;Dental Hygienist;60
+51;12027;157;Nurse;152
+26;1036;179;Budget/Accounting Analyst II;182
+53;4409;183;Software Test Engineer II;68
+23;1799;200;Recruiting Manager;134
+61;7353;165;Associate Professor;78
+20;6903;184;Nuclear Power Engineer;31
+36;7281;152;Graphic Designer;184
+59;3881;164;Help Desk Operator;32
+53;5133;181;Human Resources Assistant IV;150
+31;9022;178;VP Sales;14
+47;5617;178;Account Executive;41
+22;934;197;Web Designer IV;43
+40;10534;188;Human Resources Assistant III;103
+28;9925;166;Quality Control Specialist;2
+20;9366;199;Human Resources Manager;87
+42;14726;168;Financial Advisor;143
+66;1848;178;Staff Scientist;163
+39;13578;191;Structural Engineer;111
+28;712;161;VP Marketing;47
+65;6523;208;Social Worker;158
+34;14929;191;Junior Executive;33
+31;12181;169;Environmental Specialist;171
+35;12927;154;Computer Systems Analyst IV;158
+44;1110;190;VP Accounting;8
+34;8892;179;Nuclear Power Engineer;96
+65;12637;195;Sales Representative;178
+17;14724;196;Electrical Engineer;73
+22;6136;156;Senior Quality Engineer;30
+32;5410;210;Food Chemist;50
+30;10917;184;Junior Executive;9
+50;5896;166;Computer Systems Analyst III;56
+23;9366;203;Structural Engineer;169
+30;14201;205;Biostatistician III;66
+46;13414;146;Senior Editor;23
+16;6866;158;Senior Developer;173
+20;3693;202;Compensation Analyst;12
+60;5886;185;Human Resources Assistant III;3
+36;9282;184;Director of Sales;193
+17;12137;140;Research Assistant II;179
+55;3399;188;Dental Hygienist;27
+43;9645;169;Nuclear Power Engineer;81
+25;7459;162;Food Chemist;53
+59;8565;184;Computer Systems Analyst III;198
+47;11732;146;Administrative Officer;93
+32;2835;185;Sales Associate;85
+44;2487;207;Assistant Manager;73
+30;14866;210;Technical Writer;127
+36;4731;201;Software Test Engineer IV;189
+50;3963;146;General Manager;151
+32;10269;155;Office Assistant III;184
+47;11992;142;Engineer II;61
+61;1163;168;Health Coach I;65
+45;3313;181;Software Engineer III;119
+52;2728;173;Assistant Manager;109
+27;4276;200;Quality Control Specialist;34
+55;3797;200;Senior Sales Associate;149
+64;8154;183;Geologist III;171
+31;6769;159;Senior Financial Analyst;177
+36;3056;207;Associate Professor;69
+51;3128;174;Research Nurse;46
+50;3558;186;GIS Technical Architect;162
+51;7194;157;Structural Engineer;157
+60;13869;159;Help Desk Operator;59
+28;6130;201;Geologist IV;63
+43;11763;171;Statistician IV;144
+58;1445;189;Nurse Practicioner;77
+25;3569;189;Human Resources Manager;61
+65;6173;141;Technical Writer;39
+17;13645;157;Assistant Professor;165
+38;7003;183;Executive Secretary;41
+36;8338;187;Biostatistician III;23
+65;12936;179;Product Engineer;128
+29;9954;179;VP Accounting;181
+21;298;182;Account Coordinator;63
+20;1552;156;Sales Associate;127
+65;6591;204;Developer I;93
+25;8392;143;Nuclear Power Engineer;66
+49;4935;172;Environmental Specialist;116
+66;6872;202;Recruiting Manager;77
+30;1144;181;Sales Associate;170
+58;5848;155;Quality Engineer;95
+55;5591;178;Pharmacist;178
+56;2733;193;Help Desk Operator;119
+44;11425;175;Marketing Manager;113
+17;5063;160;Senior Cost Accountant;38
+42;3707;197;Senior Editor;41
+51;4853;146;VP Quality Control;5
+32;5508;190;Product Engineer;122
+37;9382;183;Administrative Assistant II;9
+27;7235;208;Nurse Practicioner;65
+40;4083;147;Senior Developer;2
+42;2287;190;Human Resources Assistant I;3
+54;4585;160;Programmer II;75
+33;1999;176;Payment Adjustment Coordinator;195
+21;9233;200;Software Test Engineer I;126
+51;8084;156;Director of Sales;60
+45;8853;190;Teacher;164
+27;12105;198;Marketing Assistant;34
+54;14255;179;Occupational Therapist;23
+25;10483;176;Business Systems Development Analyst;4
+25;12049;159;Automation Specialist IV;142
+22;5254;198;Software Engineer I;175
+65;5188;143;Payment Adjustment Coordinator;7
+21;8467;177;GIS Technical Architect;145
+30;14758;174;Engineer IV;30
+32;14616;164;Account Executive;192
+46;14117;161;Budget/Accounting Analyst III;41
+22;12882;143;Systems Administrator III;133
+64;7798;199;Web Designer I;38
+50;3842;147;Graphic Designer;27
+19;6677;208;Operator;107
+56;196;189;Dental Hygienist;99
+38;3621;198;Office Assistant II;37
+29;6326;162;Administrative Officer;74
+23;5457;168;Sales Representative;64
+48;1307;203;Nurse;135
+25;2677;193;Web Developer IV;189
+64;14601;204;Quality Control Specialist;153
+18;8004;191;Environmental Specialist;99
+43;1467;202;Technical Writer;29
+24;2894;151;Compensation Analyst;145
+22;4800;161;Staff Accountant III;22
+36;4623;162;Operator;14
+63;13318;181;Developer III;186
+20;4265;188;Product Engineer;116
+67;14261;179;Physical Therapy Assistant;82
+55;14008;168;Nuclear Power Engineer;22
+33;3325;177;Budget/Accounting Analyst I;121
+38;8252;148;Structural Engineer;144
+49;14220;174;Project Manager;97
+58;9114;195;Senior Quality Engineer;70
+65;4898;209;Office Assistant II;168
+52;8877;170;Help Desk Technician;32
+48;1153;154;Payment Adjustment Coordinator;34
+45;1734;184;Human Resources Manager;177
+45;732;152;Junior Executive;195
+39;3261;156;Quality Engineer;93
+39;12748;209;Internal Auditor;84
+30;13210;186;Senior Cost Accountant;32
+35;6431;156;Sales Representative;114
+17;581;141;Tax Accountant;191
+60;2105;151;Dental Hygienist;2
+40;14173;201;VP Sales;121
+53;14553;145;Analyst Programmer;97
+59;14124;200;Technical Writer;127
+17;3415;189;Occupational Therapist;109
+58;9668;157;Operator;65
+38;8555;197;Structural Analysis Engineer;19
+48;12537;206;Physical Therapy Assistant;200
+34;12876;194;Cost Accountant;194
+17;3217;160;Help Desk Operator;166
+66;7038;176;Human Resources Manager;109
+30;14647;172;Teacher;74
+54;4560;157;Senior Quality Engineer;70
+60;4901;157;Budget/Accounting Analyst II;63
+55;179;147;Senior Sales Associate;67
+30;6133;186;Human Resources Assistant I;1
+53;7241;145;Quality Engineer;95
+18;5780;170;Environmental Specialist;191
+65;6376;188;Community Outreach Specialist;39
+35;2723;155;Director of Sales;51
+50;12907;192;Biostatistician III;0
+39;4252;199;Mechanical Systems Engineer;182
+60;8141;173;Administrative Officer;196
+28;11014;167;Research Associate;49
+54;12103;169;Accountant IV;101
+25;6428;169;Pharmacist;55
+37;11661;145;Product Engineer;64
+42;6828;152;Actuary;57
+51;8234;199;Structural Analysis Engineer;125
+36;12116;198;Legal Assistant;45
+38;9432;151;Geological Engineer;71
+31;7229;185;Senior Quality Engineer;67
+36;679;191;Financial Advisor;170
+62;13003;173;Account Executive;57
+32;8223;164;Data Coordiator;76
+46;6403;173;Compensation Analyst;70
+44;13390;144;VP Sales;173
+20;12993;194;Senior Editor;142
+55;10240;193;Account Executive;51
+30;3930;179;Recruiting Manager;167
+43;7475;144;Dental Hygienist;98
+32;8094;146;Dental Hygienist;3
+19;2235;156;Community Outreach Specialist;3
+49;1504;145;Librarian;172
+60;3326;188;Nurse;199
+45;1122;154;Recruiting Manager;33
+17;5639;159;Teacher;118
+48;3293;179;Director of Sales;83
+20;5439;193;Accounting Assistant III;81
+20;8981;203;Help Desk Technician;162
+19;5230;187;Computer Systems Analyst I;153
+22;13448;208;VP Quality Control;130
+30;8427;154;VP Product Management;91
+31;81;147;Civil Engineer;93
+61;7794;203;Paralegal;198
+44;13762;153;Accountant IV;69
+25;1573;169;Research Nurse;1
+47;8999;196;Health Coach II;18
+19;6301;158;VP Marketing;100
+34;14748;173;Environmental Specialist;139
+18;1660;189;Help Desk Technician;34
+18;8672;207;Recruiting Manager;158
+38;1696;201;Librarian;58
+49;7375;161;Developer III;122
+59;12461;144;Research Nurse;113
+52;6076;201;Environmental Specialist;87
+56;13833;180;Environmental Specialist;62
+66;10683;161;Assistant Manager;115
+31;9265;185;Geological Engineer;197
+32;6850;147;Nuclear Power Engineer;43
+37;12098;150;Software Consultant;122
+30;3339;152;Financial Advisor;161
+47;6102;159;Editor;69
+64;5010;175;Sales Representative;47
+32;13308;140;Design Engineer;170
+34;11431;194;VP Quality Control;43
+23;5092;177;Help Desk Technician;52
+36;8703;145;Director of Sales;71
+26;13407;183;Associate Professor;94
+67;7738;171;Executive Secretary;62
+21;1827;198;Human Resources Manager;140
+33;3014;197;Quality Control Specialist;118
+34;3429;146;VP Product Management;127
+64;2876;208;Administrative Officer;14
+29;3624;194;Internal Auditor;43
+57;1762;207;Quality Control Specialist;147
+22;1576;198;Software Engineer II;70
+56;9989;169;Registered Nurse;29
+48;1670;191;Associate Professor;166
+51;14980;150;Assistant Media Planner;157
+58;7388;190;VP Sales;111
+30;11028;147;Senior Cost Accountant;109
+52;12017;206;Chief Design Engineer;84
+38;8292;188;Accountant I;41
+53;1799;203;Paralegal;181
+62;4081;169;Community Outreach Specialist;184
+48;6150;209;Occupational Therapist;70
+51;14014;210;GIS Technical Architect;13
+34;6871;156;Compensation Analyst;89
+56;5222;141;Design Engineer;2
+28;5302;163;VP Marketing;93
+36;5448;179;General Manager;169
+40;1441;178;VP Accounting;158
+34;219;149;Analog Circuit Design manager;120
+31;14534;168;Quality Engineer;177
+34;262;190;Social Worker;136
+65;12236;189;Community Outreach Specialist;147
+24;12392;161;Sales Associate;76
+54;13973;192;Senior Sales Associate;147
+36;9083;173;Nurse;18
+48;4622;206;Programmer III;163
+49;12913;151;Physical Therapy Assistant;96
+52;9212;164;Account Coordinator;109
+45;14256;158;Marketing Assistant;29
+18;10395;164;Tax Accountant;8
+46;7476;154;Nurse;67
+54;8134;205;Engineer II;122
+56;3856;163;Clinical Specialist;84
+38;6345;170;Developer I;121
+22;4179;175;Professor;2
+60;4793;203;Web Developer I;14
+60;732;151;Web Developer I;157
+24;1301;203;Paralegal;181
+60;13158;201;Environmental Specialist;84
+40;5108;149;Recruiting Manager;152
+27;11304;162;Software Test Engineer II;118
+47;4019;194;Account Representative II;168
+20;14501;171;Accounting Assistant II;189
+57;4289;158;Account Coordinator;121
+44;3356;147;Geologist II;196
+32;9776;168;Assistant Professor;55
+45;1545;198;Software Engineer II;40
+25;14478;180;Graphic Designer;188
+55;8352;142;Environmental Tech;107
+29;5686;168;Assistant Professor;12
+56;6880;197;Web Designer IV;30
+48;5268;147;Tax Accountant;74
+40;2370;162;Registered Nurse;169
+35;8526;172;Recruiting Manager;164
+19;9200;151;Internal Auditor;136
+44;4979;194;Pharmacist;182
+59;6573;146;Speech Pathologist;52
+66;6476;183;Cost Accountant;29
+19;13214;179;Tax Accountant;200
+64;3716;209;Quality Engineer;53
+46;2185;155;Senior Sales Associate;66
+22;2210;180;Structural Engineer;31
+32;1128;157;Office Assistant IV;109
+24;13535;157;Technical Writer;132
+41;3032;194;Quality Control Specialist;17
+26;1017;167;Financial Advisor;52
+66;1768;201;Civil Engineer;195
+36;4422;143;Analyst Programmer;157
+56;11082;147;Geological Engineer;146
+59;7227;166;Chief Design Engineer;96
+41;551;154;Speech Pathologist;169
+28;7796;178;Human Resources Manager;97
+30;10185;174;Research Associate;139
+20;2380;173;Biostatistician III;183
+46;1006;190;Business Systems Development Analyst;149
+54;2364;151;Paralegal;57
+37;2490;141;Nurse;105
+37;4853;166;Office Assistant III;130
+62;4026;195;Accountant I;187
+40;5961;144;Editor;189
+48;2921;186;Administrative Assistant III;119
+42;10384;169;Internal Auditor;3
+38;13996;182;VP Quality Control;196
+40;14929;182;Geological Engineer;47
+64;3484;175;Director of Sales;57
+24;6657;154;Financial Advisor;24
+37;14057;151;Help Desk Technician;132
+37;12856;200;Design Engineer;135
+34;3437;192;Design Engineer;93
+55;10000;198;Legal Assistant;110
+65;8932;191;Actuary;39
+28;13200;153;Accountant I;76
+51;14197;208;Budget/Accounting Analyst II;160
+65;13338;190;Biostatistician I;29
+28;1421;155;VP Quality Control;2
+35;14365;166;Librarian;1
+29;4178;196;Chemical Engineer;36
+37;12909;148;Recruiting Manager;5
+37;7395;168;Human Resources Manager;128
+19;12381;195;Biostatistician IV;150
+63;10341;178;Nurse Practicioner;61
+19;10556;203;Pharmacist;108
+29;13110;209;Technical Writer;144
+44;756;144;Business Systems Development Analyst;31
+39;13479;189;Editor;81
+67;14883;184;Mechanical Systems Engineer;36
+56;11130;146;Chief Design Engineer;69
+54;12911;164;Automation Specialist IV;89
+31;3501;168;Information Systems Manager;154
+53;6926;210;Executive Secretary;60
+25;871;197;Media Manager II;56
+24;13420;187;Assistant Professor;144
+17;2760;192;Computer Systems Analyst I;105
+56;9552;151;Speech Pathologist;125
+67;9412;185;Associate Professor;174
+23;3005;163;Graphic Designer;29
+51;6731;167;Structural Engineer;39
+53;2408;187;Budget/Accounting Analyst IV;183
+30;8809;169;Computer Systems Analyst III;66
+21;4920;159;Help Desk Technician;45
+18;6308;150;Recruiter;121
+36;4605;186;Professor;91
+67;14518;184;Senior Sales Associate;101
+47;7855;171;Software Engineer I;20
+24;3109;162;Electrical Engineer;144
+44;5196;160;Health Coach I;76
+57;12662;157;Technical Writer;55
+65;6778;191;Information Systems Manager;76
+19;5875;180;Quality Engineer;122
+61;2697;148;Research Assistant II;9
+31;10861;204;Administrative Assistant II;72
+47;7409;143;Human Resources Assistant IV;79
+60;13781;190;Paralegal;110
+30;14176;203;Statistician I;127
+60;5665;168;Dental Hygienist;159
+31;14903;146;Financial Advisor;35
+45;2265;200;Technical Writer;149
+17;6325;198;Data Coordiator;78
+25;14773;194;Software Test Engineer II;105
+60;147;155;Structural Analysis Engineer;69
+20;7640;157;Project Manager;200
+60;1785;202;Senior Sales Associate;174
+31;1918;181;Food Chemist;147
+16;8742;166;Programmer Analyst I;29
+53;2096;157;Structural Analysis Engineer;179
+49;3099;192;Accounting Assistant IV;66
+24;8387;157;Librarian;138
+40;6095;182;VP Marketing;123
+57;4093;181;Help Desk Operator;139
+37;10497;197;Engineer I;199
+52;9364;142;Assistant Manager;71
+18;11088;167;Quality Engineer;98
+52;108;179;Compensation Analyst;27
+16;8735;143;Environmental Tech;128
+56;8291;147;Quality Engineer;6
+45;14616;143;Assistant Manager;41
+42;9870;165;Assistant Professor;6
+51;6576;151;Recruiting Manager;122
+59;5870;177;Civil Engineer;69
+32;5709;155;Legal Assistant;37
+46;7852;142;Cost Accountant;146
+21;13264;178;Assistant Media Planner;134
+58;14960;156;Electrical Engineer;151
+30;2764;169;Chemical Engineer;142
+61;4170;209;VP Quality Control;194
+27;9635;176;Paralegal;108
+58;14445;206;Compensation Analyst;103
+38;7058;166;Help Desk Technician;152
+18;9321;209;Senior Editor;4
+29;4090;171;VP Product Management;31
+18;9972;159;Executive Secretary;88
+16;13654;207;Engineer III;97
+19;13284;206;Business Systems Development Analyst;80
+24;4671;187;Account Executive;117
+28;827;171;Senior Cost Accountant;30
+16;8906;172;Marketing Manager;136
+57;2537;195;General Manager;111
+37;10138;174;Help Desk Technician;22
+17;10545;145;VP Quality Control;39
+39;6679;197;Web Developer III;166
+28;4374;146;Office Assistant II;123
+57;2232;162;Help Desk Technician;81
+55;5926;168;Nurse Practicioner;11
+43;6628;178;Account Executive;67
+38;9034;206;Quality Engineer;74
+51;11417;175;Human Resources Assistant III;77
+52;11903;181;Senior Quality Engineer;186
+45;9014;204;Payment Adjustment Coordinator;103
+52;498;145;Systems Administrator I;158
+21;5945;200;Senior Cost Accountant;136
+46;8130;166;Registered Nurse;162
+21;14738;182;Automation Specialist III;157
+53;8265;178;Community Outreach Specialist;137
+41;10135;189;VP Accounting;73
+34;6543;197;Help Desk Technician;193
+50;3426;144;Senior Editor;46
+36;14131;197;Geological Engineer;188
+46;6283;176;Technical Writer;130
+17;11838;166;Database Administrator III;54
+44;1259;159;Developer I;54
+56;13050;185;Product Engineer;67
+60;13659;200;Compensation Analyst;162
+58;14003;187;Web Designer IV;119
+25;7738;171;Data Coordiator;44
+46;13055;181;Social Worker;14
+65;1269;198;Business Systems Development Analyst;42
+27;12224;200;General Manager;149
+28;8064;166;Mechanical Systems Engineer;183
+38;2497;191;Chemical Engineer;153
+29;8712;168;Associate Professor;49
+47;2439;171;Graphic Designer;90
+19;13744;195;Senior Sales Associate;175
+23;6313;178;Dental Hygienist;99
+28;5920;143;Environmental Specialist;90
+20;11332;170;Structural Engineer;65
+66;5196;159;Recruiter;124
+35;5070;166;VP Accounting;25
+36;4586;166;Actuary;92
+49;4575;152;Business Systems Development Analyst;116
+37;5027;207;Account Executive;41
+66;8831;186;Assistant Media Planner;174
+52;6839;194;Information Systems Manager;51
+33;7964;206;Software Consultant;56
+30;11977;191;Automation Specialist III;172
+25;1659;202;Payment Adjustment Coordinator;97
+36;9151;205;Geological Engineer;139
+62;2595;209;Senior Sales Associate;166
+57;1334;142;Design Engineer;29
+42;7050;167;Executive Secretary;37
+24;6297;144;Director of Sales;180
+54;12573;166;Operator;104
+22;3434;209;Librarian;110
+62;10087;208;Environmental Tech;53
+57;11222;184;Human Resources Assistant III;121
+51;4298;180;Media Manager IV;141
+40;5002;185;Safety Technician III;122
+42;7911;167;Senior Editor;21
+64;2412;146;Developer IV;145
+57;14612;145;Compensation Analyst;129
+21;1795;175;Developer II;59
+48;3226;196;Information Systems Manager;192
+61;6001;187;Design Engineer;42
+31;7963;198;Data Coordiator;140
+65;11649;158;General Manager;168
+49;9583;183;Nurse Practicioner;107
+50;10517;157;Technical Writer;197
+48;11920;151;Media Manager III;189
+17;9229;180;Environmental Tech;48
+66;12833;179;Director of Sales;98
+28;246;149;Electrical Engineer;127
+45;1369;210;Technical Writer;177
+38;12188;145;Occupational Therapist;24
+23;5756;179;Systems Administrator I;108
+62;3884;196;Quality Control Specialist;100
+47;9367;195;Operator;177
+50;7619;206;Marketing Assistant;150
+22;12319;159;Senior Developer;196
+54;1189;151;Chief Design Engineer;161
+44;12577;180;Nurse Practicioner;116
+37;3249;161;Junior Executive;117
+24;958;182;Safety Technician II;91
+32;5755;160;Developer III;187
+18;14919;166;Health Coach I;63
+55;6818;184;Food Chemist;155
+36;8832;192;Geologist I;160
+43;7006;153;Staff Accountant IV;154
+43;11210;199;Director of Sales;91
+53;9777;209;Budget/Accounting Analyst II;114
+62;8122;142;Software Consultant;167
+20;4029;152;Help Desk Technician;51
+67;3465;206;Administrative Officer;178
+31;11354;146;Nurse;127
+23;2882;201;Junior Executive;42
+51;5521;198;Speech Pathologist;142
+51;6025;203;Nuclear Power Engineer;141
+31;5129;177;Nuclear Power Engineer;21
+16;11919;157;Quality Control Specialist;46
+19;11223;199;VP Accounting;43
+46;14170;175;Computer Systems Analyst I;152
+28;7777;154;Operator;127
+33;4226;197;Technical Writer;116
+59;253;142;Quality Engineer;83
+43;1424;204;Assistant Media Planner;97
+47;12967;152;VP Product Management;117
+56;14273;141;Research Associate;39
+19;8812;163;VP Sales;2
+18;6606;201;VP Quality Control;137
+64;553;208;Budget/Accounting Analyst III;126
+39;7499;167;Legal Assistant;27
+25;3049;209;Database Administrator IV;42
+52;14712;167;Developer I;122
+48;583;190;Assistant Manager;63
+39;4347;146;Environmental Specialist;71
+64;7524;191;Dental Hygienist;53
+33;9483;196;Desktop Support Technician;41
+36;2362;154;Software Consultant;38
+50;13277;183;Research Nurse;31
+51;14198;154;Database Administrator III;56
+60;12183;186;Accounting Assistant III;33
+46;8639;172;Statistician IV;90
+25;4789;180;Product Engineer;195
+32;3173;183;Internal Auditor;167
+51;7801;169;Dental Hygienist;62
+44;2512;209;Cost Accountant;16
+28;13902;177;Database Administrator III;105
+28;1305;196;General Manager;1
+34;3377;171;Programmer II;97
+16;9089;168;Electrical Engineer;144
+32;9107;197;Tax Accountant;77
+38;8131;186;Financial Advisor;31
+65;7799;141;Research Nurse;28
+54;14250;198;Database Administrator III;165
+64;12632;192;Environmental Tech;11
+26;14976;166;Physical Therapy Assistant;58
+62;8163;148;Database Administrator III;191
+57;11452;192;VP Accounting;2
+59;1463;203;Librarian;103
+56;4536;192;Environmental Tech;126
+40;5417;157;Software Consultant;138
+19;7635;156;Payment Adjustment Coordinator;33
+18;3056;205;Engineer III;154
+65;5950;175;Programmer Analyst I;77
+41;7062;153;Community Outreach Specialist;119
+63;3571;167;Project Manager;103
+58;1087;188;Junior Executive;82
+66;7610;161;Sales Representative;116
+59;5609;149;Systems Administrator I;28
+25;12376;203;Financial Analyst;7
+37;438;145;Accounting Assistant I;196
+28;5851;140;Structural Engineer;63
+57;14319;188;Mechanical Systems Engineer;198
+66;11756;149;Assistant Media Planner;180
+66;2653;195;Account Executive;3
+52;430;169;Electrical Engineer;108
+18;13172;186;Nurse;80
+49;3964;168;Mechanical Systems Engineer;89
+53;8688;172;Nurse Practicioner;165
+57;1307;156;VP Quality Control;137
+62;10084;148;Human Resources Assistant IV;200
+34;5578;153;VP Accounting;158
+53;2210;143;Staff Scientist;3
+36;5585;192;Programmer IV;168
+35;7089;178;Chemical Engineer;48
+66;10014;142;Tax Accountant;196
+39;9362;199;Geological Engineer;88
+66;12558;187;VP Product Management;180
+55;3544;176;Desktop Support Technician;26
+49;2123;177;Community Outreach Specialist;118
+30;6549;181;Senior Editor;66
+37;10346;184;Actuary;16
+58;10111;169;Research Nurse;110
+44;11362;164;Director of Sales;135
+64;7332;153;Programmer Analyst IV;100
+42;13829;166;Clinical Specialist;154
+35;7494;166;Speech Pathologist;95
+33;982;145;Registered Nurse;52
+51;5340;204;Business Systems Development Analyst;30
+53;3025;210;Quality Engineer;88
+48;2644;208;Senior Sales Associate;39
+53;9801;167;Professor;180
+51;8678;210;Paralegal;0
+39;4586;141;Geological Engineer;93
+51;6898;179;Accounting Assistant II;134
+36;7404;186;Help Desk Technician;172
+45;3614;178;Recruiting Manager;158
+52;10593;176;Senior Developer;196
+57;7434;187;Administrative Officer;164
+37;4932;180;Clinical Specialist;135
+65;9345;155;Financial Analyst;113
+61;12529;158;Project Manager;93
+51;11717;163;Librarian;159
+19;11248;184;Desktop Support Technician;131
+41;25;193;Teacher;103
+66;7645;175;Tax Accountant;52
+43;13760;186;VP Accounting;193
+55;4579;166;Registered Nurse;107
+60;1762;166;Nurse Practicioner;113
+39;9955;195;Chemical Engineer;177
+28;10994;207;Statistician IV;147
+29;13104;182;Food Chemist;82
+44;7558;188;VP Accounting;163
+52;9899;196;Electrical Engineer;19
+19;12603;150;Marketing Assistant;139
+42;12011;167;Director of Sales;25
+41;1804;151;Chief Design Engineer;36
+58;1080;146;Clinical Specialist;136
+51;10810;167;Account Executive;189
+61;1658;186;Programmer Analyst I;138
+17;14923;207;Professor;49
+49;13578;184;Tax Accountant;168
+19;3392;197;Mechanical Systems Engineer;98
+54;14301;173;Software Test Engineer I;139
+57;9549;205;Senior Financial Analyst;133
+50;9220;182;Senior Cost Accountant;96
+24;13450;155;Research Associate;168
+55;10689;210;Senior Sales Associate;76
+31;6622;171;Compensation Analyst;93
+22;618;202;Analyst Programmer;53
+35;461;188;Nurse Practicioner;161
+42;8677;142;Software Test Engineer I;43
+45;5077;165;Staff Scientist;64
+18;7226;209;Senior Cost Accountant;108
+28;4065;140;Project Manager;79
+35;3493;204;Geological Engineer;102
+27;8028;152;Senior Developer;119
+57;2005;189;Media Manager IV;185
+30;10050;184;Financial Advisor;120
+52;8997;155;Biostatistician IV;21
+43;2824;181;Design Engineer;64
+49;10000;151;Systems Administrator II;63
+46;14669;161;Staff Scientist;124
+25;1416;175;Payment Adjustment Coordinator;177
+60;9117;199;Financial Analyst;190
+44;7288;200;Actuary;76
+29;7464;146;Senior Financial Analyst;21
+36;2763;140;Health Coach III;125
+63;8017;146;Assistant Manager;48
+50;12472;177;Research Associate;63
+61;10751;202;Statistician II;47
+47;12081;191;Recruiter;160
+33;8482;149;Registered Nurse;150
+23;13801;185;Registered Nurse;48
+53;2576;183;Administrative Officer;186
+43;9927;171;Speech Pathologist;78
+65;7609;201;Nurse Practicioner;182
+18;10765;192;Assistant Manager;188
+34;2915;155;Senior Editor;94
+63;10197;144;Occupational Therapist;189
+55;9110;203;Graphic Designer;80
+37;6633;155;Teacher;16
+36;12581;148;Administrative Officer;155
+30;6738;195;Data Coordiator;190
+36;3503;158;Help Desk Operator;194
+55;7411;180;Chemical Engineer;162
+59;4374;177;Cost Accountant;120
+16;10224;160;Executive Secretary;156
+27;13310;180;Developer III;21
+32;13826;167;Chief Design Engineer;18
+53;4987;172;Junior Executive;117
+64;9470;170;Geological Engineer;168
+35;10837;198;Tax Accountant;44
+57;11971;158;Human Resources Manager;183
+34;4511;174;Assistant Professor;195
+42;515;198;Human Resources Manager;126
+38;9276;202;Cost Accountant;79
+54;13375;197;Community Outreach Specialist;62
+30;9978;205;Geologist II;103
+67;8198;204;Speech Pathologist;68
+49;13749;177;VP Quality Control;28
+54;5109;186;VP Quality Control;42
+46;7841;173;Product Engineer;194
+54;6371;199;Graphic Designer;139
+20;8277;193;Director of Sales;188
+53;9112;176;Food Chemist;53
+24;3584;210;Developer II;176
+44;8050;160;Human Resources Assistant II;174
+61;6006;164;Senior Editor;60
+28;487;192;Structural Analysis Engineer;36
+26;8922;182;Chemical Engineer;186
+66;13163;195;Chief Design Engineer;109
+18;325;188;Geologist III;195
+51;13552;173;Physical Therapy Assistant;190
+67;7372;197;Structural Engineer;144
+32;9041;147;Structural Analysis Engineer;97
+16;6524;198;VP Marketing;191
+67;5094;155;Product Engineer;53
+44;1267;202;Safety Technician III;44
+48;2440;204;Staff Scientist;106
+50;2080;146;Data Coordiator;96
+60;2869;197;Professor;74
+64;4365;179;Software Engineer II;59
+20;9552;204;Information Systems Manager;69
+31;14949;144;Civil Engineer;123
+42;4425;161;Financial Advisor;182
+43;6068;165;Physical Therapy Assistant;112
+35;11515;175;Internal Auditor;173
+16;3790;186;Environmental Specialist;70
+52;10472;196;Computer Systems Analyst II;36
+26;139;165;Occupational Therapist;36
+49;10253;161;Health Coach I;22
+32;2867;142;Senior Editor;140
+31;2714;207;Help Desk Technician;117
+58;408;186;Teacher;3
+55;8286;190;Registered Nurse;87
+21;9583;159;General Manager;96
+62;6315;188;Engineer III;93
+30;1645;192;VP Marketing;65
+20;3400;141;Account Representative III;192
+67;8651;150;Legal Assistant;136
+25;13514;190;Marketing Assistant;129
+67;6031;157;Civil Engineer;78
+43;9543;180;Librarian;71
+41;3488;184;Account Coordinator;23
+44;12425;163;Senior Sales Associate;176
+21;2800;177;Marketing Assistant;34
+34;9602;197;Automation Specialist II;5
+62;5215;140;Chief Design Engineer;112
+45;14674;171;Software Engineer II;188
+46;4894;206;Registered Nurse;189
+18;512;200;Programmer Analyst IV;111
+41;14668;163;Senior Editor;194
+31;2044;143;Associate Professor;194
+56;6381;196;Design Engineer;141
+20;5041;155;Librarian;64
+20;13137;165;Chemical Engineer;156
+26;14817;182;Product Engineer;161
+53;8596;186;Payment Adjustment Coordinator;52
+24;4806;194;Senior Developer;170
+63;3355;200;Speech Pathologist;70
+34;138;203;Account Coordinator;144
+20;1792;150;Sales Associate;106
+50;4796;146;Environmental Tech;37
+31;6607;161;Developer II;124
+19;9066;189;Product Engineer;46
+29;13113;201;Chemical Engineer;12
+53;4284;184;Desktop Support Technician;193
+63;10230;184;Software Consultant;177
+27;9519;144;Help Desk Operator;73
+38;5227;176;Teacher;124
+22;6991;156;VP Sales;141
+63;1840;187;Quality Engineer;96
+46;7414;159;Design Engineer;0
+43;2109;159;Senior Developer;173
+17;3121;205;Pharmacist;108
+34;14471;177;Community Outreach Specialist;103
+55;429;197;Staff Accountant II;191
+41;3406;164;Design Engineer;152
+38;13366;177;Chief Design Engineer;148
+32;8993;159;Food Chemist;171
+25;12984;196;Software Engineer IV;163
+62;2226;148;Software Consultant;142
+21;13257;172;Design Engineer;169
+18;9975;201;Account Representative I;73
+29;11234;200;Internal Auditor;8
+17;8009;210;Analog Circuit Design manager;107
+57;13290;180;Web Designer II;96
+28;13752;200;Operator;134
+56;12125;150;Structural Engineer;171
+38;7540;147;Administrative Officer;102
+21;10594;199;Web Designer IV;190
+51;13569;189;Administrative Officer;56
+64;1274;199;Community Outreach Specialist;151
+30;10100;195;Assistant Professor;196
+28;2150;169;Pharmacist;197
+29;11810;205;Structural Engineer;94
+17;13086;174;Developer IV;39
+18;3120;199;Marketing Manager;90
+34;7740;183;Help Desk Technician;55
+32;1790;198;Sales Representative;199
+44;9808;168;Information Systems Manager;40
+39;3832;204;VP Product Management;112
+38;8792;147;Speech Pathologist;134
+22;1141;159;Computer Systems Analyst II;26
+41;5918;165;Senior Editor;18
+45;947;204;Actuary;53
+28;11661;173;Quality Engineer;122
+63;8927;173;Account Executive;0
+46;2066;154;Physical Therapy Assistant;11
+44;14525;144;Developer III;50
+21;10364;205;Administrative Officer;78
+17;986;164;Financial Advisor;47
+26;5081;152;Research Assistant III;179
+20;9345;146;Paralegal;194
+45;13773;167;Senior Cost Accountant;190
+61;13525;193;Environmental Specialist;95
+47;14180;183;Assistant Professor;4
+50;12315;182;Business Systems Development Analyst;13
+17;995;197;Assistant Manager;159
+46;11910;184;Quality Engineer;31
+44;7150;149;Chemical Engineer;125
+16;9048;161;Senior Editor;55
+28;2019;176;Computer Systems Analyst I;89
+35;8446;195;Sales Associate;91
+16;14885;156;Account Coordinator;136
+34;14373;143;Biostatistician II;79
+65;13837;153;Staff Accountant I;93
+50;6546;174;Cost Accountant;57
+27;26;146;Senior Editor;96
+40;8590;196;Research Assistant III;168
+56;4035;199;Social Worker;115
+39;2830;174;General Manager;194
+37;11764;155;Senior Editor;77
+17;10466;167;Desktop Support Technician;188
+38;11788;200;Civil Engineer;74
+16;9239;202;Community Outreach Specialist;180
+60;607;153;Marketing Assistant;177
+31;9152;151;Health Coach I;14
+26;7137;181;Engineer I;24
+57;9978;210;Research Nurse;150
+17;14854;198;Software Test Engineer IV;114
+42;6392;168;Physical Therapy Assistant;21
+27;13648;178;Paralegal;119
+53;4590;205;Engineer III;166
+27;8150;179;Biostatistician I;43
+29;10601;203;VP Product Management;171
+35;938;162;Actuary;16
+59;13477;198;Developer III;180
+64;5233;201;Marketing Assistant;25
+26;14749;148;Environmental Specialist;17
+23;1798;141;Staff Accountant III;73
+40;4637;144;Biostatistician I;147
+26;14949;208;Chemical Engineer;94
+33;10428;144;Associate Professor;4
+39;923;150;Project Manager;25
+57;2531;140;Technical Writer;170
+41;4325;169;Cost Accountant;144
+19;12598;209;Business Systems Development Analyst;23
+19;10658;158;Associate Professor;173
+23;2395;168;Legal Assistant;85
+24;213;142;Account Executive;181
+36;653;148;Assistant Media Planner;128
+19;8308;151;Financial Advisor;191
+56;4880;142;Software Consultant;164
+60;5229;205;Nurse Practicioner;99
+50;9895;176;Account Coordinator;182
+62;14155;157;Database Administrator III;103
+43;14053;143;Executive Secretary;22
+52;8338;183;Associate Professor;112
+48;12413;175;Staff Accountant II;9
+20;13740;181;Speech Pathologist;178
+43;174;175;Structural Engineer;72
+21;5;180;Environmental Tech;171
+59;14214;175;Research Assistant III;172
+55;10282;159;Database Administrator IV;19
+33;527;140;Research Nurse;46
+30;11791;169;Food Chemist;165
+60;10863;144;Administrative Officer;71
+55;3509;194;Social Worker;63
+65;7791;179;Professor;4
+60;56;196;Graphic Designer;97
+46;11730;208;Research Assistant I;55
+29;9709;190;Database Administrator IV;128
+19;13692;146;Senior Cost Accountant;103
+52;6745;177;Senior Sales Associate;145
+47;2563;145;Electrical Engineer;58
+59;3491;208;Accounting Assistant II;192
+42;14364;202;Office Assistant III;7
+55;13029;191;Office Assistant II;143
+57;5357;166;Sales Representative;16
+43;6068;207;Help Desk Technician;99
+19;8904;167;Geologist IV;167
+57;3190;151;Cost Accountant;200
+63;13064;158;Analyst Programmer;112
+21;14770;166;VP Accounting;4
+66;291;206;Programmer III;176
+27;1229;149;Research Nurse;190
+65;8965;183;Marketing Assistant;95
+26;10694;165;Office Assistant IV;71
+24;11672;202;Cost Accountant;178
+44;6254;151;Help Desk Operator;39
+47;14753;169;Human Resources Manager;137
+35;9945;156;Payment Adjustment Coordinator;57
+62;1138;175;Structural Analysis Engineer;148
+67;477;156;Financial Analyst;188
+50;8464;156;Chemical Engineer;99
+22;11835;179;Budget/Accounting Analyst I;9
+40;4207;197;Software Consultant;94
+49;8501;202;Human Resources Assistant II;19
+33;5010;207;Recruiter;166
+27;11969;206;Recruiting Manager;134
+52;12692;150;Media Manager I;135
+55;6951;192;VP Marketing;108
+61;6267;203;Analog Circuit Design manager;19
+56;9895;171;Desktop Support Technician;67
+30;14181;160;Graphic Designer;68
+41;8885;160;Recruiter;76
+30;4327;152;Staff Accountant II;1
+50;6078;140;General Manager;137
+60;14491;153;Recruiter;115
+50;13361;161;VP Accounting;174
+49;13524;185;Tax Accountant;191
+39;3959;140;Operator;140
+52;2382;182;Web Designer I;137
+50;14393;152;Senior Cost Accountant;62
+51;8212;145;Accounting Assistant III;106
+66;504;174;VP Sales;76
+42;12073;190;Environmental Tech;166
+33;1231;140;Civil Engineer;24
+45;12417;206;Health Coach II;153
+58;1050;167;Quality Engineer;70
+26;3759;154;Software Engineer III;23
+27;4574;192;Quality Engineer;94
+40;2648;175;Systems Administrator III;105
+18;5621;174;Automation Specialist I;7
+35;5575;199;Sales Associate;5
+18;3575;150;Sales Representative;97
+24;7188;181;Operator;170
+18;14243;142;Nurse Practicioner;149
+50;518;176;Director of Sales;123
+58;8801;174;Health Coach I;50
+37;2771;140;Associate Professor;39
+36;3779;181;Software Consultant;7
+56;2019;209;Account Coordinator;64
+26;5913;150;Business Systems Development Analyst;106
+44;11127;209;Electrical Engineer;83
+20;6611;202;Web Designer II;13
+60;7875;154;Paralegal;3
+25;6630;176;Information Systems Manager;60
+22;13082;148;Software Engineer IV;29
+51;2832;154;Research Assistant IV;43
+60;12805;146;Information Systems Manager;109
+52;12428;162;GIS Technical Architect;62
+35;8132;163;Chief Design Engineer;19
+58;7676;191;Compensation Analyst;134
+21;7619;185;VP Marketing;170
+24;6512;210;Recruiting Manager;91
+22;6899;162;Human Resources Manager;119
+46;3443;199;Cost Accountant;163
+44;8496;166;Budget/Accounting Analyst II;43
+62;11781;199;Nurse Practicioner;143
+24;12611;179;Food Chemist;41
+60;5406;179;Financial Advisor;148

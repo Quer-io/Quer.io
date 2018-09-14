@@ -4,9 +4,15 @@ db_string = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5
 
 db = create_engine(db_string)
 
+
 def predict_income(age):
     return age * 10.5
 
 
 def get_example_row_from_db():
+    """Gets the first row of the database and return it as a dictionary.
+
+    The keys of the dictionary are the column names of the database table,
+    the values are the values of the table corresponding to the columns.
+    """
     return {'age': 30, 'income': predict_income(30)}

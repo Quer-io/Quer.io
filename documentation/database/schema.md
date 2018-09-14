@@ -1,1 +1,1 @@
-![schema diagram](https://github.com/Quer-io/Quer.io/blob/master/documentation/database/diagrams/schema_1.jpeg "Schema 10.9.2018")
+![schema diagram](https://github.com/Quer-io/Quer.io/blob/master/documentation/database/diagrams/schema_2.jpeg "Schema 14.9.2018")

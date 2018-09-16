@@ -20,6 +20,10 @@ def get_example_row_from_db():
     the values are the values of the table corresponding to the columns.
     """
 
-    column_names = table.columns.keys()
+    column_names = get_table_column_names()
     result = conn.execute("SELECT * FROM person").fetchone()
     return {column_name: result[column_name] for column_name in column_names}
+
+
+def get_table_column_names():
+    return table.columns.keys()

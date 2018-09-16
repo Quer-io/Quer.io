@@ -1,2 +1,8 @@
+#database
 psycopg2==2.7.5
 SQLAlchemy==1.2.11
+
+#machine learning
+numpy==1.14.3
+pandas==0.23.0
+scikit-learn==0.19.1

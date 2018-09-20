@@ -1,4 +1,4 @@
-import ml
+from service import default_service as ds
 
 def baseUi():
     print("Welcome to Quer.io")
@@ -7,9 +7,9 @@ def baseUi():
     displayTest(x)
 
 def displayTest(x):
-    x = ml.predict_income(x)
+    x = ds.predict(x)
     print("Expected value is " + repr(x))
 
 def displayExample():
     print("The database contains data in this form:")
-    print(ml.get_example_row_from_db())
+    print(ds.get_example_from_db())

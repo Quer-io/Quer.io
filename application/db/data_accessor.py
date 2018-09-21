@@ -33,7 +33,7 @@ def get_avg_one_param(avg):
         result = conn.execute("SELECT avg({}) FROM person".format(avg))
         row = result.fetchone()
     else:
-        return "Bad parameter for avg - has to be of type int!"
+        return "Bad parameter type - column type has to be int!"
     return row[0]
 
 def get_avg_three_param(avg, where, like):

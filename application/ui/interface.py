@@ -1,40 +1,48 @@
 from service import default_service as ds
 
 def baseUi():
-    print("Welcome to Quer.io")
+    print("****************************************")
+    print("*  Welcome to Quer.io CLI application! *")
+    print("****************************************")
+    test = input("\nWould you like to run tests? (y/n) ").lower()
+    if test == "y":
+        testDBpremadeQ()
+    exit = "y"
     displayExample()
-    displayScikit()
-    print("\nInitializing database query tests")
-    testDBpremadeQ()
-    y = input("\n Enter a database column to search average value from: ")
-    testDBuserQ(y)
-    x = int(input("\nGive age to search: "))
-    displayTest(x)
+    displayScikit()    
+    while(exit=="y"):
+        y = input("\nEnter a database column to search average value from: ")
+        testDBuserQ(y)
+        exit = input("\nEnd of run! Continue? (y/n) ").lower()
 
-def displayTest(x):
-    x = ds.predict(x)
-    print("Expected value is " + repr(x))
 
 def displayExample():
-    print("The database contains data in this form:")
+    print("\nThe database contains data in this form:")
     print(ds.get_example_from_db())
 
 def displayScikit():
     sci = ds.accuracy()
     print("\nFeatured data: " + str(sci[0]))
-    print("Accuracy of estimating Github stars: " + str(sci[1]))
+    print("\nAccuracy of estimating Github stars: " + str(sci[1]))
 
 def testDBpremadeQ():
-    print("\n****** Testing average age ******")
+    print("\n**********************************")
+    print("*  Initializing DB test queries  *")
+    print("**********************************\n")
+    print("++++ Testing queries for AVG(param) ++++\n")
+    print("-- Testing param == age --")
     col1 = "age"
     print(ds.get_avg_single_param(col1))
-    print("\n****** Testing average heigth ******")
+    print("\n-- Testing param == height --")
     col2 = "height"
     print(ds.get_avg_single_param(col2))
-    print("\n****** Testing for bad parameter 'profession' of type varchar *****")
+    print("\n-- Testing param == profession, illegal type varchar --")
     col3 = "profession"
     print(ds.get_avg_single_param(col3))
+    print("\n****************")
+    print("* End of tests *")
+    print("****************\n")
 
 def testDBuserQ(param):
-    print("\n Average result for your query parameter " + param + "is: ")
+    print("\nAverage result for your query parameter " + param + " is: ")
     print(ds.get_avg_single_param(param))

@@ -8,3 +8,6 @@ def get_example_from_db():
 
 def predict(age):
     return ml.predict_income(age)
+
+def accuracy():
+    return ml.return_accuracy()

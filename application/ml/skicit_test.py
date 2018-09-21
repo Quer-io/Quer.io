@@ -29,4 +29,7 @@ dt = c.fit(X_train, y_train)
 y_pred = c.predict(X_test)
 score = accuracy_score(y_test, y_pred) * 100
 
-print("Accuracy of estimating Github stars: ", round(score, 1), "%")
+#print("Accuracy of estimating Github stars: ", round(score, 1), "%")
+
+def return_accuracy():
+    return [features, round(score, 1)]

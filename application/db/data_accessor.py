@@ -24,3 +24,49 @@ def get_example_row_from_db():
 
 def get_table_column_names():
     return table.columns.keys()
+
+
+def get_avg_one_param(avg):
+    checker = conn.execute("SELECT {} FROM person limit 1".format(avg))
+    row = checker.fetchone()
+    if type(row[0]) is int:
+        result = conn.execute("SELECT avg({}) FROM person".format(avg))
+        row = result.fetchone()
+    else:
+        return "Bad parameter for avg - has to be of type int!"
+    return row[0]
+
+def get_avg_three_param(avg, where, like):
+    if type(avg) is int:
+        if type(like) is int:
+            result = conn.execute("SELECT avg({}) FROM person WHERE {} = {}".format(avg, where, like))
+        else:
+            result = conn.execute("SELECT avg({}) FROM person WHERE {} LIKE '{}'".format(avg, where, like))
+    else:
+        result = "Bad parameter for avg - has to be Integer!"
+
+def get_count_with_param(count, where, like):
+    if type(like) is int:
+        result = conn.execute("SELECT count({}) FROM person WHERE {} = {}".format(count, where, like))
+    else:
+        result = conn.execute("SELECT count({}) FROM person WHERE {} LIKE '{}'".format(count, where, like))
+    return result
+
+def get_user_defined_query(function, column, where, like):
+    if function.lower() == 'avg':
+        if type(column) is int:
+            if type(like) is int:
+                result = conn.execute("SELECT avg({}) FROM person WHERE {} = {}".format(column, where, like))
+            else:
+                result = conn.execute("SELECT avg({}) FROM person WHERE {} like '{}'".format(column, where, like))
+        else:
+            result = "Bad parameter for avg - has to be Integer!"
+    elif function.lower() == 'count':
+        if type(like) is int:
+            result = conn.execute("SELECT count({}) FROM person WHERE {} = {}".format(column, where, like))
+        else:
+            result = conn.execute("SELECT count({}) FROM person WHERE {} like '{}'".format(column, where, like))
+    else:
+        result = "Unknown function!"
+
+    return result

@@ -10,3 +10,9 @@ def accuracy():
 
 def get_avg_single_param(param):
     return db.get_avg_one_param(param)
+
+def get_avg_three_param(first, second, third):
+    return db.get_avg_three_param(first, second, third)
+
+def get_user_defined_query(first, second, third, fourth):
+    return db.get_user_defined_query(first, second, third, fourth)

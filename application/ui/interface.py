@@ -9,7 +9,7 @@ def baseUi():
         testDBpremadeQ()
     exit = "y"
     displayExample()
-    displayScikit()    
+    displayScikit()
     while(exit=="y"):
         function = input("\nChoose what function to use, current options are AVG or COUNT: ")
         column = input("\nChoose a column to execute above function on: ")
@@ -18,10 +18,13 @@ def baseUi():
         userQuery(function, column, where, like)
         exit = input("\nEnd of run! Continue? (y/n) ").lower()
 
+def printNZ(string):
+    print(str(string).strip('0'))
+
 
 def displayExample():
     print("\nThe database contains data in this form:")
-    print(ds.get_example_from_db())
+    printNZ(ds.get_example_from_db())
 
 def displayScikit():
     sci = ds.accuracy()
@@ -32,7 +35,7 @@ def displayScikit():
 def userQuery(function, column, where, like):
     print("\nYou chose to execute function " + function + " for column " + column + " where " + where + " is like " + like)
     print("\nExecuting query...")
-    print(ds.get_user_defined_query(function, column, where, like))
+    printNZ(ds.get_user_defined_query(function, column, where, like))
 
 def testDBpremadeQ():
     print("\n**********************************")
@@ -43,15 +46,15 @@ def testDBpremadeQ():
 
     print("-- Testing param == age --")
     avg = "age"
-    print(ds.get_avg_single_param(avg))
+    printNZ(ds.get_avg_single_param(avg))
 
     print("\n-- Testing param == height --")
     avg = "height"
-    print(ds.get_avg_single_param(avg))
+    printNZ(ds.get_avg_single_param(avg))
 
     print("\n-- Testing param == profession, illegal type varchar --")
     avg = "profession"
-    print(ds.get_avg_single_param(avg))
+    printNZ(ds.get_avg_single_param(avg))
 
     print("\n++++ Testing queries for AVG(column) with WHERE 'where' and LIKE 'like' ++++")
 
@@ -59,17 +62,17 @@ def testDBpremadeQ():
     avg = "age"
     where = "height"
     like = 185
-    print(ds.get_avg_three_param(avg, where, like))
+    printNZ(ds.get_avg_three_param(avg, where, like))
 
     print("\n-- Testing param2 == income, param2 == age, param3 == 30 --")
     avg = "income"
     where = "age"
     like = 30
-    print(ds.get_avg_three_param(avg, where, like))
+    printNZ(ds.get_avg_three_param(avg, where, like))
 
     print("\n-- Testing param1 == profession, param2 == age, param3 == 30, illegal param1 type varchar --")
     avg = "profession"
-    print(ds.get_avg_three_param(avg, where, like))
+    printNZ(ds.get_avg_three_param(avg, where, like))
 
     print("\n++++ Testing user defined query for function 'func', column 'col', where 'where', like 'like'")
 
@@ -78,7 +81,7 @@ def testDBpremadeQ():
     col = "age"
     where = "height"
     like = 185
-    print(ds.get_user_defined_query(func, col, where, like))
+    printNZ(ds.get_user_defined_query(func, col, where, like))
 
     print("\n****************")
     print("* End of tests *")

@@ -91,3 +91,8 @@ def get_user_defined_query(function, column, where, like):
         return value[0]
     except exc.SQLAlchemyError:
         print("Something went wrong! Encountered SQLAlchemyError!")
+
+def get_population_variance_from_db(column):
+    result = conn.execute("SELECT var_pop({}) FROM person".format(column))
+    value = result.fetchone()
+    return value[0]

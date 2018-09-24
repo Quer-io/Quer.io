@@ -19,3 +19,6 @@ def get_avg_three_param(first, second, third):
 
 def get_user_defined_query(first, second, third, fourth):
     return db.get_user_defined_query(first, second, third, fourth)
+
+def get_population_variance(param):
+    return db.get_population_variance_from_db(param)

@@ -16,11 +16,15 @@ def baseUi():
         where = input("\nChoose a column for where clause: ")
         like = input("\nChoose a value for like clause linked to above where clause: ")
         userQuery(function, column, where, like)
+        if column.lower() == "age" or column.lower() == "income":
+            showVariance(column)
         exit = input("\nEnd of run! Continue? (y/n) ").lower()
 
 def printNZ(string):
     print(str(string).strip('0'))
 
+def showVariance(column):
+    print("\nVariance for " + column + " is: " + str(ds.get_population_variance(column)))
 
 def displayExample():
     print("\nThe database contains data in this form:")

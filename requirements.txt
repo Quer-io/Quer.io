@@ -15,6 +15,7 @@ six==1.11.0
 Kivy==1.10.1
 Kivy-Garden==0.1.4
 Cython==0.28.2
+pygame==1.9.4
 
 #Style
 pycodestyle==2.4.0

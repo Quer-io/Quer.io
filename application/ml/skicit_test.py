@@ -12,10 +12,10 @@ engine = sqlalchemy.create_engine(db_string)
 
 data = pd.read_sql('SELECT * FROM person', engine)
 
-train, test = train_test_split(data, test_size = 0.15)
+train, test = train_test_split(data, test_size=0.15)
 c = DecisionTreeClassifier(min_samples_split=10)
 
-#to-do: add profession
+# to-do: add profession
 features = ["age", "income", "height"]
 
 X_train = train[features]
@@ -29,7 +29,8 @@ dt = c.fit(X_train, y_train)
 y_pred = c.predict(X_test)
 score = accuracy_score(y_test, y_pred) * 100
 
-#print("Accuracy of estimating Github stars: ", round(score, 1), "%")
+# print("Accuracy of estimating Github stars: ", round(score, 1), "%")
+
 
 def return_accuracy():
     return [features, round(score, 1)]

@@ -1,5 +1,6 @@
 from service import default_service as ds
 
+
 def baseUi():
     print("****************************************")
     print("*  Welcome to Quer.io CLI application! *")
@@ -10,7 +11,7 @@ def baseUi():
     exit = "y"
     displayExample()
     displayScikit()
-    while(exit=="y"):
+    while(exit == "y"):
         function = input("\nChoose what function to use, current options are AVG or COUNT: ")
         column = input("\nChoose a column to execute above function on: ")
         where = input("\nChoose a column for where clause: ")
@@ -20,15 +21,19 @@ def baseUi():
             showVariance(column)
         exit = input("\nEnd of run! Continue? (y/n) ").lower()
 
+
 def printNZ(string):
     print(str(string).strip('0'))
+
 
 def showVariance(column):
     print("\nVariance for " + column + " is: " + str(ds.get_population_variance(column)))
 
+
 def displayExample():
     print("\nThe database contains data in this form:")
     printNZ(ds.get_example_from_db())
+
 
 def displayScikit():
     sci = ds.accuracy()
@@ -40,6 +45,7 @@ def userQuery(function, column, where, like):
     print("\nYou chose to execute function " + function + " for column " + column + " where " + where + " is like " + like)
     print("\nExecuting query...")
     printNZ(ds.get_user_defined_query(function, column, where, like))
+
 
 def testDBpremadeQ():
     print("\n**********************************")
@@ -80,7 +86,7 @@ def testDBpremadeQ():
 
     print("\n++++ Testing user defined query for function 'func', column 'col', where 'where', like 'like'")
 
-    print("\n-- Testing function == avg, col == age, where == height, like == 185 --")
+    print('\n-- Testing function == avg, col == age, where == height, like == 185 --')
     func = "avg"
     col = "age"
     where = "height"

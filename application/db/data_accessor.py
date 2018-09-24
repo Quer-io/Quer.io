@@ -37,6 +37,7 @@ def get_avg_one_param(avg):
         return "Bad parameter type - column type has to be int!"
     return value[0]
 
+
 def get_avg_three_param(avg, where, like):
     check_avg = conn.execute("SELECT {} FROM person limit 1".format(avg))
     check_where = conn.execute("SELECT {} FROM person limit 1".format(where))
@@ -54,12 +55,14 @@ def get_avg_three_param(avg, where, like):
         return "Bad parameter type - column type has to be int!"
     return value[0]
 
+
 def get_count_with_param(count, where, like):
     if type(like) is int:
         result = conn.execute("SELECT count({}) FROM person WHERE {} = {}".format(count, where, like))
     else:
         result = conn.execute("SELECT count({}) FROM person WHERE {} LIKE '{}'".format(count, where, like))
     return result
+
 
 def get_user_defined_query(function, column, where, like):
     try:
@@ -91,6 +94,7 @@ def get_user_defined_query(function, column, where, like):
         return value[0]
     except exc.SQLAlchemyError:
         print("Something went wrong! Encountered SQLAlchemyError!")
+
 
 def get_population_variance_from_db(column):
     result = conn.execute("SELECT var_pop({}) FROM person".format(column))

@@ -1,3 +1,5 @@
+Cython==0.28.2
+
 #database
 psycopg2==2.7.5
 SQLAlchemy==1.2.11
@@ -12,7 +14,7 @@ scipy==1.1.0
 six==1.11.0
 
 #GUI
-Cython==0.28.2
+
 Kivy==1.10.1
 Kivy-Garden==0.1.4
 pygame==1.9.4

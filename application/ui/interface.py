@@ -5,7 +5,7 @@ def baseUi():
     print("****************************************")
     print("*  Welcome to Quer.io CLI application! *")
     print("****************************************")
-    test = input("\nWould you like to run tests? (y/n) ").lower()
+    test = input("\nWould you like to run example queries? (y/n) ").lower()
     if test == "y":
         testDBpremadeQ()
     exit = "y"
@@ -49,50 +49,51 @@ def userQuery(function, column, where, like):
 
 def testDBpremadeQ():
     print("\n**********************************")
-    print("*  Initializing DB test queries  *")
+    print("*  Initializing DB queries        *")
     print("**********************************\n")
 
-    print("++++ Testing queries for AVG(param) ++++\n")
-
-    print("-- Testing param == age --")
-    avg = "age"
-    printNZ(ds.get_avg_single_param(avg))
-
-    print("\n-- Testing param == height --")
-    avg = "height"
-    printNZ(ds.get_avg_single_param(avg))
-
-    print("\n-- Testing param == profession, illegal type varchar --")
-    avg = "profession"
-    printNZ(ds.get_avg_single_param(avg))
-
-    print("\n++++ Testing queries for AVG(column) with WHERE 'where' and LIKE 'like' ++++")
-
-    print("\n-- Testing column == age, where == height, like == 185 --")
-    avg = "age"
-    where = "height"
-    like = 185
-    printNZ(ds.get_avg_three_param(avg, where, like))
-
-    print("\n-- Testing param2 == income, param2 == age, param3 == 30 --")
-    avg = "income"
-    where = "age"
-    like = 30
-    printNZ(ds.get_avg_three_param(avg, where, like))
-
-    print("\n-- Testing param1 == profession, param2 == age, param3 == 30, illegal param1 type varchar --")
-    avg = "profession"
-    printNZ(ds.get_avg_three_param(avg, where, like))
-
-    print("\n++++ Testing user defined query for function 'func', column 'col', where 'where', like 'like'")
-
-    print('\n-- Testing function == avg, col == age, where == height, like == 185 --')
+    print('\n-- Querying -> function == avg, col == age, where == height, like == 185 --')
     func = "avg"
     col = "age"
     where = "height"
     like = 185
     printNZ(ds.get_user_defined_query(func, col, where, like))
 
-    print("\n****************")
-    print("* End of tests *")
-    print("****************\n")
+    print('\n-- Querying -> function == avg, col == income, where == age, like == 30 --')
+    func = "avg"
+    col = "income"
+    where = "age"
+    like = 30
+    printNZ(ds.get_user_defined_query(func, col, where, like))
+
+    print('\n-- Querying -> function == avg, col == age, where == height, like == 185, expecting error--')
+    func = "avg"
+    col = "profession"
+    where = "height"
+    like = 185
+    printNZ(ds.get_user_defined_query(func, col, where, like))
+
+    print('\n-- Querying -> function == count, col == *, where == height, like == 185 --')
+    func = "count"
+    col = "*"
+    where = "height"
+    like = 185
+    printNZ(ds.get_user_defined_query(func, col, where, like))
+
+    print('\n-- Querying -> function == count, col == *, where == age, like == 30 --')
+    func = "count"
+    col = "*"
+    where = "age"
+    like = 30
+    printNZ(ds.get_user_defined_query(func, col, where, like))
+
+    print('\n-- Querying -> function == count, col == test, where == age, like == 30, expecting error --')
+    func = "count"
+    col = "test"
+    where = "age"
+    like = 30
+    printNZ(ds.get_user_defined_query(func, col, where, like))
+
+    print("\n*****************")
+    print("* End of queries *")
+    print("******************\n")

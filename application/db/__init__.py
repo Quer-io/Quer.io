@@ -1,5 +1,3 @@
 from .data_accessor import get_example_row_from_db
-from .data_accessor import get_avg_one_param
-from .data_accessor import get_avg_three_param
 from .data_accessor import get_user_defined_query
 from .data_accessor import get_population_variance_from_db

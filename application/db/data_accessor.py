@@ -1,11 +1,17 @@
 import sqlalchemy
 from sqlalchemy import exc
 import math
+import configparser
+import os
 
-db_string = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5ca1733389e1dfb1dac5253a@ec2-54-217-250-0.eu-west-1.compute.amazonaws.com:5432/dab0467utv53cp"
+APP_ROOT = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+APP_STATIC = os.path.join(APP_ROOT, 'configuration.ini')
+config = configparser.ConfigParser()
+config.read(APP_STATIC)
+db_address = config['ORIG_DB']['db_address']
 
 # represents the core interface to the database
-engine = sqlalchemy.create_engine(db_string)
+engine = sqlalchemy.create_engine(db_address)
 conn = engine.connect()
 md = sqlalchemy.MetaData()
 

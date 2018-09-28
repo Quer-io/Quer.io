@@ -19,6 +19,8 @@ def baseUi():
         userQuery(function, column, where, like)
         if column.lower() == "age" or column.lower() == "income":
             showVariance(column)
+            rs = filterResultset(where, like)
+            showVariance(rs[column])
         exit = input("\nEnd of run! Continue? (y/n) ").lower()
 
 
@@ -45,6 +47,9 @@ def userQuery(function, column, where, like):
     print("\nYou chose to execute function " + function + " for column " + column + " where " + where + " is like " + like)
     print("\nExecuting query...")
     printNZ(ds.get_user_defined_query(function, column, where, like))
+
+def filterResultset(where, like):
+    return ds.get_filtered_resultset(where, like)
 
 
 def testDBpremadeQ():

@@ -2,9 +2,12 @@ import sqlalchemy
 from sqlalchemy import exc
 import math
 import configparser
+import os
 
+APP_ROOT = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+APP_STATIC = os.path.join(APP_ROOT, 'configuration.ini')
 config = configparser.ConfigParser()
-config.read('./configuration.ini')
+config.read(APP_STATIC)
 db_address = config['ORIG_DB']['db_address']
 
 # represents the core interface to the database

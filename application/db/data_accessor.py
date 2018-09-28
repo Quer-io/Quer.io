@@ -34,6 +34,22 @@ def get_example_row_from_db():
 def get_table_column_names():
     return table.columns.keys()
 
+def get_filtered_resultset(where, like):
+    try:
+        check_where = conn.execute("SELECT {} FROM person limit 1".format(where))
+        where_column = check_where.fetchone()
+
+        if type(where_column[0]) is int:
+            result = conn.execute("SELECT * FROM person WHERE {} = {}".format(where, like)) 
+        else:
+            result = conn.execute("SELECT * FROM person WHERE {} like '{}'".format(where, like))
+
+        rs = result.fetchall()
+        print(rs)
+        return rs
+    except exc.SQLAlchemyError as e:
+        print("Something went wrong!")
+        print(e)
 
 def get_user_defined_query(function, column, where, like):
     try:
@@ -61,8 +77,8 @@ def get_user_defined_query(function, column, where, like):
                 value = result.fetchone()
         else:
             return "Unknown function - please choose from 'avg' or 'count'!"
-        floored = math.floor(value[0])
-        return floored
+        floor = math.floor(value[0])
+        return floor
     except exc.SQLAlchemyError as e:
         print("Something went wrong!")
         print(e)

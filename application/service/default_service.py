@@ -14,6 +14,8 @@ def accuracy():
 def get_user_defined_query(function, column, where, like):
     return db.get_user_defined_query(function, column, where, like)
 
-
 def get_population_variance(param):
     return db.get_population_variance_from_db(param)
+
+def get_filtered_resultset(where, like):
+    return db.get_filtered_resultset(where, like)

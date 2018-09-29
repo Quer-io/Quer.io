@@ -1,10 +1,18 @@
 import sqlalchemy
 from sqlalchemy import exc
+import math
+import configparser
+import os
+import pandas as pd
 
-db_string = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5ca1733389e1dfb1dac5253a@ec2-54-217-250-0.eu-west-1.compute.amazonaws.com:5432/dab0467utv53cp"
+APP_ROOT = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+APP_STATIC = os.path.join(APP_ROOT, 'configuration.ini')
+config = configparser.ConfigParser()
+config.read(APP_STATIC)
+db_address = config['ORIG_DB']['db_address']
 
 # represents the core interface to the database
-engine = sqlalchemy.create_engine(db_string)
+engine = sqlalchemy.create_engine(db_address)
 conn = engine.connect()
 md = sqlalchemy.MetaData()
 
@@ -26,40 +34,22 @@ def get_example_row_from_db():
 def get_table_column_names():
     return table.columns.keys()
 
+def get_filtered_resultset(where, like):
+    try:
+        check_where = conn.execute("SELECT {} FROM person limit 1".format(where))
+        where_column = check_where.fetchone()
 
-def get_avg_one_param(avg):
-    check_avg = conn.execute("SELECT {} FROM person limit 1".format(avg))
-    avg_column = check_avg.fetchone()
-    if type(avg_column[0]) is int:
-        result = conn.execute("SELECT avg({}) FROM person".format(avg))
-        value = result.fetchone()
-    else:
-        return "Bad parameter type - column type has to be int!"
-    return value[0]
-
-def get_avg_three_param(avg, where, like):
-    check_avg = conn.execute("SELECT {} FROM person limit 1".format(avg))
-    check_where = conn.execute("SELECT {} FROM person limit 1".format(where))
-    avg_column = check_avg.fetchone()
-    where_column = check_where.fetchone()
-
-    if type(avg_column[0]) is int:
         if type(where_column[0]) is int:
-            result = conn.execute("SELECT avg({}) FROM person WHERE {} = {}".format(avg, where, like))
-            value = result.fetchone()
+            result = conn.execute("SELECT * FROM person WHERE {} = {}".format(where, like)) 
         else:
-            result = conn.execute("SELECT avg({}) FROM person WHERE {} LIKE '{}'".format(avg, where, like))
-            value = result.fetchone()
-    else:
-        return "Bad parameter type - column type has to be int!"
-    return value[0]
+            result = conn.execute("SELECT * FROM person WHERE {} like '{}'".format(where, like))
 
-def get_count_with_param(count, where, like):
-    if type(like) is int:
-        result = conn.execute("SELECT count({}) FROM person WHERE {} = {}".format(count, where, like))
-    else:
-        result = conn.execute("SELECT count({}) FROM person WHERE {} LIKE '{}'".format(count, where, like))
-    return result
+        rs = result.fetchall()
+        print(rs)
+        return rs
+    except exc.SQLAlchemyError as e:
+        print("Something went wrong!")
+        print(e)
 
 def get_user_defined_query(function, column, where, like):
     try:
@@ -87,7 +77,18 @@ def get_user_defined_query(function, column, where, like):
                 value = result.fetchone()
         else:
             return "Unknown function - please choose from 'avg' or 'count'!"
+        floor = math.floor(value[0])
+        return floor
+    except exc.SQLAlchemyError as e:
+        print("Something went wrong!")
+        print(e)
 
-        return value[0]
-    except exc.SQLAlchemyError:
-        print("Something went wrong! Encountered SQLAlchemyError!")
+
+def get_population_variance_from_db(column):
+    result = conn.execute("SELECT var_pop({}) FROM person".format(column))
+    value = result.fetchone()
+    return value[0]
+
+
+def get_all_data():
+    return pd.read_sql('SELECT * FROM person', engine)

@@ -1,1 +1,1 @@
-from .skicit_test import return_accuracy
+from .model import Model

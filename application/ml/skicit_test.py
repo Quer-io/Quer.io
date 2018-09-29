@@ -15,7 +15,7 @@ data = pd.read_sql('SELECT * FROM person', engine)
 train, test = train_test_split(data, test_size = 0.15)
 c = DecisionTreeRegressor()
 
-#to-do: add profession
+# to-do: add profession
 features = ["age", "income", "height"]
 
 X_train = train[features]

@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Quer-io/Quer.io.svg?branch=master)](https://travis-ci.org/Quer-io/Quer.io)
+[![Coverage Status](https://coveralls.io/repos/github/Quer-io/Quer.io/badge.svg?branch=master)](https://coveralls.io/github/Quer-io/Quer.io?branch=master)
 
 # Quer.io
 
@@ -37,4 +38,4 @@ This command will find every test from the project and run it. If you want to ru
 - [Kim Toivonen](https://github.com/ConstantKrieg)
 - [Mauri Frestadius](https://github.com/Suidat)
 - [Ossi Räisä](https://github.com/oraisa)
-- [Petja Valkama]()
+- [Petja Valkama](https://github.com/xbexbex)

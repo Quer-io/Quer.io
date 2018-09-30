@@ -10,6 +10,11 @@ See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentati
 
 ## Project description
 
+This project is built to the specifications and requirements provided by Prof. Michael Mathioudakis and is a course work project for course TKT20007 Software Engineering Lab at the University of Helsinki, department of Computer Science.
+
+The aim of this project is to build an Approximate Query Processing (AQP) engine -- i.e., a software layer on top of a relational database, that allows us to obtain fast, approximate answers to aggregate queries, with the help of Machine Learning models.
+
+Chosen implementation is Python for the application and Postgres for the database. Machine learning components are built using Scikit Learn and the graphical user interface is build using Kivy.
 
 ## Installation
 
@@ -17,10 +22,7 @@ This project is done with Python version 3.6
 
 See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install PostgreSQL database dumps as local databases.
 
-### Libraries
-Every time a new library is used, the name of the library needs to be added to requirements.txt. Every time you run the project with new libraries the following command is needed. It will install all the necessary libraries to your machine:
-
-`pip3 install --user -r requirements.txt`
+See [Application Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/install.md) for information how to install the application and all its dependencies.
 
 ### Tests
 Currently the project contains tests that are done using the [unittest](https://docs.python.org/3/library/unittest.html) library. Tests can be run with the following command from the project root

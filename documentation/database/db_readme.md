@@ -1,4 +1,8 @@
-# How to install the database
+# Database information
+
+The application is currently automatically connected to an extrnal Heroku -supplied Postgres database. **We strongly recommend using the preconfigured database!**. It is also possible to use a local copy of the database.
+
+## How to install a local copy of the database
 
 NOTE! '< >' refer to user specific values and should be changed accordingly!
 
@@ -14,7 +18,7 @@ $> sudo apt-get install postgresql
 - Current database dump is set to public as default
 
 ### Installing a database through a dump file
-- Download the the required dump file
+- Download the the dump file
 
 - Create a new empty database
 

@@ -3,6 +3,7 @@ from sqlalchemy import exc
 import math
 import configparser
 import os
+import pandas as pd
 
 APP_ROOT = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
 APP_STATIC = os.path.join(APP_ROOT, 'configuration.ini')
@@ -87,3 +88,7 @@ def get_population_variance_from_db(column):
     result = conn.execute("SELECT var_pop({}) FROM person".format(column))
     value = result.fetchone()
     return value[0]
+
+
+def get_all_data():
+    return pd.read_sql('SELECT * FROM person', engine)

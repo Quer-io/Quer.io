@@ -6,7 +6,7 @@ kivy.require('1.10.1')
 
 class userInterfaceApp(App):
     def build(self):
-        return gui.mainWindow()
+        return gui.mainWindow().build()
 
 
 def main():

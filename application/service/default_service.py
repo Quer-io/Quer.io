@@ -20,3 +20,9 @@ def get_population_variance(param):
 
 def get_filtered_resultset(where, like):
     return db.get_filtered_resultset(where, like)
+    
+def get_column_names_from_db():
+    #TODO: When DB contains more than one table, a table name needs to be passed as an argument to the db module
+    return db.get_table_column_names()
+
+

@@ -8,6 +8,9 @@ class DatabaseAndModelService:
         self.predicted_column_name = predicted_column_name
         self.model = ml.Model(db.get_all_data(), self.predicted_column_name, self.predicting_column_name)
 
+    def get_prediction_for_value(self, value):
+        return self.model.predict(value)
+
     def get_example_from_db(self):
         return db.get_example_row_from_db()
 

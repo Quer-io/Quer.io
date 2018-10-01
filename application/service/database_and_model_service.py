@@ -1,8 +1,9 @@
 import ml
 import db
 
+
 class DatabaseAndModelService:
-    
+
     def __init__(self, predicting_column_name, predicted_column_name):
         self.predicting_column_name = predicting_column_name
         self.predicted_column_name = predicted_column_name
@@ -28,11 +29,7 @@ class DatabaseAndModelService:
 
     def get_filtered_resultset(self, where, like):
         return db.get_filtered_resultset(where, like)
-        
+
     def get_column_names_from_db(self):
         #TODO: When DB contains more than one table, a table name needs to be passed as an argument to the db module
         return db.get_table_column_names()
-
-
-
-

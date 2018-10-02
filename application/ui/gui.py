@@ -4,14 +4,18 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 
+
 from kivy.uix.spinner import Spinner
 from kivy.graphics import Color, Rectangle
+from kivy.uix.popup import Popup
 from service.database_and_model_service import DatabaseAndModelService as ds
+from ui.database_config_window import DBWindow
 
 
 class mainWindow(GridLayout):
 
     def button1(self, value):
+        print(self.db_conf.db_connection)
         self.lbl.text = 'Value given: ' + self.input.text + '\n'
         self.lbl.text += 'Current query column: ' + str(self.query_column) + '\n'
         self.lbl.text += 'Current reference column: ' + str(self.reference_column + '\n')
@@ -24,14 +28,28 @@ class mainWindow(GridLayout):
             self.lbl.text += ' \n Prediction: %d, Variance: %d' % self.age_model.get_prediction_for_value(self.input.text)
         else:
             self.lbl.text += 'Prediction: %d, Variance: %d' % self.income_model.get_prediction_for_value(self.input.text)
+    
+    def button2(self, value):
+        self.db_popup.open()
+        
+
+
 
     def build(self):
+
+        self.db_conf = DBWindow()
+
         self.income_model = ds('income', 'age')
         self.age_model = ds('age', 'income')
         self.layout = GridLayout(cols=2)
 
         self.reference_column = None
         self.query_column = None
+
+        self.db_popup = Popup(title="Database configuration",
+            content=self.db_conf.layout,
+            size_hint=(None,None), size=(400,400))
+        self.db_conf.close_button.bind(on_press=self.db_popup.dismiss)
 
         self.reference_column_spinner = Spinner(
             text="Choose column",
@@ -58,6 +76,9 @@ class mainWindow(GridLayout):
                            text=str(self.income_model.get_example_from_db()))
         self.btn1 = Button(text='This is a button')
         self.btn1.bind(on_press=self.button1)
+
+        self.btn2 = Button(text='Database config')
+        self.btn2.bind(on_press=self.button2)
         self.input = TextInput(text='Insert Value', multiline=False)
 
         self.spinner_layout = GridLayout(cols=2)
@@ -65,10 +86,12 @@ class mainWindow(GridLayout):
         self.spinner_layout.add_widget(self.reference_column_spinner)
 
         self.layout.add_widget(self.spinner_layout)
+        self.layout.add_widget(self.btn2)
         self.layout.add_widget(self.input)
         self.layout.add_widget(self.exmpl)
         self.layout.add_widget(self.btn1)
         self.layout.add_widget(self.lbl)
+        
 
         return self.layout
 

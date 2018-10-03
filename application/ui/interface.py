@@ -1,4 +1,4 @@
-from service import default_service as ds
+from service.database_and_model_service import DatabaseAndModelService as ds
 
 
 def baseUi():

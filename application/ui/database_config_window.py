@@ -23,8 +23,6 @@ class DBWindow():
         self.create_db_name_box()
         self.create_info_box()
         self.create_save_button_box()
-        
-    
 
     def create_close_button_layout(self):
         self.close_button_layout = AnchorLayout(
@@ -33,7 +31,6 @@ class DBWindow():
         self.close_button = Button(text='Close', size_hint=(None, None), height=25)
         self.close_button_layout.add_widget(self.close_button)
         self.layout.add_widget(self.close_button_layout)
-
 
     def create_username_box(self):
         self.username_label = Label(text="Username")
@@ -55,7 +52,7 @@ class DBWindow():
         self.host_input.bind(focus=self.clear_info_label)
         self.layout.add_widget(self.host_label)
         self.layout.add_widget(self.host_input)
-    
+
     def create_port_box(self):
         self.port_label = Label(text="Port")
         self.port_input = TextInput(write_tab=False)
@@ -79,12 +76,9 @@ class DBWindow():
         self.save_button.bind(on_press=self.save_database_connection)
         self.layout.add_widget(self.save_button)
 
-
-
-
     def save_database_connection(self, value):
         connection = "postgresql://" + self.username_input.text.strip() + ":" + self.password_input.text.strip()
-        connection +=  "@" + self.host_input.text.strip() + ":" + self.port_input.text.strip() + "/" + self.db_name_input.text.strip()
+        connection += "@" + self.host_input.text.strip() + ":" + self.port_input.text.strip() + "/" + self.db_name_input.text.strip()
         self.db_connection = connection
         setattr(self.info_label, 'text', 'Saved!')
 
@@ -95,19 +89,15 @@ class DBWindow():
             self.use_config_file = False
 
     def create_config_file_layout(self):
-        self.config_file_layout  = BoxLayout(padding=10, orientation='horizontal')
+        self.config_file_layout = BoxLayout(padding=10, orientation='horizontal')
         self.config_label = Label(font_size=11, text='Use configuration.ini')
         self.config_file_checkbox = CheckBox()
         self.config_file_checkbox.bind(active=self.on_checkbox_active)
 
         self.config_file_layout.add_widget(self.config_label)
         self.config_file_layout.add_widget(self.config_file_checkbox)
-        
 
         self.layout.add_widget(self.config_file_layout)
-    
 
     def clear_info_label(self, instance, value):
         setattr(self.info_label, 'text', '')
-
-    

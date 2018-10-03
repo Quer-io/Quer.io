@@ -28,7 +28,7 @@ def get_example_row_from_db():
 
     column_names = get_table_column_names()
     result = conn.execute("SELECT * FROM person").fetchone()
-    return {column_name: result[column_name] for column_name in column_names}
+    return {(column_name, result[column_name]) for column_name in column_names}
 
 
 def get_table_column_names():

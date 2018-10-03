@@ -21,3 +21,6 @@ pygame==1.9.4
 
 #Style
 pycodestyle==2.4.0
+
+#Build
+pyinstaller==3.4

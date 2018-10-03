@@ -1,5 +1,6 @@
-from service import default_service as ds
+from service.database_and_model_service import DatabaseAndModelService
 
+ds = DatabaseAndModelService("age", "income")
 
 def baseUi():
     print("****************************************")

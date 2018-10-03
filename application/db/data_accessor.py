@@ -28,7 +28,7 @@ def get_example_row_from_db():
 
     column_names = get_table_column_names()
     result = conn.execute("SELECT * FROM person").fetchone()
-    return {column_name: result[column_name] for column_name in column_names}
+    return {(column_name, result[column_name]) for column_name in column_names}
 
 
 def get_table_column_names():
@@ -40,7 +40,7 @@ def get_filtered_resultset(where, like):
         where_column = check_where.fetchone()
 
         if type(where_column[0]) is int:
-            result = conn.execute("SELECT * FROM person WHERE {} = {}".format(where, like)) 
+            result = conn.execute("SELECT * FROM person WHERE {} = {}".format(where, like))
         else:
             result = conn.execute("SELECT * FROM person WHERE {} like '{}'".format(where, like))
 
@@ -61,6 +61,7 @@ def get_user_defined_query(function, column, where, like):
         if function.lower() == 'avg':
             if type(avg_column[0]) is int:
                 if type(where_column[0]) is int:
+                    print("SELECT avg({}) FROM person WHERE {} = {}".format(column, where, like))
                     result = conn.execute("SELECT avg({}) FROM person WHERE {} = {}".format(column, where, like))
                     value = result.fetchone()
                 else:

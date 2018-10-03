@@ -40,12 +40,10 @@ def get_filtered_resultset(where, like):
         where_column = check_where.fetchone()
 
         if type(where_column[0]) is int:
-            result = conn.execute("SELECT * FROM person WHERE {} = {}".format(where, like))
+            rs = pd.read_sql("SELECT * FROM person WHERE {} = {}".format(where, like), engine)
         else:
-            result = conn.execute("SELECT * FROM person WHERE {} like '{}'".format(where, like))
+            rs = pd.read_sql("SELECT * FROM person WHERE {} like '{}'".format(where, like), engine)
 
-        rs = result.fetchall()
-        print(rs)
         return rs
     except exc.SQLAlchemyError as e:
         print("Something went wrong!")
@@ -59,8 +57,8 @@ def get_user_defined_query(function, column, where, like):
         where_column = check_where.fetchone()
 
         if function.lower() == 'avg':
-            if type(avg_column[0]) is int:
-                if type(where_column[0]) is int:
+            if type(avg_column[0]) is int or type(avg_column[0]) is float:
+                if type(where_column[0]) is int or type(where_column[0]) is float:
                     print("SELECT avg({}) FROM person WHERE {} = {}".format(column, where, like))
                     result = conn.execute("SELECT avg({}) FROM person WHERE {} = {}".format(column, where, like))
                     value = result.fetchone()
@@ -70,7 +68,7 @@ def get_user_defined_query(function, column, where, like):
             else:
                 return "Bad parameter type - column has to be int!"
         elif function.lower() == 'count':
-            if type(like) is int:
+            if type(where_column[0]) is int or type(where_column[0]) is float:
                 result = conn.execute("SELECT count({}) FROM person WHERE {} = {}".format(column, where, like))
                 value = result.fetchone()
             else:
@@ -90,6 +88,11 @@ def get_population_variance_from_db(column):
     value = result.fetchone()
     return value[0]
 
+def get_variance_from_filtered_rs(column, where, like):
+    #DOES NOT WORK YET
+    result = conn.execute("SELECT var_pop(SELECT {} FROM person where {} = {}) FROM person".format(column, where, like))
+    value = result.fetchone()
+    return value[0]
 
 def get_all_data():
     return pd.read_sql('SELECT * FROM person', engine)

@@ -23,11 +23,11 @@ class mainWindow(GridLayout):
         self.lbl.text += 'Current reference column: ' + str(self.reference_column + '\n')
         result = self.age_model.get_user_defined_query('avg', str(self.reference_column), str(self.query_column), self.input.text)
         if type(result) is not None:
-            self.lbl.text += 'Result: ' + str(result)
+            self.lbl.text += 'Result: ' + str(result) + '\n'
         else:
-            self.lbl.text += 'Error in database'
+            self.lbl.text += 'Error in database \n'
         if str(self.reference_column) is 'age':
-            self.lbl.text += ' \n Prediction: %d, Variance: %d' % self.age_model.get_prediction_for_value(self.input.text)
+            self.lbl.text += 'Prediction: %d, Variance: %d' % self.age_model.get_prediction_for_value(self.input.text)
         else:
             self.lbl.text += 'Prediction: %d, Variance: %d' % self.income_model.get_prediction_for_value(self.input.text)
 
@@ -40,10 +40,9 @@ class mainWindow(GridLayout):
     def connect(self):
         self.income_model = ds('income', 'age', self.db_conf.db_connection)
         self.age_model = ds('age', 'income', self.db_conf.db_connection)
-    
+
     def connect_button(self, value):
         self.connect()
- 
 
         if self.age_model.db.connected:
             self.db_info_label.text = 'Connection succesful!'
@@ -51,14 +50,10 @@ class mainWindow(GridLayout):
         else:
             self.db_info_label.text = 'Error with connection. Check your database settings'
             self.btn1.disabled = True
-        
-
 
     def build(self):
-        
-    
+
         self.db_conf = DBWindow()
-        
 
         self.connect()
 
@@ -102,7 +97,6 @@ class mainWindow(GridLayout):
         self.btn1 = Button(text='This is a button')
         self.btn1.bind(on_press=self.button1)
 
-        
         self.input = TextInput(text='Insert Value', multiline=False)
 
         self.spinner_layout = GridLayout(cols=2)
@@ -128,17 +122,14 @@ class mainWindow(GridLayout):
         self.btn2 = Button(text='Database config')
         self.btn2.bind(on_press=self.button2)
 
-
-
         self.db_info_label = Label()
 
         self.connect_btn = Button(text='Connect')
         self.connect_btn.bind(on_press=self.connect_button)
 
         self.db_layout.add_widget(self.btn2)
-        self.db_layout.add_widget(self.connect_btn) 
+        self.db_layout.add_widget(self.connect_btn)
         self.db_layout.add_widget(self.db_info_label)
-
 
         return self.db_layout
 
@@ -153,7 +144,6 @@ class ExampleWindow():
 
         for x, y in sorted(examples):
             self.createLabel(x, y)
-
 
     def create_close_button_layout(self):
         self.close_button_layout = AnchorLayout(

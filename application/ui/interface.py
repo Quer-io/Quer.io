@@ -36,8 +36,9 @@ def printNZ(string):
 def showVariance(column):
     print("\nVariance for " + column + " is: {}".format(ds.get_population_variance(column)))
 
+
 def filteredVariance(column, where, like):
-    #DO NOT CALL YET, BROKEN
+    # DO NOT CALL YET, BROKEN
     print("\nVariance for " + column + " is: {}".format(ds.get_filtered_variance(column, where, like)))
 
 
@@ -56,6 +57,7 @@ def userQuery(function, column, where, like):
     print("\nYou chose to execute function " + function + " for column " + column + " where " + where + " is like " + like)
     print("\nExecuting query...")
     printNZ(ds.get_user_defined_query(function, column, where, like))
+
 
 def filterResultset(where, like):
     return ds.get_filtered_resultset(where, like)

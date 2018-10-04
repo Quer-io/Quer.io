@@ -24,27 +24,17 @@ You now have a working copy of the project files on your own computer.
 
 ### Installation
 
-Navigate to the folder you just created by cloning the git project. Next step is to activate Python virtual environment, do this with the following command:
-```python
-source venv/bin/activate
-```
-
-If this succeeds, your path marker with now look like:
-
-```
-(venv) $>
-```
-
+Navigate to the folder you just created by cloning the git project.
 Now you can install the requirements from requirements.txt file, do this by running the following command:
 
-```python
-(venv) $> pip install -r requirements.txt
+```
+$> pip3 install -r requirements.txt
 ```
 
 This will install all the required dependencies on your local machine. Next navigate to /application folder and run the project with following command:
 
-```python
-(venv) $> python3 querio.py
+```
+$> python3 querio.py
 ```
 
 The application should now start and is ready to use!

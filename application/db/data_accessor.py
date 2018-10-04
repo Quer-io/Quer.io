@@ -4,9 +4,18 @@ import math
 import configparser
 import os
 import pandas as pd
+import sys
 
-APP_ROOT = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
-APP_STATIC = os.path.join(APP_ROOT, 'configuration.ini')
+if getattr(sys, 'frozen', False):
+    APP_STATIC = os.path.join(
+        os.path.dirname(sys.executable),
+        'application/configuration.ini'
+    )
+else:
+    APP_ROOT = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+    APP_STATIC = os.path.join(APP_ROOT, 'configuration.ini')
+
+print('Looking for configuration in {0}'.format(APP_STATIC))
 config = configparser.ConfigParser()
 config.read(APP_STATIC)
 db_address = config['ORIG_DB']['db_address']

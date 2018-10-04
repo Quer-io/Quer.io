@@ -12,9 +12,4 @@ run:
 
 .PHONY: build
 build:
-	pyinstaller -y --clean \
-	-p application/ \
-	--additional-hooks-dir hookfiles \
-	--add-data application/configuration.ini:application \
-	--add-data application/userInterface.kv:application \
-	application/querio.py
+	pyinstaller -y --clean querio.spec

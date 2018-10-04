@@ -1,5 +1,6 @@
-from service.database_and_model_service import DatabaseAndModelService as ds
+from service.database_and_model_service import DatabaseAndModelService
 
+ds = DatabaseAndModelService("age", "income")
 
 def baseUi():
     print("****************************************")
@@ -17,10 +18,14 @@ def baseUi():
         where = input("\nChoose a column for where clause: ")
         like = input("\nChoose a value for like clause linked to above where clause: ")
         userQuery(function, column, where, like)
+
         if column.lower() == "age" or column.lower() == "income":
             showVariance(column)
             rs = filterResultset(where, like)
-            showVariance(rs[column])
+            print("Proof that filtering works with filterResultSet")
+            filtered = rs.filter(items=['{}'.format(column)])
+            print(filtered)
+
         exit = input("\nEnd of run! Continue? (y/n) ").lower()
 
 
@@ -29,7 +34,11 @@ def printNZ(string):
 
 
 def showVariance(column):
-    print("\nVariance for " + column + " is: " + str(ds.get_population_variance(column)))
+    print("\nVariance for " + column + " is: {}".format(ds.get_population_variance(column)))
+
+def filteredVariance(column, where, like):
+    #DO NOT CALL YET, BROKEN
+    print("\nVariance for " + column + " is: {}".format(ds.get_filtered_variance(column, where, like)))
 
 
 def displayExample():
@@ -38,7 +47,7 @@ def displayExample():
 
 
 def displayScikit():
-    sci = ds.accuracy()
+    sci = ds.get_accuracy()
     print("\nFeatured data: " + str(sci[0]))
     print("\nAccuracy of estimating Github stars: " + str(sci[1]))
 

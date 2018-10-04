@@ -24,8 +24,11 @@ class DatabaseAndModelService:
     def get_user_defined_query(self, function, column, where, like):
         return db.get_user_defined_query(function, column, where, like)
 
-    def get_population_variance(self, param):
-        return db.get_population_variance_from_db(param)
+    def get_population_variance(self, column):
+        return db.get_population_variance_from_db(column)
+
+    def get_filtered_variance(self, column, where, like):
+        return db.get_variance_from_filtered_rs(column, where, like)
 
     def get_filtered_resultset(self, where, like):
         return db.get_filtered_resultset(where, like)

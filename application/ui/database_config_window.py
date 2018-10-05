@@ -9,7 +9,7 @@ from kivy.uix.checkbox import CheckBox
 
 class DBWindow():
     def __init__(self):
-        self.db_connection = ''
+        self.db_connection = (True, '')
         self.use_config_file = False
 
         self.layout = GridLayout(cols=2)
@@ -79,7 +79,7 @@ class DBWindow():
     def save_database_connection(self, value):
         connection = "postgresql://" + self.username_input.text.strip() + ":" + self.password_input.text.strip()
         connection += "@" + self.host_input.text.strip() + ":" + self.port_input.text.strip() + "/" + self.db_name_input.text.strip()
-        self.db_connection = connection
+        self.db_connection = (self.use_config_file, connection)
         setattr(self.info_label, 'text', 'Saved!')
 
     def on_checkbox_active(self, checkbox, value):

@@ -1,11 +1,14 @@
 import sklearn
 import sklearn.tree
 import sklearn.model_selection
+import numpy as np
+from .utils import make_into_list_if_scalar
 
 
 class Model:
-    def __init__(self, data, feature_name, output_name):
-        self.feature_name = feature_name
+    def __init__(self, data, feature_names, output_name):
+
+        self.feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
         self.tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
@@ -14,17 +17,18 @@ class Model:
         train, test = sklearn.model_selection.train_test_split(
             data, random_state=42
         )
-        self.tree.fit(train[[self.feature_name]], train[self.output_name])
+        self.tree.fit(train[self.feature_names], train[self.output_name])
         self.test_score = self.tree.score(
-            test[[self.feature_name]], test[self.output_name]
+            test[self.feature_names], test[self.output_name]
         )
         self.train_score = self.tree.score(
-            train[[self.feature_name]], train[self.output_name]
+            train[self.feature_names], train[self.output_name]
         )
 
-    def predict(self, feature_value):
+    def predict(self, feature_values):
         """Returns a tuple with (mean, variance)"""
-        node_index = self.tree.apply([[feature_value]])[0]
+        feature_values = make_into_list_if_scalar(feature_values)
+        node_index = self.tree.apply([feature_values])[0]
         return (
             self.tree.tree_.value[node_index][0][0],
             self.tree.tree_.impurity[node_index]

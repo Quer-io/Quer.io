@@ -13,3 +13,7 @@ run:
 .PHONY: build
 build:
 	pyinstaller -y --clean querio.spec
+
+.PHONY: run_build
+run_build:
+	./dist/querio/querio

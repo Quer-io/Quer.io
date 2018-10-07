@@ -75,14 +75,14 @@ class mainWindow(GridLayout):
 
         self.reference_column_spinner = Spinner(
             text="Choose column",
-            values=('age', 'income'),
+            values=self.age_model.get_column_names_from_db(),
             size_hint=(None, None),
             size=(125, 42)
         )
 
         self.query_column_spinner = Spinner(
             text="Choose column",
-            values=('age', 'income'),
+            values=self.age_model.get_column_names_from_db(),
             size_hint=(None, None),
             size=(125, 42)
         )

@@ -1,8 +1,8 @@
 import kivy
-from ui import interface, gui
 from kivy.app import App
+import sys
+from ui import interface, gui
 kivy.require('1.10.1')
-
 
 class userInterfaceApp(App):
     def build(self):
@@ -13,6 +13,14 @@ def main():
     interface.baseUi()
 
 
+def run_test():
+    # TODO: test some runtime functionality here
+    print('App started successfully')
+
+
 if __name__ == '__main__':
-    userInterfaceApp().run()
-    main()
+    if(len(sys.argv) > 1 and sys.argv[1] == '--run-test'):
+        run_test()
+    else:
+        userInterfaceApp().run()
+        main()

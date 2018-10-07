@@ -10,6 +10,10 @@ test:
 run:
 	python3 application/querio.py
 
+.PHONY: run-test
+run-test:
+	python3 application/querio.py -- --run-test
+
 .PHONY: build
 build:
 	pyinstaller -y --clean querio.spec
@@ -17,3 +21,7 @@ build:
 .PHONY: run_build
 run_build:
 	./dist/querio/querio
+
+.PHONY: run_build-test
+run_build-test:
+	./dist/querio/querio -- --run-test

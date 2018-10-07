@@ -7,6 +7,8 @@ from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 
 
+TEXT_VALUE = 'text'
+
 class DBWindow():
     def __init__(self):
         self.db_connection = (True, '')
@@ -94,17 +96,17 @@ class DBWindow():
         self.layout.add_widget(self.config_file_layout)
 
     def clear_info_label(self, instance, value):
-        setattr(self.info_label, 'text', '')
+        setattr(self.info_label, TEXT_VALUE, '')
 
     def save_database_connection(self, value):
         try:
             port = int(self.port_input.text.strip())
         except ValueError:
-            setattr(self.info_label, 'text', 'Port has to be a number')
+            setattr(self.info_label, TEXT_VALUE, 'Port has to be a number')
             return
 
         connection = "postgresql://" + self.username_input.text.strip() + ":" + self.password_input.text.strip()
         connection += "@" + self.host_input.text.strip() + ":" + self.port_input.text.strip() + "/" + self.db_name_input.text.strip()
         self.db_connection = (self.use_config_file, connection)
-        setattr(self.info_label, 'text', 'Saved!')    
+        setattr(self.info_label, TEXT_VALUE, 'Saved!')    
 

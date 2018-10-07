@@ -13,4 +13,4 @@ install:
 script:
   - python -m unittest discover
   - make build
-  - make build_run-test
+  - make run_build-test

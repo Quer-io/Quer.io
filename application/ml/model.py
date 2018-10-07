@@ -6,13 +6,14 @@ from .utils import make_into_list_if_scalar
 
 
 class Model:
-    def __init__(self, data, feature_names, output_name):
+    def __init__(self, data, feature_names, output_name, max_depth=None):
 
         self.feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
         self.tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
-            random_state=42
+            random_state=42,
+            max_depth=max_depth
         )
         train, test = sklearn.model_selection.train_test_split(
             data, random_state=42
@@ -42,3 +43,11 @@ class Model:
         """Returns the R^2 accuracy score of the ML model on the training
         data."""
         return self.train_score
+
+    def export_graphviz(self):
+        return sklearn.tree.export_graphviz(
+            self.tree, out_file=None,
+            feature_names=self.feature_names,
+            filled=True, rounded=True,
+            special_characters=True
+        )

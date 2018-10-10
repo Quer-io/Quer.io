@@ -25,6 +25,8 @@ class ModelTest(unittest.TestCase):
     @parameterized.expand([
         ('One feature', 35),
         ('Two features', [35, 120]),
+        ('One feature', {'age': 40}),
+        ('Two features', {'age': 35, 'height': 120}),
     ])
     def test_predict_gives_value_in_correct_range(self, name, test_values):
         prediction, variance = self.models[name].predict(

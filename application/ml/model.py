@@ -1,3 +1,4 @@
+import collections
 import sklearn
 import sklearn.tree
 import sklearn.model_selection
@@ -28,8 +29,18 @@ class Model:
 
     def predict(self, feature_values):
         """Returns a tuple with (mean, variance)"""
-        feature_values = make_into_list_if_scalar(feature_values)
-        node_index = self.tree.apply([feature_values])[0]
+        if not isinstance(feature_values, collections.Mapping):
+            feature_values = make_into_list_if_scalar(feature_values)
+            if len(feature_values) != len(self.feature_names):
+                raise ValueError(
+                    "When feature_values is not a dictionary, it's length " +
+                    "must be the number of features."
+                )
+            feature_values = {
+                self.feature_names[i]: feature_values[i]
+                for i in range(0, len(feature_values))
+            }
+        node_index = self.tree.apply([[v for v in feature_values.values()]])[0]
         return (
             self.tree.tree_.value[node_index][0][0],
             self.tree.tree_.impurity[node_index]

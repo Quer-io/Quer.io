@@ -14,7 +14,7 @@ This project is built to the specifications and requirements provided by Prof. M
 
 The aim of this project is to build an Approximate Query Processing (AQP) engine -- i.e., a software layer on top of a relational database, that allows us to obtain fast, approximate answers to aggregate queries, with the help of Machine Learning models.
 
-Chosen implementation is Python for the application and Postgres for the database. Machine learning components are built using Scikit Learn and the graphical user interface is build using Kivy.
+Chosen implementation is Python for the application and Postgres for the database. The Querio library will be importable as a Library. Machine learning components are built using Scikit Learn and the optional graphical user interface and application is build using Kivy.
 
 ## Installation
 

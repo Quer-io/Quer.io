@@ -36,6 +36,10 @@ class ModelTest(unittest.TestCase):
         self.assertLessEqual(prediction, self.data['income'].max())
         self.assertGreaterEqual(variance, 0)
 
+    def test_predict_raises_ValueError_with_bad_number_of_feature_values(self):
+        with self.assertRaises(ValueError):
+            self.models['Two features'].predict(35)
+
     @parameterized.expand([
         ('One feature'),
         ('Two features'),

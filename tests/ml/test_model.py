@@ -4,6 +4,7 @@ import numpy as np
 from parameterized import parameterized
 
 from application.ml import Model
+from application.ml.utils import make_into_list_if_scalar
 
 
 class ModelTest(unittest.TestCase):
@@ -19,6 +20,9 @@ class ModelTest(unittest.TestCase):
             'One feature': Model(self.data, 'age', 'income'),
             'Two features': Model(
                 self.data, ['age', 'height'], 'income'
+            ),
+            'Two features reverse': Model(
+                self.data, ['height', 'age'], 'income'
             )
         }
 
@@ -36,9 +40,27 @@ class ModelTest(unittest.TestCase):
         self.assertLessEqual(prediction, self.data['income'].max())
         self.assertGreaterEqual(variance, 0)
 
+    @parameterized.expand([
+        ('One feature', 40),
+        ('Two features', [41, 134])
+    ])
+    def test_predict_same_mean_as_sklearn_predict(self, name, test_values):
+        model = self.models[name]
+        prediction, variance = model.predict(test_values)
+        test_values = make_into_list_if_scalar(test_values)
+        self.assertAlmostEqual(
+            model.tree.predict([test_values])[0],
+            prediction
+        )
+
     def test_predict_raises_ValueError_with_bad_number_of_feature_values(self):
         with self.assertRaises(ValueError):
             self.models['Two features'].predict(35)
+
+    def test_reversing_features_doesnt_change_prediction(self):
+        pred = self.models['Two features'].predict([25, 130])
+        pred_reverse = self.models['Two features reverse'].predict([130, 25])
+        self.assertAlmostEqual(pred, pred_reverse)
 
     @parameterized.expand([
         ('One feature'),

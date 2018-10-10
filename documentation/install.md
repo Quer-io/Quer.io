@@ -1,4 +1,4 @@
-## Install guide for general use
+## Install guide for general use as a Python library
 
 This project is a Python library than can be installed and then imported to any project.
 
@@ -10,7 +10,7 @@ This project is a Python library than can be installed and then imported to any 
 
 ## Local CLI/GUI application installation guide
 
-**This is an optional version and it is not required to go through the following steps to use Querio AQE!**
+**This is an optional version and it is not required to go through the following steps to use Querio AQPE!**
 
 This guide is written for Linux and Mac users who are familiar with CLI commands and git.
 

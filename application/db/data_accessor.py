@@ -132,4 +132,4 @@ class DataAccessor():
         return value[0]
 
     def get_all_data(self):
-        return pd.read_sql('SELECT * FROM person', self.engine)
+        return pd.read_sql('SELECT * FROM person WHERE age IS NOT NULL AND income IS NOT NULL', self.engine)

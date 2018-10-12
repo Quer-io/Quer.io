@@ -27,9 +27,9 @@ class mainWindow(GridLayout):
         else:
             self.lbl.text += 'Error in database \n'
         if str(self.reference_column) is 'age':
-            self.lbl.text += 'Prediction: %d, Variance: %d' % self.age_model.get_prediction_for_value(self.input.text)
+            self.lbl.text += str(self.age_model.get_prediction_for_value(self.input.text))
         else:
-            self.lbl.text += 'Prediction: %d, Variance: %d' % self.income_model.get_prediction_for_value(self.input.text)
+            self.lbl.text += str(self.income_model.get_prediction_for_value(self.input.text))
 
     def button2(self, value):
         self.db_popup.open()

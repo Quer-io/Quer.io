@@ -33,12 +33,12 @@ class ModelTest(unittest.TestCase):
         ('Two features', {'age': 35, 'height': 120}),
     ])
     def test_predict_gives_value_in_correct_range(self, name, test_values):
-        prediction, variance = self.models[name].predict(
+        prediction = self.models[name].predict(
             test_values
         )
-        self.assertGreaterEqual(prediction, self.data['income'].min())
-        self.assertLessEqual(prediction, self.data['income'].max())
-        self.assertGreaterEqual(variance, 0)
+        self.assertGreaterEqual(prediction.result, self.data['income'].min())
+        self.assertLessEqual(prediction.result, self.data['income'].max())
+        self.assertGreaterEqual(prediction.variance, 0)
 
     @parameterized.expand([
         ('One feature', 40),
@@ -46,11 +46,11 @@ class ModelTest(unittest.TestCase):
     ])
     def test_predict_same_mean_as_sklearn_predict(self, name, test_values):
         model = self.models[name]
-        prediction, variance = model.predict(test_values)
+        prediction = model.predict(test_values)
         test_values = make_into_list_if_scalar(test_values)
         self.assertAlmostEqual(
             model.tree.predict([test_values])[0],
-            prediction
+            prediction.result
         )
 
     def test_predict_raises_ValueError_with_bad_number_of_feature_values(self):

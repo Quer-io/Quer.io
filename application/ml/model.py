@@ -17,8 +17,7 @@ class Model:
     def __init__(self, data, feature_names, output_name, max_depth=None):
         self.feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
-        self.data = data
-       # self.__preprocess_data__()
+        ## data = self.__preprocess_data__(data)
 
         self.tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
@@ -27,7 +26,7 @@ class Model:
         )
 
         train, test = sklearn.model_selection.train_test_split(
-            self.data, random_state=42
+            data, random_state=42
         )
 
         self.tree.fit(train[self.feature_names], train[self.output_name])
@@ -38,18 +37,18 @@ class Model:
             train[self.feature_names], train[self.output_name]
         )
 
-    def __preprocess_data__(self):
+    def __preprocess_data__(self, data):
         le = LabelEncoder()
         ohe = OneHotEncoder()
-        processed_data = self.data.copy()
+        processed_data = data.copy()
         processed_feature_names = self.feature_names.copy()
 
-        for col in self.data.columns:
-            if (self.data[col].dtype == np.bool and col in self.feature_names):
+        for col in data.columns:
+            if (data[col].dtype == np.bool and col in self.feature_names):
                 processed_data[col] = processed_data[col].astype(float)
 
-        for col in self.data.columns:
-            if (self.data[col].dtype in [np.object, np.str] and col in self.feature_names):
+        for col in data.columns:
+            if (data[col].dtype in [np.object, np.str] and col in self.feature_names):
                 processed_data[col] = le.fit_transform(processed_data[col])
                 col_array = ohe.fit_transform(processed_data[col].values.reshape(-1, 1)).toarray() ## from 1D array to 2D
                 new_col_names = [col + "_" + str(int(i)) for i in range(col_array.shape[1])]
@@ -60,7 +59,7 @@ class Model:
                 processed_feature_names += new_col_names
 
         self.feature_names = processed_feature_names
-        self.data = processed_data.reindex(processed_feature_names.append(self.output_name))
+        return processed_data
 
     def predict(self, feature_values):
         """Returns a tuple with (mean, variance)"""

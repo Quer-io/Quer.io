@@ -1,6 +1,6 @@
 import unittest
 
-from application.ml.prediction import Prediction
+from querio.ml.prediction import Prediction
 
 
 class PredictTest(unittest.TestCase):
@@ -22,5 +22,3 @@ class PredictTest(unittest.TestCase):
         test_prediction2 = Prediction(21560.4568, 23.56544)
 
         self.assertFalse(test_prediction == test_prediction2)
-
-

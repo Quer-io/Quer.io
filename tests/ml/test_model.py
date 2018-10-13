@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 from parameterized import parameterized
 
-from application.ml import Model
-from application.ml.utils import make_into_list_if_scalar
+from querio.ml import Model
+from querio.ml.utils import make_into_list_if_scalar
 
 
 class ModelTest(unittest.TestCase):

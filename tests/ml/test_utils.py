@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 from parameterized import parameterized
 
-from application.ml.utils import *
+from querio.ml.utils import *
 
 
 class UtilsTest(unittest.TestCase):

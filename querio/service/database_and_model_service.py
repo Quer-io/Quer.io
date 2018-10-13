@@ -1,5 +1,5 @@
-import ml
-import db
+import querio.ml
+import querio.db
 from db.data_accessor import DataAccessor
 
 class DatabaseAndModelService:

@@ -8,8 +8,8 @@ from sklearn.preprocessing import OneHotEncoder
 from functools import reduce
 import numpy as np
 import pandas as pd
-from .utils import *
-from .prediction import Prediction
+from querio.ml.utils import *
+from querio.ml.prediction import Prediction
 
 
 class Model:

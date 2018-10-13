@@ -9,6 +9,7 @@ from functools import reduce
 import numpy as np
 import pandas as pd
 from .utils import *
+from .prediction import Prediction
 
 
 class Model:
@@ -51,7 +52,7 @@ class Model:
                 processed_data[col] = le.fit_transform(processed_data[col])
                 col_array = ohe.fit_transform(processed_data[col].values.reshape(-1, 1)).toarray() ## from 1D array to 2D
                 new_col_names = [col + "_" + str(int(i)) for i in range(col_array.shape[1])]
-                col_df = pd.DataFrame(col_array, columns = new_col_names) 
+                col_df = pd.DataFrame(col_array, columns = new_col_names)
                 del processed_data[col]
                 processed_data = pd.concat([processed_data, col_df], axis=1)
                 processed_feature_names.remove(col)
@@ -76,7 +77,9 @@ class Model:
             )
             for leaf in leaf_set
         ]
-        return calculate_mean_and_variance_from_populations(leaf_populations)
+
+        result_tuple = calculate_mean_and_variance_from_populations(leaf_populations)
+        return Prediction(result_tuple[0], result_tuple[1])
         # node_index = self.tree.apply([[v for v in feature_values.values()]])[0]
         # return (
         #     self.tree.tree_.value[node_index][0][0],
@@ -111,7 +114,7 @@ class Model:
             return {node_index}
 
         if tree.feature[node_index] == feature_index:
-            if feature_value <= tree.threshold[node_index]:
+            if float(feature_value) <= tree.threshold[node_index]:
                 next_node = tree.children_left[node_index]
             else:
                 next_node = tree.children_right[node_index]

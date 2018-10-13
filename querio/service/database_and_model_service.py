@@ -1,6 +1,6 @@
 import querio.ml
 import querio.db
-from db.data_accessor import DataAccessor
+from querio.db.data_accessor import DataAccessor
 
 class DatabaseAndModelService:
 

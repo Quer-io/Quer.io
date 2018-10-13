@@ -13,8 +13,8 @@ from .prediction import Prediction
 
 
 class Model:
-    
-    def __init__(self, data, feature_names, output_name, max_depth=None):       
+
+    def __init__(self, data, feature_names, output_name, max_depth=None):
         self.feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
         ## data = self.__preprocess_data__(data)
@@ -80,11 +80,6 @@ class Model:
 
         result_tuple = calculate_mean_and_variance_from_populations(leaf_populations)
         return Prediction(result_tuple[0], result_tuple[1])
-        # node_index = self.tree.apply([[v for v in feature_values.values()]])[0]
-        # return (
-        #     self.tree.tree_.value[node_index][0][0],
-        #     self.tree.tree_.impurity[node_index]
-        # )
 
     def _convert_to_dict(self, feature_values):
         if not isinstance(feature_values, collections.Mapping):

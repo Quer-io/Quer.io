@@ -20,7 +20,9 @@ class UtilsTest(unittest.TestCase):
         ('2', [[6, 3, 4.6, 2, 7.5, 2], [3.5, 2], [7.8, 5, 1, 0], [1]]),
         ('3', [[1], [2], [3], [4]])
     ])
-    def test_calculate_mean_and_variance_from_population(self, name, populations):
+    def test_calculate_mean_and_variance_from_population(
+        self, name, populations
+    ):
         flattened = list(itertools.chain.from_iterable(populations))
         true_mean = np.mean(flattened)
         true_variance = np.var(flattened)

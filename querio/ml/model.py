@@ -62,7 +62,6 @@ class Model:
         return processed_data
 
     def predict(self, feature_values):
-        """Returns a tuple with (mean, variance)"""
         feature_values = self._convert_to_dict(feature_values)
         leaf_set = reduce(operator.and_, [
             self._query_for_one_feature(name, value)

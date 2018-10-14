@@ -9,6 +9,11 @@ class interface:
         self.columns = self.accessor.get_table_column_names()
 
     def train(self, xkey, ykey):
+        if xkey not in self.columns:
+            raise ValueError(xkey + ': No column of this name in database')
+        if ykey not in self.columns:
+            raise ValueError(ykey + ': No column of this name in database')
+
         self.models[xkey+''+ykey] = model.Model(self.accessor.get_all_data(), ykey, xkey)
         print('new model: '+xkey+', '+ykey)
         return self.models[xkey+''+ykey]

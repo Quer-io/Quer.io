@@ -58,13 +58,19 @@ class ModelTest(unittest.TestCase):
             prediction.result
         )
 
+    @parameterized.expand([
+        ('1', {'age': 42}, 10535),
+        ('2', {'age': 33, 'height': 100}, 7926.333333333333333),
+        ('3', {'height': 120, 'github_stars': 54}, 3311),
+        ('4', {'github_stars': 42}, 10685.5),
+    ])
     def test_predict_same_value_as_pre_calculated(
-        self, name, test_values, true_result, true_variance
+        self, name, test_values, true_result
     ):
         model = self.models['Three features']
         prediction = model.predict(test_values)
+        # self.__render_graph(model, 'visualizations/testcases/tree{0}'.format(name))
         self.assertAlmostEqual(true_result, prediction.result)
-        self.assertAlmostEqual(true_variance, prediction.variance)
 
     def test_predict_raises_ValueError_with_bad_number_of_feature_values(self):
         with self.assertRaises(ValueError):

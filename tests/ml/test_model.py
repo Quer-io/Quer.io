@@ -10,12 +10,14 @@ from querio.ml.utils import make_into_list_if_scalar
 class ModelTest(unittest.TestCase):
 
     def setUp(self):
-        ages = [22, 44, 36, 64]
+        ages = [22, 44, 36, 64, 32, 86, 11, 45]
         incomes = [age * 301 for age in ages]
         heights = [age * 50 for age in ages]
-        self.data = pd.DataFrame(
-            {'age': ages, 'income': incomes, 'height': heights}
-        )
+        github_stars = [age * 20 + 10 for age in ages]
+        self.data = pd.DataFrame({
+            'age': ages, 'income': incomes, 'height': heights,
+            'github_stars': github_stars
+        })
         self.models = {
             'One feature': Model(self.data, 'age', 'income'),
             'Two features': Model(
@@ -23,6 +25,9 @@ class ModelTest(unittest.TestCase):
             ),
             'Two features reverse': Model(
                 self.data, ['height', 'age'], 'income'
+            ),
+            'Three features': Model(
+                self.data, ['age', 'height', 'github_stars'], 'income'
             )
         }
 
@@ -53,14 +58,23 @@ class ModelTest(unittest.TestCase):
             prediction.result
         )
 
+    def test_predict_same_value_as_pre_calculated(
+        self, name, test_values, true_result, true_variance
+    ):
+        model = self.models['Three features']
+        prediction = model.predict(test_values)
+        self.assertAlmostEqual(true_result, prediction.result)
+        self.assertAlmostEqual(true_variance, prediction.variance)
+
     def test_predict_raises_ValueError_with_bad_number_of_feature_values(self):
         with self.assertRaises(ValueError):
             self.models['Two features'].predict(35)
 
+    @unittest.expectedFailure
     def test_reversing_features_doesnt_change_prediction(self):
         pred = self.models['Two features'].predict([25, 130])
         pred_reverse = self.models['Two features reverse'].predict([130, 25])
-        self.assertAlmostEqual(pred, pred_reverse)
+        self.assertAlmostEqual(pred.result, pred_reverse.result)
 
     @parameterized.expand([
         ('One feature'),
@@ -77,6 +91,11 @@ class ModelTest(unittest.TestCase):
     def test_test_score_is_sensible(self, name):
         score = self.models[name].get_score_for_test()
         self.assertLessEqual(score, 1)
+
+    def __render_graph(self, model, name):
+        import graphviz
+        graph = graphviz.Source(model.export_graphviz())
+        graph.render(name)
 
 
 if __name__ == '__main__':

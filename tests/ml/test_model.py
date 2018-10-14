@@ -69,7 +69,6 @@ class ModelTest(unittest.TestCase):
     ):
         model = self.models['Three features']
         prediction = model.predict(test_values)
-        # self.__render_graph(model, 'visualizations/testcases/tree{0}'.format(name))
         self.assertAlmostEqual(true_result, prediction.result)
 
     def test_predict_raises_ValueError_with_bad_number_of_feature_values(self):

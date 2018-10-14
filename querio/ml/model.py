@@ -17,6 +17,7 @@ class Model:
     def __init__(self, data, feature_names, output_name, max_depth=None):
         self.feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
+        self.feature_min_max_count = get_feature_min_max_count(data, self.feature_names)
         ## data = self.__preprocess_data__(data)
 
         self.tree = sklearn.tree.DecisionTreeRegressor(

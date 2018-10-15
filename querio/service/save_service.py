@@ -5,35 +5,43 @@ import os
 
 class SaveService():
 
-    def __init__(self):
-        self._src_folder = ""
+    def __init__(self, path=""):
+        self._src_folder = path
 
 
 
     def save_model(self, model):
-        relative_path = self._src_folder + self.generate_name_for_model_attributes( model.output_name, model.feature_names )
-        file = open(os.path.join(os.path.expanduser('~'), relative_path), 'wb+')
+        relative_path = self._src_folder + self.generate_name_for_model_attributes(model.output_name, model.feature_names)
+        file = open(os.path.join(os.getcwd(), relative_path), 'wb+')
 
-        pickle.dump( model, file )
+        pickle.dump(model, file)
 
         file.close()
 
     def load_model(self, output_name, feature_names):
         relative_path = self._src_folder + self.generate_name_for_model_attributes(output_name, feature_names)
 
-        file = open(os.path.join(os.path.expanduser('~'), relative_path), 'rb')
+        file = open(os.path.join(os.getcwd(), relative_path), 'rb')
         model = pickle.load(file)
         file.close()
 
         return model
 
+    def load_file(self, file_name):
+        relative_path = self._src_folder + file_name
+
+        file = open(os.path.join(os.getcwd(), relative_path), 'rb')
+        model = pickle.load(file)
+        file.close()
+
+        return model
 
     def clear_querio_files(self):
-        path = os.path.join(os.path.expanduser('~'), self._src_folder)
+        path = os.path.join(os.getcwd(), self._src_folder)
         querio_files = self.get_querio_files()
 
         for file in querio_files:
-            os.remove( path + file )
+            os.remove(path + file)
 
 
     def set_folder (self, folder_path):
@@ -52,7 +60,7 @@ class SaveService():
 
 
     def is_querio_file(self, filename):
-        filename_pattern = '^(ON-){1}(\S)+(FN-){1}(\S)+$'
+        filename_pattern = '^(ON-){1}(\S)+(FN-){1}(\S)+(.querio){1}$'
 
         return re.match(filename_pattern, filename)
 
@@ -62,11 +70,11 @@ class SaveService():
 
         name += output_name + 'FN-' # for attribute featurenames
         name += '_'.join(feature_names)
-
+        name += '.querio'
         return name
 
     def get_querio_files(self):
-        files = os.listdir(os.path.join(os.path.expanduser('~'), self._src_folder))
+        files = os.listdir(os.path.join(os.getcwd(), self._src_folder))
         querio_files = filter(self.is_querio_file, files)
         return querio_files
 

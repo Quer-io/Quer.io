@@ -1,5 +1,6 @@
 from querio.db import data_accessor as da
 from querio.ml import model
+from querio.service.save_service import SaveService
 
 
 class interface:
@@ -7,6 +8,7 @@ class interface:
         self.accessor = da.DataAccessor(False, dbPath)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
+        self.ss = SaveService()
 
     def train(self, xkey, ykey):
         if xkey not in self.columns:

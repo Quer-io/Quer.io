@@ -29,7 +29,9 @@ def calculate_mean_and_variance_from_populations(populations):
 def get_feature_min_max_count(data, feature_names):
     feat_dict = {}
     for feat in feature_names:
-        feat_dict[feat] = {"max": data.max().get('%s' % feat),
-             "min": data.min().get('%s' % feat),
-             "count": data.count().get('%s' % feat)}
+        feat_dict[feat] = {
+            "max": data.max().get('%s' % feat),
+            "min": data.min().get('%s' % feat),
+            "count": data.count().get('%s' % feat)
+        }
     return feat_dict

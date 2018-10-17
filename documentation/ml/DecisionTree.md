@@ -1,8 +1,6 @@
 The model class uses a [decision tree regressor](http://scikit-learn.org/stable/modules/tree.html#regression) to
 estimate the mean and the variance of the rows of the
-data matching the given conditions. Currently the
-condition can only be that one column is equal to some
-value.
+data matching the given conditions.
 
 The parameters of the tree are the defaults of scikit
 learn, except the random state of the tree is fixed.

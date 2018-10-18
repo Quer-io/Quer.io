@@ -10,6 +10,8 @@ where-clause. The resulting mean and variance is then
 calculated from the means and variances of the
 matching leaves.
 
+![Example decision tree](tree_example.png "Example decision tree")
+
 The set of leaves matching the condition of one
 variable is found by searching through the tree,
 starting from the root. For each searched node,

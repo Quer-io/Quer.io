@@ -8,6 +8,9 @@ See [Documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation
 
 See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for Database Schema
 
+See [Ml documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
+of the machine learning model quer.io uses
+
 ## Project description
 
 This project is built to the specifications and requirements provided by Prof. Michael Mathioudakis and is a course work project for course TKT20007 Software Engineering Lab at the University of Helsinki, department of Computer Science.
@@ -31,7 +34,7 @@ Currently the project contains tests that are done using the [unittest](https://
 
 This command will find every test from the project and run it. If you want to run an individual test script it can be done with the following command
 
-`python3 -m unittest [path to file]` 
+`python3 -m unittest [path to file]`
 
 ## FAQ
 

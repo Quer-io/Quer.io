@@ -1,1 +1,1 @@
-from querio.interface import interface
+from querio.interface import Interface

@@ -8,7 +8,7 @@ See [Documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation
 
 See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for Database Schema
 
-See [Ml documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
+See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 of the machine learning model quer.io uses
 
 ## Project description

@@ -1,12 +1,16 @@
 ## Install guide for general use as a Python library
 
-This project is a Python library than can be installed and then imported to any project.
+A setup file has been provided for your convenince. Navigate to the project folder and run following commands:
 
-- Install through pip?
+```
+$> python3 setup.py build
+```
 
-- Import to project?
+```
+$> python3 setup.py install
+```
 
-- Use Querio functions?
+This will install Querio library.
 
 ## Local CLI/GUI application installation guide
 

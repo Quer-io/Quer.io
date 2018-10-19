@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from querio.ml.utils import *
 from querio.ml.prediction import Prediction
+from querio.ml.feature import Feature
 
 
 class Model:
@@ -62,11 +63,16 @@ class Model:
         self.feature_names = processed_feature_names
         return processed_data
 
-    def predict(self, feature_values):
-        feature_values = self._convert_to_dict(feature_values)
+    def predict(self, conditions):
+        for condition in conditions:
+            if condition.feature not in self.feature_names:
+                raise ValueError('{0} is not a feature name'.format(
+                    condition.feature
+                ))
+
         leaf_set = reduce(operator.and_, [
-            self._query_for_one_feature(name, value)
-            for name, value in feature_values.items()
+            self._query_for_one_feature(cond.feature, cond.threshold)
+            for cond in conditions
         ])
         tree = self.tree.tree_
         leaf_populations = [
@@ -78,22 +84,10 @@ class Model:
             for leaf in leaf_set
         ]
 
-        result_tuple = calculate_mean_and_variance_from_populations(leaf_populations)
+        result_tuple = calculate_mean_and_variance_from_populations(
+            leaf_populations
+        )
         return Prediction(result_tuple[0], result_tuple[1])
-
-    def _convert_to_dict(self, feature_values):
-        if not isinstance(feature_values, collections.Mapping):
-            feature_values = make_into_list_if_scalar(feature_values)
-            if len(feature_values) != len(self.feature_names):
-                raise ValueError(
-                    "When feature_values is not a dictionary, it's length " +
-                    "must be the number of features."
-                )
-            feature_values = {
-                self.feature_names[i]: feature_values[i]
-                for i in range(0, len(feature_values))
-            }
-        return feature_values
 
     def _query_for_one_feature(self, feature_name, feature_value):
         """Returns a set of all tree node indexes that match the give

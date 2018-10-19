@@ -4,6 +4,9 @@ import numpy as np
 from parameterized import parameterized
 
 from querio.ml import Model
+from querio.ml.cond import Cond
+from querio.ml.cond import Op
+from querio.ml.feature import Feature
 from querio.ml.utils import make_into_list_if_scalar
 
 
@@ -32,48 +35,52 @@ class ModelTest(unittest.TestCase):
         }
 
     @parameterized.expand([
-        ('One feature', 35),
-        ('Two features', [35, 120]),
-        ('One feature', {'age': 40}),
-        ('Two features', {'age': 35, 'height': 120}),
+        ('One feature', [Cond('age', Op.eq, 35)]),
+        ('Two features', [Cond('age', Op.eq, 35), Cond('height', Op.eq, 120)]),
     ])
-    def test_predict_gives_value_in_correct_range(self, name, test_values):
+    def test_predict_gives_value_in_correct_range(self, name, test_conditions):
         prediction = self.models[name].predict(
-            test_values
+            test_conditions
         )
         self.assertGreaterEqual(prediction.result, self.data['income'].min())
         self.assertLessEqual(prediction.result, self.data['income'].max())
         self.assertGreaterEqual(prediction.variance, 0)
 
     @parameterized.expand([
-        ('One feature', 40),
-        ('Two features', [41, 134])
+        ('One feature', [Cond('age', Op.eq, 40)]),
+        ('Two features', [Cond('age', Op.eq, 41), Cond('height', Op.eq, 134)])
     ])
-    def test_predict_same_mean_as_sklearn_predict(self, name, test_values):
+    def test_predict_same_mean_as_sklearn_predict(self, name, test_conditions):
         model = self.models[name]
-        prediction = model.predict(test_values)
-        test_values = make_into_list_if_scalar(test_values)
+        prediction = model.predict(test_conditions)
         self.assertAlmostEqual(
-            model.tree.predict([test_values])[0],
+            model.tree.predict([[
+                cond.threshold for cond in test_conditions
+            ]])[0],
             prediction.result
         )
 
     @parameterized.expand([
-        ('1', {'age': 42}, 10535),
-        ('2', {'age': 33, 'height': 100}, 7926.333333333333333),
-        ('3', {'height': 120, 'github_stars': 54}, 3311),
-        ('4', {'github_stars': 42}, 10685.5),
+        ('1', [Cond('age', Op.eq, 42)], 10535),
+        ('2', [Cond('age', Op.eq, 33), Cond('height', Op.eq, 100)],
+            7926.333333333333333),
+        ('3', [Cond('height', Op.eq, 120), Cond('github_stars', Op.eq, 54)],
+            3311),
+        ('4', [Cond('github_stars', Op.eq, 42)], 10685.5),
+        ('5', [Feature('age') == 42], 10535),
     ])
     def test_predict_same_value_as_pre_calculated(
-        self, name, test_values, true_result
+        self, name, test_conditions, true_result
     ):
         model = self.models['Three features']
-        prediction = model.predict(test_values)
+        prediction = model.predict(test_conditions)
         self.assertAlmostEqual(true_result, prediction.result)
 
-    def test_predict_raises_ValueError_with_bad_number_of_feature_values(self):
+    def test_predict_raises_ValueError_with_bad_feature_names(self):
         with self.assertRaises(ValueError):
-            self.models['Two features'].predict(35)
+            self.models['Two features'].predict(
+                [Cond('github_stars', Op.eq, 0)]
+            )
 
     @unittest.expectedFailure
     def test_reversing_features_doesnt_change_prediction(self):
@@ -84,6 +91,7 @@ class ModelTest(unittest.TestCase):
     @parameterized.expand([
         ('One feature'),
         ('Two features'),
+        ('Three features'),
     ])
     def test_train_score_is_sensible(self, name):
         score = self.models[name].get_score_for_train()
@@ -92,6 +100,7 @@ class ModelTest(unittest.TestCase):
     @parameterized.expand([
         ('One feature'),
         ('Two features'),
+        ('Three features'),
     ])
     def test_test_score_is_sensible(self, name):
         score = self.models[name].get_score_for_test()

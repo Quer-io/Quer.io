@@ -68,6 +68,11 @@ class ModelTest(unittest.TestCase):
             3311),
         ('4', [Cond('github_stars', Op.eq, 42)], 10685.5),
         ('5', [Feature('age') == 42], 10535),
+        ('6', [Feature('height') > 2500], 16404.5),
+        ('7', [Feature('github_stars') > 700], 14548.333333333333333333),
+        ('8', [Feature('age') > 40], 10535),
+        ('9', [Feature('height') < 1000, Feature('github_stars') > 700],
+            10836),
     ])
     def test_predict_same_value_as_pre_calculated(
         self, name, test_conditions, true_result

@@ -11,6 +11,7 @@ import pandas as pd
 from querio.ml.utils import *
 from querio.ml.prediction import Prediction
 from querio.ml.feature import Feature
+from querio.ml.cond import Op
 
 
 class Model:
@@ -71,7 +72,7 @@ class Model:
                 ))
 
         leaf_set = reduce(operator.and_, [
-            self._query_for_one_feature(cond.feature, cond.threshold)
+            self._query_for_one_condition(cond)
             for cond in conditions
         ])
         tree = self.tree.tree_
@@ -89,33 +90,60 @@ class Model:
         )
         return Prediction(result_tuple[0], result_tuple[1])
 
-    def _query_for_one_feature(self, feature_name, feature_value):
-        """Returns a set of all tree node indexes that match the give
+    def _query_for_one_condition(self, condition):
+        """Returns a set of all tree node indexes that match the given
         value of the given feature"""
-        feature_index = self.feature_names.index(feature_name)
+        feature_index = self.feature_names.index(condition.feature)
         tree = self.tree.tree_
-        return self.__recurse_tree_node(0, feature_index, feature_value)
+        return self.__recurse_tree_node(
+            0, feature_index, condition.op, float(condition.threshold)
+        )
 
-    def __recurse_tree_node(self, node_index, feature_index, feature_value):
+    def __recurse_tree_node(self, node_index, feature_index, op, threshold):
+        def recurse_both_children():
+            return self.__recurse_tree_node(
+                tree.children_left[node_index], feature_index, op, threshold
+            ) | self.__recurse_tree_node(
+                tree.children_right[node_index], feature_index, op, threshold
+            )
+
+        def recurse_right_child():
+            return self.__recurse_tree_node(
+                tree.children_right[node_index], feature_index, op, threshold
+            )
+
+        def recurse_left_child():
+            return self.__recurse_tree_node(
+                tree.children_left[node_index], feature_index, op, threshold
+            )
+
         tree = self.tree.tree_
 
         if self.__is_leaf_node(node_index):
             return {node_index}
 
         if tree.feature[node_index] == feature_index:
-            if float(feature_value) <= tree.threshold[node_index]:
-                next_node = tree.children_left[node_index]
+            if op is Op.eq:
+                if threshold <= tree.threshold[node_index]:
+                    return recurse_left_child()
+                else:
+                    return recurse_right_child()
+            elif op is Op.lt:
+                if threshold <= tree.threshold[node_index]:
+                    return recurse_left_child()
+                else:
+                    return recurse_both_children()
+            elif op is Op.gt:
+                if threshold < tree.threshold[node_index]:
+                    return recurse_both_children()
+                else:
+                    return recurse_right_child()
             else:
-                next_node = tree.children_right[node_index]
-            return self.__recurse_tree_node(
-                next_node, feature_index, feature_value
-            )
+                raise NotImplementedError(
+                    'Unimplemented comparison {0}'.format(op)
+                )
         else:
-            return self.__recurse_tree_node(
-                tree.children_left[node_index], feature_index, feature_value
-            ) | self.__recurse_tree_node(
-                tree.children_right[node_index], feature_index, feature_value
-            )
+            return recurse_both_children()
 
     def __is_leaf_node(self, node_index):
         tree = self.tree.tree_

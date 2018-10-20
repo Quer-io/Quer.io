@@ -1,4 +1,5 @@
 import collections
+import sys
 import operator
 import sklearn
 import sklearn.tree
@@ -20,12 +21,14 @@ class Model:
         self.feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
         self.feature_min_max_count = get_feature_min_max_count(data, self.feature_names)
+        if max_depth is None:
+            max_depth = sys.getrecursionlimit()
         ## data = self.__preprocess_data__(data)
 
         self.tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
             random_state=42,
-            max_depth=max_depth
+            max_depth=min(max_depth, sys.getrecursionlimit() / 2 - 10)
         )
 
         train, test = sklearn.model_selection.train_test_split(

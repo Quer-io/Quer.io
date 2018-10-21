@@ -38,9 +38,33 @@ if the variable the node is checking isn't the same
 as the variable the search is for, the search
 proceeds to both of the nodes children. If the nodes
 variable is the same as the searched variable, the
-condition on the node is checked. If the value of
-the searched variable matches the condition of the
-node, the search proceeds only to the left child
-of the node. Otherwise, the search proceeds only to
-the right child. The set resulting from the search
-is the set of all leaf nodes found by the search.
+condition on the node is checked. The conditions of
+all nodes are of the form NodeVariable <= threshold.
+How the search proceeds depends on the condition of the
+node and the condition of the variable that is the
+search is for.
+
+When the condition on the search variable is an
+equality, i.e. SearchVariable = value, the search
+proceeds only to the left child if value is lesser than
+or equal to threshold. of the node. Otherwise, the
+search proceeds only to the right child.
+
+If the condition is of the form
+SearchVariable < value, value is again compared to
+threshold. If value <= threshold, the search proceeds
+to the left child. Otherwise, the search proceeds to
+both children.
+
+When the searched condition is of the form
+SearchVariable > value, the search proceeds to the
+right child, if value >= threshold. Otherwise, the
+search proceeds to both children.
+
+The set resulting from the search is the set of all
+leaf nodes found by the search. After the searches for
+all of the conditions are completed, the intersection
+of all the sets is calculated. The approximate mean and
+variance returned by the query are the the mean and the
+variance off all the samples in the nodes in the
+intersection set.

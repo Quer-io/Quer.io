@@ -1,6 +1,7 @@
 from querio.db import data_accessor as da
 from querio.ml import model, cond
 from querio.service.save_service import SaveService
+from querio.service.util_service import frequency_count
 
 
 class Interface:
@@ -54,3 +55,18 @@ class Interface:
 
     def clearSavedModels(self):
         self.__ss__.clear_querio_files()
+
+    def frequency(self, values):
+        data = self.accessor.get_all_data()
+        if type(values) != list:
+            if values in self.columns:
+                values = [values]
+            else:
+                raise ValueError("Database doesn't contain column with the name '{}'".format(values))
+        else:
+            for val in values:
+                if val in self.columns:
+                    continue
+                else:
+                    raise ValueError("Database doesn't contain column with the name '{}'".format(val))
+        return frequency_count(data, values)

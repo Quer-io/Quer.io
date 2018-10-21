@@ -1,5 +1,5 @@
 from querio.db import data_accessor as da
-from querio.ml import model
+from querio.ml import model, cond
 from querio.service.save_service import SaveService
 
 
@@ -26,13 +26,13 @@ class Interface:
         self.models[xkey+':'+feature_names] = model.Model(self.accessor.get_all_data(), ykey, xkey)
         return self.models[xkey+':'+feature_names]
 
-    def query(self, xkey, ykey, value):
+    def query(self, xkey, conditions):
         feature_names = ""
-        for s in ykey:
-            feature_names += s
+        for c in conditions:
+            feature_names += c.feature
         if xkey+':'+feature_names not in self.models:
-            self.train(xkey, ykey)
-        return self.models[xkey+':'+feature_names].predict(value)
+            self.train(xkey, feature_names)
+        return self.models[xkey+':'+feature_names].predict(conditions)
 
     def saveModels(self):
         for m in self.models:

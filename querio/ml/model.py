@@ -68,6 +68,8 @@ class Model:
         return processed_data
 
     def predict(self, conditions):
+        if not isinstance(conditions, list):
+            raise TypeError('Conditions must be a list of Condition')
         for condition in conditions:
             if condition.feature not in self.feature_names:
                 raise ValueError('{0} is not a feature name'.format(

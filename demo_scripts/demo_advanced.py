@@ -8,10 +8,15 @@ dB = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5ca17333
 
 i = q.Interface(dB)
 # i.clearSavedModels()
-i.loadModels()
+i.load_models()
 result = i.query("height", [Feature('age') > 30, Feature('income') < 6000])
 print(str(result))  # > (avg income = 1000; variance income = 4000)
 result = i.query("age", [Feature('income') == 5000])
 print(str(result))  # > (avg age = 30; variance age = 10)
-
+print(str(i.frequency('height')))
 # i.saveModels()
+
+files = i.get_saved_models()
+
+for f in files:
+    print(str(f))

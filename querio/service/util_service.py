@@ -21,7 +21,7 @@ def frequency_count_int(data, value):
     tmp_dict = {}
     for val in ii:
         tmp_dict[val] = y[val]
-    frequency_values_dict["{} frequencys".format(value)] = tmp_dict
+    frequency_values_dict["{} frequencies".format(value)] = tmp_dict
     return frequency_values_dict
 
 
@@ -36,6 +36,6 @@ def frequency_count_str(data, value):
             tmp_set_of_str.add(feature)
         else:
             tmp_dict[feature] = tmp_dict.get(feature) + 1
-    frequency_values_dict["{} frequencys".format(value)] = tmp_dict
+    frequency_values_dict["{} frequencies".format(value)] = tmp_dict
     return frequency_values_dict
 

@@ -10,7 +10,6 @@ class Interface:
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
-        
 
     def train(self, xkey, features):
         print('training new model')
@@ -36,11 +35,11 @@ class Interface:
             self.train(xkey, conditions)
         return self.models[xkey+':'+feature_names].predict(conditions)
 
-    def saveModels(self):
+    def save_models(self):
         for m in self.models:
             self.__ss__.save_model(self.models[m])
 
-    def loadModels(self):
+    def load_models(self):
         names = self.__ss__.get_querio_files()
         for n in names:
             mod = self.__ss__.load_file(n)
@@ -51,11 +50,14 @@ class Interface:
                 feature_names += s
             self.models[output+':'+feature_names] = mod
 
-    def clearModels(self):
+    def clear_models(self):
         self.models = {}
 
-    def clearSavedModels(self):
+    def clear_saved_models(self):
         self.__ss__.clear_querio_files()
+
+    def get_saved_models(self):
+        return self.__ss__.get_querio_files()
 
     def frequency(self, values):
         data = self.accessor.get_all_data()
@@ -63,11 +65,11 @@ class Interface:
             if values in self.columns:
                 values = [values]
             else:
-                raise ValueError("Database doesn't contain column with the name '{}'".format(values))
+                raise ValueError(str("Database doesn't contain column with the name '{}'").format(values))
         else:
             for val in values:
                 if val in self.columns:
                     continue
                 else:
-                    raise ValueError("Database doesn't contain column with the name '{}'".format(val))
+                    raise ValueError(str("Database doesn't contain column with the name '{}'").format(val))
         return frequency_count(data, values)

@@ -8,7 +8,6 @@ class DatabaseAndModelService:
         self.db = DataAccessor(db_connection[0], db_connection[1])
         self.predicting_column_name = predicting_column_name
         self.predicted_column_name = predicted_column_name
-        self.get_null_value()
         if self.db.connected:
             self.model = ml.Model(self.db.get_all_data(), self.predicted_column_name, self.predicting_column_name)
 
@@ -39,6 +38,3 @@ class DatabaseAndModelService:
     def get_column_names_from_db(self):
         #TODO: When DB contains more than one table, a table name needs to be passed as an argument to the db module
         return self.db.get_table_column_names()
-
-    def get_null_value(self):
-        return self.get_null_value

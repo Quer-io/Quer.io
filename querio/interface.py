@@ -10,6 +10,7 @@ class Interface:
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
+        
 
     def train(self, xkey, features):
         print('training new model')

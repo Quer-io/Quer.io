@@ -28,6 +28,7 @@ class DataAccessor():
             self.table = sqlalchemy.Table('person', self.md, autoload_with=self.engine)
             self.connected = True
             print("Connection established")
+            print(self.get_null_count())
         except exc.OperationalError as e:
             print("Invalid database settings. No connection to database")
             self.connected = False
@@ -136,4 +137,5 @@ class DataAccessor():
 
     def get_null_count(self):
         nulls = pd.read_sql('SELECT count(*) FROM person WHERE age IS NULL OR income IS NULL', self.engine, None)
-        return "There are " + nulls[0] + " rows with null values. These rows have been ignored."
+        value = nulls['count'].to_string(index=False)
+        return "There are " + value + " rows with null values. These rows have been ignored."

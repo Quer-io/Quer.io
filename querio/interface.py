@@ -11,28 +11,28 @@ class Interface:
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
 
-    def train(self, xkey, ykey):
+    def train(self, xkey, features):
         print('training new model')
         if xkey not in self.columns:
             raise ValueError(xkey + ': No column of this name in database')
-        if type(ykey) is list:
-            for feature_name in ykey:
-                if feature_name not in self.columns:
-                    raise ValueError(feature_name + ': No column of this name in database')
-        if type(ykey) is list:
-            ykey = sorted(ykey)
+        if type(features) is list:
+            for f in features:
+                if f.feature not in self.columns:
+                    raise ValueError(f.feature + ': No column of this name in database')
+        feature_list = sorted(list({Cond.feature for Cond in features}))
         feature_names = ""
-        for s in ykey:
+        for s in feature_list:
             feature_names += s
-        self.models[xkey+':'+feature_names] = model.Model(self.accessor.get_all_data(), ykey, xkey)
+        self.models[xkey+':'+feature_names] = model.Model(self.accessor.get_all_data(), feature_list, xkey)
         return self.models[xkey+':'+feature_names]
 
     def query(self, xkey, conditions):
         feature_names = ""
         for c in conditions:
-            feature_names += c.feature
+            if c.feature not in feature_names:
+                feature_names += c.feature
         if xkey+':'+feature_names not in self.models:
-            self.train(xkey, feature_names)
+            self.train(xkey, conditions)
         return self.models[xkey+':'+feature_names].predict(conditions)
 
     def saveModels(self):

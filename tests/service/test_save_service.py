@@ -25,13 +25,13 @@ class SaveServiceTest(unittest.TestCase):
         self.save_service.clear_querio_files()
 
     def test_name_is_generated_correctly(self):
-        generated_name = self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.feature_names)
+        generated_name = self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.get_feature_names())
         expected_name = 'ON-incomeFN-height_age.querio'
 
         self.assertEqual(expected_name, generated_name)
 
     def test_saving_model(self):
-        file_name = self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.feature_names)
+        file_name = self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.get_feature_names())
 
         self.assertFalse(self.save_service.model_is_saved(file_name))
 
@@ -42,22 +42,22 @@ class SaveServiceTest(unittest.TestCase):
     def test_loading_model(self):
         self.save_service.save_model(self.test_model)
 
-        loaded_model = self.save_service.load_model(self.test_model.output_name, self.test_model.feature_names)
+        loaded_model = self.save_service.load_model(self.test_model.output_name, self.test_model.get_feature_names())
 
         self.assertEqual(self.test_model.test_score, loaded_model.test_score)
         self.assertEqual(self.test_model.train_score, loaded_model.train_score)
         self.assertEqual(self.test_model.output_name, loaded_model.output_name)
-        self.assertEqual(self.test_model.feature_names, loaded_model.feature_names)
+        self.assertEqual(self.test_model.get_feature_names(), loaded_model.get_feature_names())
 
     def test_load_file(self):
         self.save_service.save_model(self.test_model)
 
-        loaded_model = self.save_service.load_file(self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.feature_names))
+        loaded_model = self.save_service.load_file(self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.get_feature_names()))
 
         self.assertEqual(self.test_model.test_score, loaded_model.test_score)
         self.assertEqual(self.test_model.train_score, loaded_model.train_score)
         self.assertEqual(self.test_model.output_name, loaded_model.output_name)
-        self.assertEqual(self.test_model.feature_names, loaded_model.feature_names)
+        self.assertEqual(self.test_model.get_feature_names(), loaded_model.get_feature_names())
 
     def test_load_file_with_invalid_name(self):
         with self.assertRaises(QuerioFileError):
@@ -88,7 +88,7 @@ class SaveServiceTest(unittest.TestCase):
         self.assertEqual(0, len(files))
 
     def test_load_invalid_file_to_model(self):
-        file_name = self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.feature_names)
+        file_name = self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.get_feature_names())
         invalid_file = open(file_name, "w+")
         invalid_file.write("INVALID")
         invalid_file.close()

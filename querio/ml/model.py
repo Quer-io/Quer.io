@@ -4,8 +4,6 @@ import operator
 import sklearn
 import sklearn.tree
 import sklearn.model_selection
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
 from functools import reduce
 import numpy as np
 import pandas as pd
@@ -18,12 +16,14 @@ from querio.ml.cond import Op
 class Model:
 
     def __init__(self, data, feature_names, output_name, max_depth=None):
-        self.feature_names = make_into_list_if_scalar(feature_names)
+        feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
-        self.feature_min_max_count = get_feature_min_max_count(data, self.feature_names)
+        self.features = {}
+        self.model_feature_names = []
+        self.feature_min_max_count = get_feature_min_max_count(data, feature_names)
+        data = self.__preprocess_data__(data, feature_names)
         if max_depth is None:
             max_depth = sys.getrecursionlimit()
-        ## data = self.__preprocess_data__(data)
 
         self.tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
@@ -34,47 +34,58 @@ class Model:
         train, test = sklearn.model_selection.train_test_split(
             data, random_state=42
         )
-
-        self.tree.fit(train[self.feature_names], train[self.output_name])
+        self.tree.fit(train[self.model_feature_names], train[self.output_name])
         self.test_score = self.tree.score(
-            test[self.feature_names], test[self.output_name]
+            test[self.model_feature_names], test[self.output_name]
         )
         self.train_score = self.tree.score(
-            train[self.feature_names], train[self.output_name]
+            train[self.model_feature_names], train[self.output_name]
         )
 
-    def __preprocess_data__(self, data):
-        le = LabelEncoder()
-        ohe = OneHotEncoder()
-        processed_data = data.copy()
-        processed_feature_names = self.feature_names.copy()
-
-        for col in data.columns:
-            if (data[col].dtype == np.bool and col in self.feature_names):
-                processed_data[col] = processed_data[col].astype(float)
-
-        for col in data.columns:
-            if (data[col].dtype in [np.object, np.str] and col in self.feature_names):
-                processed_data[col] = le.fit_transform(processed_data[col])
-                col_array = ohe.fit_transform(processed_data[col].values.reshape(-1, 1)).toarray() ## from 1D array to 2D
-                new_col_names = [col + "_" + str(int(i)) for i in range(col_array.shape[1])]
-                col_df = pd.DataFrame(col_array, columns = new_col_names)
-                del processed_data[col]
-                processed_data = pd.concat([processed_data, col_df], axis=1)
-                processed_feature_names.remove(col)
-                processed_feature_names += new_col_names
-
-        self.feature_names = processed_feature_names
-        return processed_data
+    def __preprocess_data__(self, data, feature_names):
+        categorical_features = []
+        data_columns = data.columns.copy()
+        for col in data_columns:
+            if data[col].dtype == np.bool and col in feature_names:
+                data[col] = data[col].astype(float)
+        for col in data_columns:
+            if data[col].dtype == np.object and col in feature_names:
+                data = pd.concat([data, pd.get_dummies(data[col], prefix=col)], axis=1)
+                categorical_features.append(col)
+        for feature in feature_names:
+            col_dict = {"data_type": data[feature].dtype}
+            if feature in categorical_features:
+                sub_columns = []
+                for sub in data.columns:
+                    if sub.startswith(feature + "_") and sub not in feature_names:
+                        sub_columns.append(sub)
+                col_dict["columns"] = sub_columns
+                self.model_feature_names += sub_columns
+                data.drop(feature, axis=1, inplace=True)
+            else:
+                col_dict["columns"] = [feature]
+                self.model_feature_names.append(feature)
+            self.features[feature] = col_dict
+        return data
 
     def predict(self, conditions):
         if not isinstance(conditions, list):
             raise TypeError('Conditions must be a list of Condition')
         for condition in conditions:
-            if condition.feature not in self.feature_names:
+            if condition.feature not in self.features.keys():
                 raise ValueError('{0} is not a feature name'.format(
                     condition.feature
                 ))
+            if type(condition.threshold) == type(True):
+                condition.threshold = float(condition.threshold)
+            elif len(self.features[condition.feature]["columns"]) > 1:
+                categories = self.get_categories_for_feature(condition.feature)
+                if condition.threshold not in categories:
+                    raise ValueError('{0} does not contain value \"{1}\"'.format(
+                    condition.feature, condition.threshold
+                ))
+                condition.feature = condition.feature + "_" + condition.threshold
+                condition.threshold = 1.0
 
         leaf_set = reduce(operator.and_, [
             self._query_for_one_condition(cond)
@@ -98,7 +109,7 @@ class Model:
     def _query_for_one_condition(self, condition):
         """Returns a set of all tree node indexes that match the given
         value of the given feature"""
-        feature_index = self.feature_names.index(condition.feature)
+        feature_index = self.model_feature_names.index(condition.feature)
         tree = self.tree.tree_
         return self.__recurse_tree_node(
             0, feature_index, condition.op, float(condition.threshold)
@@ -166,7 +177,17 @@ class Model:
     def export_graphviz(self):
         return sklearn.tree.export_graphviz(
             self.tree, out_file=None,
-            feature_names=self.feature_names,
+            feature_names=self.model_feature_names,
             filled=True, rounded=True,
             special_characters=True
         )
+
+    def get_features(self):
+        return self.features
+
+    def get_categories_for_feature(self, feature_name):
+        categories = []
+        if feature_name in self.features.keys():
+            for col in self.features[feature_name]["columns"]:
+                categories.append(col.split(feature_name + "_", 1)[1])
+        return categories

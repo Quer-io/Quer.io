@@ -72,7 +72,7 @@ class Model:
         if not isinstance(conditions, list):
             raise TypeError('Conditions must be a list of Condition')
         for condition in conditions:
-            if condition.feature not in self.features.keys():
+            if condition.feature not in [*self.features]:
                 raise ValueError('{0} is not a feature name'.format(
                     condition.feature
                 ))
@@ -184,10 +184,13 @@ class Model:
 
     def get_features(self):
         return self.features
+    
+    def get_feature_names(self):
+        return [*self.features]
 
     def get_categories_for_feature(self, feature_name):
         categories = []
-        if feature_name in self.features.keys():
+        if feature_name in [*self.features]:
             for col in self.features[feature_name]["columns"]:
                 categories.append(col.split(feature_name + "_", 1)[1])
         return categories

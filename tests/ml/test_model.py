@@ -17,12 +17,20 @@ class ModelTest(unittest.TestCase):
         incomes = [age * 301 for age in ages]
         heights = [age * 50 for age in ages]
         github_stars = [age * 20 + 10 for age in ages]
+        professions = [
+            'accountant', 'janitor', 'president', 'janitor', 
+            'accountant', 'programmer', 'janitor', 'programmer'
+        ]
+        is_client = [True, True, False, True, False, False, False, True]
         self.data = pd.DataFrame({
             'age': ages, 'income': incomes, 'height': heights,
-            'github_stars': github_stars
+            'github_stars': github_stars, 'profession': professions,
+            'is_client': is_client
         })
         self.models = {
             'One feature': Model(self.data, 'age', 'income'),
+            'One feature with boolean': Model(self.data, 'is_client', 'income'),
+            'One feature with categorical': Model(self.data, 'profession', 'income'),
             'Two features': Model(
                 self.data, ['age', 'height'], 'income'
             ),
@@ -36,6 +44,8 @@ class ModelTest(unittest.TestCase):
 
     @parameterized.expand([
         ('One feature', [Cond('age', Op.eq, 35)]),
+        ('One feature with boolean', [Cond('is_client', Op.eq, True)]),
+        ('One feature with categorical', [Cond('profession', Op.eq, 'janitor')]),
         ('Two features', [Cond('age', Op.eq, 35), Cond('height', Op.eq, 120)]),
     ])
     def test_predict_gives_value_in_correct_range(self, name, test_conditions):
@@ -85,6 +95,12 @@ class ModelTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.models['Two features'].predict(
                 [Cond('github_stars', Op.eq, 0)]
+            )
+
+    def test_predict_raises_ValueError_with_bad_categorical_feature_values(self):
+        with self.assertRaises(ValueError):
+            self.models['One feature with categorical'].predict(
+                [Cond('profession', Op.eq, 'firefighter')]
             )
 
     @unittest.expectedFailure

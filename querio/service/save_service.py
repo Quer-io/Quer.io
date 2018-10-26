@@ -11,7 +11,7 @@ class SaveService():
         self._src_folder = path
 
     def save_model(self, model):
-        relative_path = self._src_folder + self._generate_name_for_model_attributes(model.output_name, model.feature_names)
+        relative_path = self._src_folder + self._generate_name_for_model_attributes(model.output_name, model.get_feature_names())
         file = open(os.path.join(os.getcwd(), relative_path), 'wb+')
 
         pickle.dump(model, file)

@@ -18,7 +18,7 @@ class ModelTest(unittest.TestCase):
         heights = [age * 50 for age in ages]
         github_stars = [age * 20 + 10 for age in ages]
         professions = [
-            'accountant', 'janitor', 'president', 'janitor', 
+            'accountant', 'janitor', 'president', 'janitor',
             'accountant', 'programmer', 'janitor', 'programmer'
         ]
         is_client = [True, True, False, True, False, False, False, True]
@@ -45,7 +45,9 @@ class ModelTest(unittest.TestCase):
     @parameterized.expand([
         ('One feature', [Cond('age', Op.eq, 35)]),
         ('One feature with boolean', [Cond('is_client', Op.eq, True)]),
+        ('One feature with boolean', [Feature('is_client') == 1]),
         ('One feature with categorical', [Cond('profession', Op.eq, 'janitor')]),
+        ('One feature with categorical', [Feature('profession') == 'janitor']),
         ('Two features', [Cond('age', Op.eq, 35), Cond('height', Op.eq, 120)]),
     ])
     def test_predict_gives_value_in_correct_range(self, name, test_conditions):

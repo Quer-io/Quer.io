@@ -28,9 +28,13 @@ class Feature:
         return self.__gt__(other)
 
     def __eq__(self, other):
-        if(not isinstance(other, Real)):
+        isStr = isinstance(other, str)
+        isReal = isinstance(other, Real)
+        isBool = isinstance(other, bool)
+        if isStr or isReal or isBool:
+            return Cond(self.name, Op.eq, other)
+        else:
             return NotImplemented
-        return Cond(self.name, Op.eq, other)
 
     # def __ne__(self, other):
     #     self._checktype(other, '!=')

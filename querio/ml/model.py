@@ -20,7 +20,9 @@ class Model:
         self.output_name = output_name
         self.features = {}
         self.model_feature_names = []
-        self.feature_min_max_count = get_feature_min_max_count(data, feature_names)
+        self.feature_min_max_count = get_feature_min_max_count(
+            data, feature_names
+        )
         data = self.__preprocess_data__(data, feature_names)
         if max_depth is None:
             max_depth = sys.getrecursionlimit()
@@ -50,14 +52,17 @@ class Model:
                 data[col] = data[col].astype(float)
         for col in data_columns:
             if data[col].dtype == np.object and col in feature_names:
-                data = pd.concat([data, pd.get_dummies(data[col], prefix=col)], axis=1)
+                data = pd.concat(
+                    [data, pd.get_dummies(data[col], prefix=col)], axis=1
+                )
                 categorical_features.append(col)
         for feature in feature_names:
             col_dict = {"data_type": data[feature].dtype}
             if feature in categorical_features:
                 sub_columns = []
                 for sub in data.columns:
-                    if sub.startswith(feature + "_") and sub not in feature_names:
+                    correct_prefix = sub.startswith(feature + "_")
+                    if correct_prefix and sub not in feature_names:
                         sub_columns.append(sub)
                 col_dict["columns"] = sub_columns
                 self.model_feature_names += sub_columns
@@ -76,15 +81,17 @@ class Model:
                 raise ValueError('{0} is not a feature name'.format(
                     condition.feature
                 ))
-            if type(condition.threshold) == type(True):
+            if isinstance(condition.threshold, bool):
                 condition.threshold = float(condition.threshold)
             elif len(self.features[condition.feature]["columns"]) > 1:
                 categories = self.get_categories_for_feature(condition.feature)
                 if condition.threshold not in categories:
-                    raise ValueError('{0} does not contain value \"{1}\"'.format(
-                    condition.feature, condition.threshold
-                ))
-                condition.feature = condition.feature + "_" + condition.threshold
+                    raise ValueError(
+                        '{0} does not contain value \"{1}\"'.format(
+                            condition.feature, condition.threshold
+                        )
+                    )
+                condition.feature += "_" + condition.threshold
                 condition.threshold = 1.0
 
         leaf_set = reduce(operator.and_, [
@@ -184,7 +191,7 @@ class Model:
 
     def get_features(self):
         return self.features
-    
+
     def get_feature_names(self):
         return [*self.features]
 

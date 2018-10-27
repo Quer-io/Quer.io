@@ -4,9 +4,9 @@ import numpy as np
 from parameterized import parameterized
 
 from querio.ml import Model
-from querio.ml.cond import Cond
-from querio.ml.cond import Op
-from querio.ml.feature import Feature
+from querio.ml.expression.cond import Cond
+from querio.ml.expression.cond import Op
+from querio.ml.expression.feature import Feature
 from querio.ml.utils import make_into_list_if_scalar
 
 

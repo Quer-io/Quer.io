@@ -1,5 +1,6 @@
 from querio.db import data_accessor as da
-from querio.ml import model, cond
+from querio.ml import model
+from querio.ml.expression import Feature
 from querio.service.save_service import SaveService
 from querio.service.util_service import frequency_count
 

@@ -1,5 +1,5 @@
 from numbers import Real
-from querio.ml.cond import Cond, Op
+from querio.ml.expression.cond import Cond, Op
 
 
 class Feature:

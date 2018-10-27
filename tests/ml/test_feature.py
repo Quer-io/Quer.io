@@ -1,8 +1,8 @@
 import unittest
 from parameterized import parameterized
-from querio.ml.cond import Cond
-from querio.ml.cond import Op
-from querio.ml.feature import Feature
+from querio.ml.expression.cond import Cond
+from querio.ml.expression.cond import Op
+from querio.ml.expression.feature import Feature
 
 
 class TestFeature(unittest.TestCase):

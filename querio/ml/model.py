@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 from querio.ml.utils import *
 from querio.ml.prediction import Prediction
-from querio.ml.feature import Feature
-from querio.ml.cond import Op
+from querio.ml.expression.feature import Feature
+from querio.ml.expression.cond import Op
 
 
 class Model:

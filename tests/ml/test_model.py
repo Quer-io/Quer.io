@@ -29,8 +29,12 @@ class ModelTest(unittest.TestCase):
         })
         self.models = {
             'One feature': Model(self.data, 'age', 'income'),
-            'One feature with boolean': Model(self.data, 'is_client', 'income'),
-            'One feature with categorical': Model(self.data, 'profession', 'income'),
+            'One feature with boolean': Model(
+                self.data, 'is_client', 'income'
+            ),
+            'One feature with categorical': Model(
+                self.data, 'profession', 'income'
+            ),
             'Two features': Model(
                 self.data, ['age', 'height'], 'income'
             ),
@@ -46,7 +50,9 @@ class ModelTest(unittest.TestCase):
         ('One feature', [Cond('age', Op.eq, 35)]),
         ('One feature with boolean', [Cond('is_client', Op.eq, True)]),
         ('One feature with boolean', [Feature('is_client') == 1]),
-        ('One feature with categorical', [Cond('profession', Op.eq, 'janitor')]),
+        ('One feature with categorical', [
+            Cond('profession', Op.eq, 'janitor')
+        ]),
         ('One feature with categorical', [Feature('profession') == 'janitor']),
         ('Two features', [Cond('age', Op.eq, 35), Cond('height', Op.eq, 120)]),
     ])
@@ -99,7 +105,7 @@ class ModelTest(unittest.TestCase):
                 [Cond('github_stars', Op.eq, 0)]
             )
 
-    def test_predict_raises_ValueError_with_bad_categorical_feature_values(self):
+    def test_predict_raises_ValueError_with_bad_categorical_feature_values(self):  # noqa
         with self.assertRaises(ValueError):
             self.models['One feature with categorical'].predict(
                 [Cond('profession', Op.eq, 'firefighter')]

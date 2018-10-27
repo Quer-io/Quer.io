@@ -14,8 +14,35 @@ from querio.ml.expression.cond import Op
 
 
 class Model:
+    """A decision tree regressor extension capable of more compex queries.
+    Model uses a decision tree regressor as a foundation to predict
+    the mean and variance for samples matching a compex query.
+
+    Parameters:
+    data: pandas.DataFrame
+        The data that is queried.
+    feature_names: list of string
+        The names of the columns in the data that are used to narrow down the
+        rows.
+    output_name: string
+        The name of the column used to calculate the mean and the variance in
+        queries.
+    max_depth: int, optional
+        A limit to the maximum depth of the underlying decision tree.
+
+    Queries:
+    The queries can contain conditions for equalities and inequalities
+    between the features and constant real numbers. The conditions can be
+    combined with arbitrarily nested or and and operation.
+
+    Example queries:
+    Feature('age') == 30 -- find the mean and the variance of all 30 year olds.
+    (Feature('income') > 5000) & (Feature('age') == 40)
+    (Feature('height') > 180) | ((Feature('age') < 50) & (Feature('age') > 40))
+    """
 
     def __init__(self, data, feature_names, output_name, max_depth=None):
+        """Initialize the Model."""
         feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
         self.features = {}
@@ -74,6 +101,14 @@ class Model:
         return data
 
     def predict(self, conditions):
+        """Return the predicted mean and variance for the given conditions
+
+        Arguments:
+        conditions --  a list of Condition
+        Returns:
+        A Prediction object that contains the predicted mean and variance of
+        samples matching the given conditions.
+        """
         if not isinstance(conditions, list):
             raise TypeError('Conditions must be a list of Condition')
         for condition in conditions:
@@ -114,8 +149,7 @@ class Model:
         return Prediction(result_tuple[0], result_tuple[1])
 
     def _query_for_one_condition(self, condition):
-        """Returns a set of all tree node indexes that match the given
-        value of the given feature"""
+        """Return the set of node indexes that match the condition."""
         feature_index = self.model_feature_names.index(condition.feature)
         tree = self.tree.tree_
         return self.__recurse_tree_node(
@@ -173,15 +207,15 @@ class Model:
         return tree.children_left[node_index] == sklearn.tree._tree.TREE_LEAF
 
     def get_score_for_test(self):
-        """Returns the R^2 accuracy score of the ML model on the test data."""
+        """Return the R^2 score of the decision tree on the test data."""
         return self.test_score
 
     def get_score_for_train(self):
-        """Returns the R^2 accuracy score of the ML model on the training
-        data."""
+        """Return the R^2 score of the decision tree on the training data."""
         return self.train_score
 
     def export_graphviz(self):
+        """Return a visualization of the decision tree in graphviz format."""
         return sklearn.tree.export_graphviz(
             self.tree, out_file=None,
             feature_names=self.model_feature_names,
@@ -189,13 +223,16 @@ class Model:
             special_characters=True
         )
 
-    def get_features(self):
+    def _get_features(self):
+        """Return a dict containing the type and columns of all features."""
         return self.features
 
     def get_feature_names(self):
+        """Return the names of all the features."""
         return [*self.features]
 
     def get_categories_for_feature(self, feature_name):
+        """Return the categories for a categorical feature."""
         categories = []
         if feature_name in [*self.features]:
             for col in self.features[feature_name]["columns"]:

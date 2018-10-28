@@ -104,13 +104,13 @@ class Model:
         """Return the predicted mean and variance for the given conditions
 
         Arguments:
-        conditions --  a list of Condition
+        conditions --  a list of Cond
         Returns:
         A Prediction object that contains the predicted mean and variance of
         samples matching the given conditions.
         """
         if not isinstance(conditions, list):
-            raise TypeError('Conditions must be a list of Condition')
+            raise TypeError('Conditions must be a list of Cond')
         for condition in conditions:
             if condition.feature not in [*self.features]:
                 raise ValueError('{0} is not a feature name'.format(

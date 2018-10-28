@@ -3,6 +3,20 @@ from querio.ml.expression.cond import Cond, Op
 
 
 class Feature:
+    """A class allowing the easy creation of Cond objects.
+
+    This class allows creating Cond objects using standard python
+    comparison operators <, <=, >, >= and ==. The operators >= and <= have
+    the same behaviour as their stricter counterparts.
+
+    Parameters:
+        name: string
+            The name of the feature created Cond objects will use.
+
+    Example:
+    Feature('age') > 30 -- returns a Cond object representing the condition
+    age > 30
+    """
 
     def __init__(self, name):
         self.name = name

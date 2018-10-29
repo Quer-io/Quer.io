@@ -23,17 +23,8 @@ class DatabaseAndModelService:
     def get_accuracy_for_test(self):
         return [self.predicted_column_name, self.model.get_score_for_test()]
 
-    def get_user_defined_query(self, function, column, where, like):
-        return self.db.get_user_defined_query(function, column, where, like)
-
     def get_population_variance(self, column):
         return self.db.get_population_variance_from_db(column)
-
-    def get_filtered_variance(self, column, where, like):
-        return self.db.get_variance_from_filtered_rs(column, where, like)
-
-    def get_filtered_resultset(self, where, like):
-        return self.db.get_filtered_resultset(where, like)
 
     def get_column_names_from_db(self):
         #TODO: When DB contains more than one table, a table name needs to be passed as an argument to the db module

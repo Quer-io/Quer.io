@@ -1,8 +1,7 @@
 from querio.db import data_accessor as da
 from querio.ml import model
-from querio.ml.expression import Feature
 from querio.service.save_service import SaveService
-from querio.service.util_service import frequency_count
+from querio.service.utils import get_frequency_count
 
 
 class Interface:
@@ -60,7 +59,7 @@ class Interface:
     def get_saved_models(self):
         return self.__ss__.get_querio_files()
 
-    def frequency(self, values):
+    def get_frequency(self, values):
         data = self.accessor.get_all_data()
         if type(values) != list:
             if values in self.columns:
@@ -73,4 +72,4 @@ class Interface:
                     continue
                 else:
                     raise ValueError(str("Database doesn't contain column with the name '{}'").format(val))
-        return frequency_count(data, values)
+        return get_frequency_count(data, values)

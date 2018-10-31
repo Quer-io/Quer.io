@@ -2,6 +2,7 @@ import querio.ml as ml
 import querio.db as db
 from querio.db.data_accessor import DataAccessor
 
+
 class DatabaseAndModelService:
 
     def __init__(self, predicting_column_name, predicted_column_name, db_connection):

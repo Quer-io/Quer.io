@@ -55,7 +55,7 @@ As for now, no outside contributions will be allowed due to course work assessme
 
 ## Contributors
 - [Dennis Ahlfors](https://github.com/Dforssi)
-- [Joonas J]()
+- [Joonas J](https://github.com/JaykobJ)
 - [Kim Toivonen](https://github.com/ConstantKrieg)
 - [Mauri Frestadius](https://github.com/Suidat)
 - [Ossi Räisä](https://github.com/oraisa)

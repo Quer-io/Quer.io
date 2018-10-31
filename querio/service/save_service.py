@@ -5,7 +5,7 @@ import os
 from .exceptions.querio_file_error import QuerioFileError
 
 
-class SaveService():
+class SaveService:
 
     def __init__(self, path=""):
         self._src_folder = path
@@ -35,7 +35,6 @@ class SaveService():
             raise QuerioFileError(file_name + " could not be loaded as a model. Please train a new model", e)
         finally:
             file.close()
-
 
         return model
 

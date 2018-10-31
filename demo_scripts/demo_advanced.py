@@ -13,7 +13,7 @@ result = i.query("height", [Feature('age') > 30, Feature('income') < 6000])
 print(str(result))  # > (avg income = 1000; variance income = 4000)
 result = i.query("age", [Feature('income') == 5000])
 print(str(result))  # > (avg age = 30; variance age = 10)
-print(str(i.frequency('height')))
+print(str(i.get_frequency('height')))
 # i.saveModels()
 
 files = i.get_saved_models()

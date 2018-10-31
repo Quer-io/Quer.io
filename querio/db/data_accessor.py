@@ -9,8 +9,16 @@ import sys
 
 
 class DataAccessor():
+    '''Class that allows communication with the defined database
 
+    Parameters:
+    use_config_file: Bool
+        use defined database in querios config_file or not
+    address: String
+        users defined database address
+    '''
     def __init__(self, use_config_file, address):
+        '''Initialize the class'''
 
 
         if use_config_file:
@@ -40,6 +48,11 @@ class DataAccessor():
 
 
     def get_db_address_from_file(self):
+        '''Fetch the pre defined database
+
+        :return:
+            address of the database
+        '''
         if getattr(sys, 'frozen', False):
             APP_STATIC = os.path.join(
                 os.path.dirname(sys.executable),
@@ -58,21 +71,35 @@ class DataAccessor():
 
 
     def get_example_row_from_db(self):
-        """Gets the first row of the database and return it as a dictionary.
+        '''Gets the first row of the database and return it as a dictionary.
 
-        The keys of the dictionary are the column names of the database table,
-        the values are the values of the table corresponding to the columns.
-        """
-
+        :return:
+            first row of the database as a dictionary. Column names as keys and
+            values as corresponding column value
+        '''
         column_names = self.get_table_column_names()
         result = self.conn.execute("SELECT * FROM person").fetchone()
         return {(column_name, result[column_name]) for column_name in column_names}
 
 
     def get_table_column_names(self):
+        '''Gets the names of the table columns
+
+        :return:
+            list of table column names as string
+        '''
         return self.table.columns.keys()
 
     def get_filtered_resultset(self, where, like):
+        '''Get filtered data by specified sql query command
+
+        :param where: String
+            specifies the WHERE condition in the query
+        :param like: String
+            specifies the LIKE condition in the query
+        :return:
+            data meeting the specified query conditions as pandas DataFrame
+        '''
         try:
             check_where = self.conn.execute("SELECT {} FROM person limit 1".format(where))
             where_column = check_where.fetchone()
@@ -88,6 +115,20 @@ class DataAccessor():
             print(e)
 
     def get_user_defined_query(self,function, column, where, like):
+        '''Get data from database with user defined sql query command.
+        returns first row that matches the command result.
+
+        :param function: String
+            What is to be selected
+        :param column: String
+            Defined column name
+        :param where: String
+            Specified WHERE condition
+        :param like: String
+            Specified LIKE condition
+        :return:
+            numeric value of the first rows data
+        '''
         try:
             check_column = self.conn.execute("SELECT {} FROM person limit 1".format(column))
             check_where = self.conn.execute("SELECT {} FROM person limit 1".format(where))
@@ -121,21 +162,38 @@ class DataAccessor():
             print(e)
 
 
-    def get_population_variance_from_db(self,column):
+    def get_population_variance_from_db(self, column):
+        '''Gets the variance for all the rows in the specified column
+
+        :param column: String
+            user defined column from the table
+        :return:
+            value of the variance
+        '''
         result = self.conn.execute("SELECT var_pop({}) FROM person".format(column))
         value = result.fetchone()
         return value[0]
 
-    def get_variance_from_filtered_rs(self,column, where, like):
+    def get_variance_from_filtered_rs(self, column, where, like):
         #DOES NOT WORK YET
         result = self.conn.execute("SELECT var_pop(SELECT {} FROM person where {} = {}) FROM person".format(column, where, like))
         value = result.fetchone()
         return value[0]
 
     def get_all_data(self):
+        '''Gets all the data from age and income column in the database table
+
+        :return:
+            table data as (pandas) DataFrame
+        '''
         return pd.read_sql('SELECT * FROM person WHERE age IS NOT NULL AND income IS NOT NULL', self.engine)
 
     def get_null_count(self):
+        '''Gets the count of rows with null values in age and income column
+
+        :return:
+            result defined as string
+        '''
         nulls = pd.read_sql('SELECT count(*) FROM person WHERE age IS NULL OR income IS NULL', self.engine, None)
         value = nulls['count'].to_string(index=False)
         return "There are " + value + " rows with null values. These rows have been ignored."

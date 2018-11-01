@@ -1,9 +1,10 @@
 from querio.db import data_accessor as da
 from querio.ml import model
 from querio.service.save_service import SaveService
-from querio.service.util_service import frequency_count
+from querio.ml.expression.expression import Expression
 from querio.queryobject import QueryObject
-from querio.ml.expression import Expression
+from querio.service.utils import get_frequency_count
+
 
 class Interface:
     def __init__(self, dbpath, savepath=""):
@@ -78,7 +79,7 @@ class Interface:
             for val in values:
                 if val not in self.columns:
                     raise ValueError(str("Database doesn't contain column with the name '{}'").format(val))
-        return frequency_count(data, values)
+        return get_frequency_count(data, values)
 
     def _validate_columns(self, to_check):
             if to_check not in self.columns:

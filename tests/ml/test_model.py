@@ -4,9 +4,9 @@ import numpy as np
 from parameterized import parameterized
 
 from querio.ml import Model
-from querio.ml.cond import Cond
-from querio.ml.cond import Op
-from querio.ml.feature import Feature
+from querio.ml.expression.cond import Cond
+from querio.ml.expression.cond import Op
+from querio.ml.expression.feature import Feature
 from querio.ml.utils import make_into_list_if_scalar
 
 
@@ -18,7 +18,7 @@ class ModelTest(unittest.TestCase):
         heights = [age * 50 for age in ages]
         github_stars = [age * 20 + 10 for age in ages]
         professions = [
-            'accountant', 'janitor', 'president', 'janitor', 
+            'accountant', 'janitor', 'president', 'janitor',
             'accountant', 'programmer', 'janitor', 'programmer'
         ]
         is_client = [True, True, False, True, False, False, False, True]
@@ -29,8 +29,12 @@ class ModelTest(unittest.TestCase):
         })
         self.models = {
             'One feature': Model(self.data, 'age', 'income'),
-            'One feature with boolean': Model(self.data, 'is_client', 'income'),
-            'One feature with categorical': Model(self.data, 'profession', 'income'),
+            'One feature with boolean': Model(
+                self.data, 'is_client', 'income'
+            ),
+            'One feature with categorical': Model(
+                self.data, 'profession', 'income'
+            ),
             'Two features': Model(
                 self.data, ['age', 'height'], 'income'
             ),
@@ -45,7 +49,11 @@ class ModelTest(unittest.TestCase):
     @parameterized.expand([
         ('One feature', [Cond('age', Op.eq, 35)]),
         ('One feature with boolean', [Cond('is_client', Op.eq, True)]),
-        ('One feature with categorical', [Cond('profession', Op.eq, 'janitor')]),
+        ('One feature with boolean', [Feature('is_client') == 1]),
+        ('One feature with categorical', [
+            Cond('profession', Op.eq, 'janitor')
+        ]),
+        ('One feature with categorical', [Feature('profession') == 'janitor']),
         ('Two features', [Cond('age', Op.eq, 35), Cond('height', Op.eq, 120)]),
     ])
     def test_predict_gives_value_in_correct_range(self, name, test_conditions):
@@ -97,7 +105,7 @@ class ModelTest(unittest.TestCase):
                 [Cond('github_stars', Op.eq, 0)]
             )
 
-    def test_predict_raises_ValueError_with_bad_categorical_feature_values(self):
+    def test_predict_raises_ValueError_with_bad_categorical_feature_values(self):  # noqa
         with self.assertRaises(ValueError):
             self.models['One feature with categorical'].predict(
                 [Cond('profession', Op.eq, 'firefighter')]

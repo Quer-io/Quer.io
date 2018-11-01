@@ -85,6 +85,9 @@ class Interface:
         self._validate_columns(values)
         return get_frequency_count(data, values)
 
+    def list_columns(self):
+        return self.columns
+
     def _validate_columns(self, to_check: List[str]):
         for check in to_check:
             if check not in self.columns:

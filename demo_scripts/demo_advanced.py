@@ -16,7 +16,5 @@ print(str(result))  # > (avg age = 30; variance age = 10)
 print(str(i.frequency('height')))
 # i.saveModels()
 
-files = i.get_saved_models()
-
-for f in files:
-    print(str(f))
+for c in i.list_columns():
+    print(c)

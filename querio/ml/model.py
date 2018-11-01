@@ -152,26 +152,33 @@ class Model:
         """Return the set of node indexes that match the condition."""
         feature_index = self.model_feature_names.index(condition.feature)
         tree = self.tree.tree_
+        if condition.feature in self.feature_min_max_count:
+            feature_min_max = self.feature_min_max_count[condition.feature]
+        else:
+            feature_min_max = {'min': 0, 'max': 0}
         return self.__recurse_tree_node(
-            0, feature_index, condition.op, float(condition.threshold)
+            0, feature_index, condition.op, float(condition.threshold),
+            feature_min_max['min'], feature_min_max['max']
         )
 
-    def __recurse_tree_node(self, node_index, feature_index, op, threshold):
-        def recurse_both_children():
+    def __recurse_tree_node(
+        self, node_index, feature_index, op, threshold, min, max
+    ):
+        def recurse_both_children(isSkipping=False):
+            return recurse_right_child() | recurse_left_child()
+
+        def recurse_right_child(isSkipping=False):
+            next_min = min if isSkipping else tree.threshold[node_index]
             return self.__recurse_tree_node(
-                tree.children_left[node_index], feature_index, op, threshold
-            ) | self.__recurse_tree_node(
-                tree.children_right[node_index], feature_index, op, threshold
+                tree.children_right[node_index], feature_index, op, threshold,
+                next_min, max
             )
 
-        def recurse_right_child():
+        def recurse_left_child(isSkipping=False):
+            next_max = max if isSkipping else tree.threshold[node_index]
             return self.__recurse_tree_node(
-                tree.children_right[node_index], feature_index, op, threshold
-            )
-
-        def recurse_left_child():
-            return self.__recurse_tree_node(
-                tree.children_left[node_index], feature_index, op, threshold
+                tree.children_left[node_index], feature_index, op, threshold,
+                min, next_max
             )
 
         tree = self.tree.tree_
@@ -200,7 +207,7 @@ class Model:
                     'Unimplemented comparison {0}'.format(op)
                 )
         else:
-            return recurse_both_children()
+            return recurse_both_children(isSkipping=True)
 
     def __is_leaf_node(self, node_index):
         tree = self.tree.tree_

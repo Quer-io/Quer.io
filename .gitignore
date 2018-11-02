@@ -108,3 +108,6 @@ visualizations/
 
 # Querio save files
 *.querio
+
+# Docker data
+docker-environment/data/

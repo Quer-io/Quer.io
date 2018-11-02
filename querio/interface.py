@@ -3,8 +3,10 @@ from querio.db import data_accessor as da
 from querio.ml import model
 from querio.service.save_service import SaveService
 from querio.ml.expression.cond import Cond
+from querio.ml.expression.expression import Expression
 from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
+
 
 
 class Interface:
@@ -27,8 +29,9 @@ class Interface:
     def object_query(self, q_object: QueryObject):
         feature_names = []
         for c in q_object.expression:
-            if c.feature not in feature_names:
-                feature_names.append(c.feature)
+            if isinstance(c, Cond):
+                if c.feature not in feature_names:
+                    feature_names.append(c.feature)
 
         self._validate_columns(feature_names)
 
@@ -37,15 +40,23 @@ class Interface:
         return self.models[q_object.target+':'+feature_names]
 
     def query(self, target: str, conditions: List[Cond]):
-        feature_names = []
-        for c in conditions:
-            if c.feature not in feature_names:
-                feature_names.append(c.feature)
+        feature_names = self.__generate_list(conditions)
         self._validate_columns(feature_names)
         feature_names = sorted(feature_names)
         if target+':'.join(feature_names) not in self.models:
             self.train(target, feature_names)
-        return self.models[target+':'.join(feature_names)].predict(conditions)
+        #exp = conditions[0] & conditions[0]
+        #for x in range(1, len(conditions)):
+        #    exp = exp and conditions[x]
+
+        return self.models[target+':'.join(feature_names)].query(conditions)
+
+    def __generate_list(self, conditions):
+        feature_names = []
+        for c in conditions:
+            if c.feature not in feature_names:
+                feature_names.append(c.feature)
+        return feature_names
 
     def save_models(self):
         for m in self.models:
@@ -56,7 +67,7 @@ class Interface:
         for n in names:
             try:
                 mod = self.__ss__.load_file(n)
-                features = mod.feature_names
+                features = mod.model_feature_names
                 output = mod.output_name
 
                 self._validate_columns(features)

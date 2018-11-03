@@ -42,3 +42,11 @@ class Expression:
 
     def __or__(self, other):
         return Expression(self, BoolOp.or_, other)
+
+    def __iter__(self):
+        yield self.leftcond
+        yield self.rightcond
+
+
+
+

@@ -34,9 +34,10 @@ class Interface:
 
         self._validate_columns(feature_names)
 
-        if q_object.target+':'+q_object.expression not in self.models:
-            self.train(q_object.target, q_object.expression)
-        return self.models[q_object.target+':'+feature_names]
+        model_name = q_object.target+':'.join(feature_names)
+        if model_name not in self.models:
+            self.train(q_object.target, feature_names)
+        return self.models[model_name].query(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
         feature_names = self.__generate_list(conditions)

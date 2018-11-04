@@ -8,7 +8,6 @@ from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
 
 
-
 class Interface:
     def __init__(self, dbpath, savepath=""):
         self.accessor = da.DataAccessor(False, dbpath)
@@ -35,9 +34,10 @@ class Interface:
 
         self._validate_columns(feature_names)
 
-        if q_object.target+':'+q_object.expression not in self.models:
-            self.train(q_object.target, q_object.expression)
-        return self.models[q_object.target+':'+feature_names]
+        model_name = q_object.target+':'.join(feature_names)
+        if model_name not in self.models:
+            self.train(q_object.target, feature_names)
+        return self.models[model_name].query(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
         feature_names = self.__generate_list(conditions)
@@ -45,11 +45,11 @@ class Interface:
         feature_names = sorted(feature_names)
         if target+':'.join(feature_names) not in self.models:
             self.train(target, feature_names)
-        #exp = conditions[0] & conditions[0]
-        #for x in range(1, len(conditions)):
-        #    exp = exp and conditions[x]
+        exp = conditions[0]
+        for x in range(1, len(conditions)):
+            exp = exp and conditions[x]
 
-        return self.models[target+':'.join(feature_names)].query(conditions)
+        return self.models[target+':'.join(feature_names)].query(exp)
 
     def __generate_list(self, conditions):
         feature_names = []

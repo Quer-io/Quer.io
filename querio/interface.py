@@ -37,7 +37,7 @@ class Interface:
         if q_object.target+':'+q_object.expression not in self.models:
             self.train(q_object.target, q_object.expression)
 
-        return self.models[q_object.target+':'+feature_names].predict(q_object.expression)
+        return self.models[q_object.target+':'+feature_names].query(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
         feature_names = generate_list(conditions)

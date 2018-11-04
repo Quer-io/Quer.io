@@ -8,10 +8,9 @@ from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
 
 
-
 class Interface:
-    def __init__(self, dbpath, savepath=""):
-        self.accessor = da.DataAccessor(False, dbpath)
+    def __init__(self, dbpath,  table_name, savepath=""):
+        self.accessor = da.DataAccessor(False, dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
@@ -37,26 +36,16 @@ class Interface:
 
         if q_object.target+':'+q_object.expression not in self.models:
             self.train(q_object.target, q_object.expression)
-        return self.models[q_object.target+':'+feature_names]
+
+        return self.models[q_object.target+':'+feature_names].predict(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
-        feature_names = self.__generate_list(conditions)
+        feature_names = generate_list(conditions)
         self._validate_columns(feature_names)
-        feature_names = sorted(feature_names)
         if target+':'.join(feature_names) not in self.models:
             self.train(target, feature_names)
-        #exp = conditions[0] & conditions[0]
-        #for x in range(1, len(conditions)):
-        #    exp = exp and conditions[x]
 
         return self.models[target+':'.join(feature_names)].query(conditions)
-
-    def __generate_list(self, conditions):
-        feature_names = []
-        for c in conditions:
-            if c.feature not in feature_names:
-                feature_names.append(c.feature)
-        return feature_names
 
     def save_models(self):
         for m in self.models:
@@ -103,6 +92,14 @@ class Interface:
         for check in to_check:
             if check not in self.columns:
                 raise QuerioColumnError("No column called {} in database".format(check))
+
+
+def generate_list(conditions):
+    feature_names = []
+    for c in conditions:
+        if c.feature not in feature_names:
+            feature_names.append(c.feature)
+    return sorted(feature_names)
 
 
 class QuerioColumnError(Exception):

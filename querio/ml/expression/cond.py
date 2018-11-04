@@ -1,4 +1,6 @@
 from enum import Enum
+from querio.ml.expression.expression import Expression
+from querio.ml.expression.expressionnode import ExpressionTreeNode, BoolOp
 
 
 class Op(Enum):
@@ -8,7 +10,7 @@ class Op(Enum):
     eq = '='
 
 
-class Cond:
+class Cond(Expression):
     """A condition for a feature.
     The condition is of the format
         feature op[<, >, ==] threshold
@@ -27,3 +29,15 @@ class Cond:
         self.feature = feature
         self.op = op
         self.threshold = threshold
+
+    def __and__(self, other):
+        return ExpressionTreeNode(self, BoolOp.and_, other)
+
+    def __or__(self, other):
+        return ExpressionTreeNode(self, BoolOp.or_, other)
+
+    def __iter__(self):
+        yield self
+
+    def eval(self, condition_evaluator):
+        return condition_evaluator(self)

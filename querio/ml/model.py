@@ -11,6 +11,7 @@ from querio.ml.utils import *
 from querio.ml.prediction import Prediction
 from querio.ml.expression.feature import Feature
 from querio.ml.expression.cond import Op
+from querio.ml.expression.expression import Expression
 
 
 class Model:
@@ -100,18 +101,18 @@ class Model:
             self.features[feature] = col_dict
         return data
 
-    def predict(self, conditions):
-        """Return the predicted mean and variance for the given conditions
+    def query(self, expression):
+        """Return the predicted mean and variance for the given condition
 
         Arguments:
-        conditions --  a list of Cond
+        expression -- an Expression
         Returns:
         A Prediction object that contains the predicted mean and variance of
         samples matching the given conditions.
         """
-        if not isinstance(conditions, list):
-            raise TypeError('Conditions must be a list of Cond')
-        for condition in conditions:
+        if not isinstance(expression, Expression):
+            raise TypeError('expression must be an Expression')
+        for condition in expression:
             if condition.feature not in [*self.features]:
                 raise ValueError('{0} is not a feature name'.format(
                     condition.feature
@@ -129,10 +130,7 @@ class Model:
                 condition.feature += "_" + condition.threshold
                 condition.threshold = 1.0
 
-        leaf_set = reduce(operator.and_, [
-            self._query_for_one_condition(cond)
-            for cond in conditions
-        ])
+        leaf_set = expression.eval(self._query_for_one_condition)
         tree = self.tree.tree_
         leaf_populations = [
             Population(

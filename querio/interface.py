@@ -10,7 +10,7 @@ from querio.service.utils import get_frequency_count
 
 class Interface:
     def __init__(self, dbpath, savepath=""):
-        self.accessor = da.DataAccessor(False, dbpath)
+        self.accessor = da.DataAccessor(dbpath)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)

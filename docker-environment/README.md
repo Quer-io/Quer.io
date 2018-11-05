@@ -48,4 +48,13 @@ First you have to install Docker-CE and Docker Compose according to following in
   After this it generates a fixed number of rows exactly like the data generator in the tools folder. Rows are saved into a .csv-file and copied to the database. 
 
   
+## Additional steps for Windows
+
+When Git clones a repository it automatically converts line endings in files.
+
+This can be disabled by configuring your Git with the following command: 
+
+`git config --global core.autocrlf input`
+
+
 

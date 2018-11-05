@@ -37,5 +37,5 @@ class DatabaseAndModelService:
         return self.db.get_filtered_resultset(where, like)
 
     def get_column_names_from_db(self):
-        #TODO: When DB contains more than one table, a table name needs to be passed as an argument to the db module
+        # TODO: When DB contains more than one table, a table name needs to be passed as an argument to the db module
         return self.db.get_table_column_names()

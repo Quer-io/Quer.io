@@ -108,7 +108,7 @@ class SaveService:
     def _generate_name_for_model_attributes(self, output_name, feature_names):
         name = 'ON-'   # for attribute outputname
 
-        name += output_name + 'FN-' # for attribute featurenames
+        name += output_name + 'FN-'  # for attribute featurenames
         name += '_'.join(feature_names)
         name += '.querio'
         return name

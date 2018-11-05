@@ -39,13 +39,14 @@ class Interface:
 
         return self.models[q_object.target+':'+feature_names].query(q_object.expression)
 
+
     def query(self, target: str, conditions: List[Cond]):
         feature_names = generate_list(conditions)
         self._validate_columns(feature_names)
         if target+':'.join(feature_names) not in self.models:
             self.train(target, feature_names)
 
-        return self.models[target+':'.join(feature_names)].query(conditions)
+        return self.models[target+':'.join(feature_names)].query(exp)
 
     def save_models(self):
         for m in self.models:

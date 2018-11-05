@@ -3,7 +3,6 @@ from querio.db import data_accessor as da
 from querio.ml import model
 from querio.service.save_service import SaveService
 from querio.ml.expression.cond import Cond
-from querio.ml.expression.expression import Expression
 from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
 
@@ -22,8 +21,8 @@ class Interface:
         self._validate_columns(features)
 
         feature_names = sorted(features)
-        self.models[target+':'.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
-        return self.models[target+':'.join(feature_names)]
+        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
+        return self.models[target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
         feature_names = []
@@ -32,9 +31,10 @@ class Interface:
                 if c.feature not in feature_names:
                     feature_names.append(c.feature)
 
+        feature_names = sorted(feature_names)
         self._validate_columns(feature_names)
 
-        model_name = q_object.target+':'.join(feature_names)
+        model_name = q_object.target+':'+''.join(feature_names)
         if model_name not in self.models:
             self.train(q_object.target, feature_names)
         return self.models[model_name].query(q_object.expression)
@@ -43,13 +43,13 @@ class Interface:
         feature_names = self.__generate_list(conditions)
         self._validate_columns(feature_names)
         feature_names = sorted(feature_names)
-        if target+':'.join(feature_names) not in self.models:
+        if target+':'+''.join(feature_names) not in self.models:
             self.train(target, feature_names)
         exp = conditions[0]
         for x in range(1, len(conditions)):
             exp = exp and conditions[x]
 
-        return self.models[target+':'.join(feature_names)].query(exp)
+        return self.models[target+':'+''.join(feature_names)].query(exp)
 
     def __generate_list(self, conditions):
         feature_names = []
@@ -71,7 +71,7 @@ class Interface:
                 output = mod.output_name
 
                 self._validate_columns(features)
-                self._validate_columns(output)
+                self._validate_columns([output])
 
                 feature_names = ""
                 for s in features:

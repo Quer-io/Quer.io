@@ -8,10 +8,9 @@ import pandas as pd
 import sys
 
 
-class DataAccessor():
+class DataAccessor:
 
     def __init__(self, use_config_file, address):
-
 
         if use_config_file:
             self.get_db_address_from_file()
@@ -19,7 +18,6 @@ class DataAccessor():
             self.db_address = address
 
         # represents the core interface to the database
-        
 
         try:
             self.engine = sqlalchemy.create_engine(self.db_address)
@@ -33,11 +31,6 @@ class DataAccessor():
             print("Invalid database settings. No connection to database")
             self.connected = False
             return
-        
-        
-
-
-
 
     def get_db_address_from_file(self):
         if getattr(sys, 'frozen', False):
@@ -54,9 +47,6 @@ class DataAccessor():
         config.read(APP_STATIC)
         self.db_address = config['ORIG_DB']['db_address']
 
-
-
-
     def get_example_row_from_db(self):
         """Gets the first row of the database and return it as a dictionary.
 
@@ -67,7 +57,6 @@ class DataAccessor():
         column_names = self.get_table_column_names()
         result = self.conn.execute("SELECT * FROM person").fetchone()
         return {(column_name, result[column_name]) for column_name in column_names}
-
 
     def get_table_column_names(self):
         return self.table.columns.keys()
@@ -87,7 +76,7 @@ class DataAccessor():
             print("Something went wrong!")
             print(e)
 
-    def get_user_defined_query(self,function, column, where, like):
+    def get_user_defined_query(self, function, column, where, like):
         try:
             check_column = self.conn.execute("SELECT {} FROM person limit 1".format(column))
             check_where = self.conn.execute("SELECT {} FROM person limit 1".format(where))
@@ -120,14 +109,13 @@ class DataAccessor():
             print("Something went wrong!")
             print(e)
 
-
-    def get_population_variance_from_db(self,column):
+    def get_population_variance_from_db(self, column):
         result = self.conn.execute("SELECT var_pop({}) FROM person".format(column))
         value = result.fetchone()
         return value[0]
 
-    def get_variance_from_filtered_rs(self,column, where, like):
-        #DOES NOT WORK YET
+    def get_variance_from_filtered_rs(self, column, where, like):
+        # DOES NOT WORK YET
         result = self.conn.execute("SELECT var_pop(SELECT {} FROM person where {} = {}) FROM person".format(column, where, like))
         value = result.fetchone()
         return value[0]

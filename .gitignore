@@ -103,7 +103,7 @@ venv.bak/
 .mypy_cache/
 
 .idea/
-.vscode/    
+.vscode/
 
 visualizations/
 

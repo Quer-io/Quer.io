@@ -3,7 +3,6 @@ language: python
 python: "3.6"
 services:
   - postgresql
-  - docker
 
 before_install:
 
@@ -16,8 +15,7 @@ install:
 
 before_script: 
   - psql -c 'create database queriodb;' -U postgres
-  - docker build -t db_init travis_data_setup 
-  - docker run db_init   
+  - python travis_data_setup/travis_init_database.py 10000000 trows.csv
 
 script:
   - python -m unittest discover

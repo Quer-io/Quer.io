@@ -2,8 +2,8 @@ sudo: required
 language: python
 python: "3.6"
 services:
-  -postgresql
-  -docker
+  - postgresql
+  - docker
 
 before_install:
 
@@ -15,9 +15,9 @@ install:
   - pip install -r requirements.txt
 
 before_script: 
-  -psql -c 'create database queriodb;' -U postgres
-  -docker build -t db_init travis_data_setup 
-  -docker run db_init   
+  - psql -c 'create database queriodb;' -U postgres
+  - docker build -t db_init travis_data_setup 
+  - docker run db_init   
 
 script:
   - python -m unittest discover

@@ -1,14 +1,23 @@
 sudo: required
 language: python
 python: "3.6"
+services:
+  -postgresql
+  -docker
 
 before_install:
+
   - pip install --upgrade pip
   - pip --version
 
 install:
   - pip install Cython
   - pip install -r requirements.txt
+
+before_script: 
+  -psql -c 'create database queriodb;' -U postgres
+  -docker build -t db_init travis_data_setup 
+  -docker run db_init   
 
 script:
   - python -m unittest discover

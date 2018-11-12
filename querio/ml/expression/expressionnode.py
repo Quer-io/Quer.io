@@ -71,5 +71,5 @@ class ExpressionTreeNode(Expression):
             return left | right
         else:
             raise NotImplementedError(
-                'Unimplemented boolean op {0}'.format(op)
+                'Unimplemented boolean op {0}'.format(self.op)
             )

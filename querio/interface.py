@@ -3,60 +3,84 @@ from querio.db import data_accessor as da
 from querio.ml import model
 from querio.service.save_service import SaveService
 from querio.ml.expression.cond import Cond
-from querio.ml.expression.expression import Expression
 from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
 
 
 class Interface:
-    def __init__(self, dbpath, savepath=""):
-        self.accessor = da.DataAccessor(dbpath)
+    def __init__(self, dbpath,  table_name, savepath=""):
+        """The base class through which the Querio library can be used effectively.
+        It is recomended to use this class for queries, since it handles all necessary functions
+        for the user.
+
+        Parameters:
+        dbpath: string
+            The path to the database in the form postgres://username:password@DatabaseAddress:Port/DatabaseName
+        savepath: string, optional
+            The path that you wish to save the files into. If left blank will be the path from which the program was called.
+
+        """
+
+        self.accessor = da.DataAccessor(dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
 
     def train(self, target: str, features: list):
-        print('training new model')
+        """Trains a new model for given data using the features provided.
 
+        Arguments:
+            target: string
+                The target of the model that will be trained.
+            features: list of string
+                The column names of features that will be trained for the model
+         """
         self._validate_columns([target])
         self._validate_columns(features)
 
         feature_names = sorted(features)
-        self.models[target+':'.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
-        return self.models[target+':'.join(feature_names)]
+        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
+        return self.models[target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
+        """Run new query from models using a QueryObject.
+        This will run a query from an existing model,
+        or if no such model is found will train a new one
+        and then query from that.
+
+        Arguments:
+            q_object: QueryObject
+        Returns:
+            A Prediction object that contains the predicted mean and variance of
+            samples matching the given conditions.
+        """
+
         feature_names = []
         for c in q_object.expression:
             if isinstance(c, Cond):
                 if c.feature not in feature_names:
                     feature_names.append(c.feature)
 
+        feature_names = sorted(feature_names)
         self._validate_columns(feature_names)
 
-        model_name = q_object.target+':'.join(feature_names)
-        if model_name not in self.models:
+        if q_object.target+':'+''.join(feature_names) not in self.models:
             self.train(q_object.target, feature_names)
-        return self.models[model_name].query(q_object.expression)
+        return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
-        feature_names = self.__generate_list(conditions)
+        feature_names = generate_list(conditions)
         self._validate_columns(feature_names)
-        feature_names = sorted(feature_names)
         if target+':'.join(feature_names) not in self.models:
             self.train(target, feature_names)
-        exp = conditions[0]
-        for x in range(1, len(conditions)):
-            exp = exp and conditions[x]
+        if len(conditions) == 1:
+            exp = conditions[0]
+        else:
+            exp = conditions[0] & conditions[1]
+            for i in range(2, len(conditions)):
+                exp = exp & conditions[i]
+        return self.models[target+':'+''.join(feature_names)].query(exp)
 
-        return self.models[target+':'.join(feature_names)].query(exp)
-
-    def __generate_list(self, conditions):
-        feature_names = []
-        for c in conditions:
-            if c.feature not in feature_names:
-                feature_names.append(c.feature)
-        return feature_names
 
     def save_models(self):
         for m in self.models:
@@ -71,7 +95,7 @@ class Interface:
                 output = mod.output_name
 
                 self._validate_columns(features)
-                self._validate_columns(output)
+                self._validate_columns([output])
 
                 feature_names = ""
                 for s in features:
@@ -103,6 +127,21 @@ class Interface:
         for check in to_check:
             if check not in self.columns:
                 raise QuerioColumnError("No column called {} in database".format(check))
+
+
+def generate_list(conditions):
+    """Generates a list without duplicates from given list
+
+    Arguments:
+        conditions: a list of string
+    Returns:
+        """
+
+    feature_names = []
+    for c in conditions:
+        if c.feature not in feature_names:
+            feature_names.append(c.feature)
+    return sorted(feature_names)
 
 
 class QuerioColumnError(Exception):

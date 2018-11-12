@@ -9,7 +9,6 @@ class Prediction:
     def __str__(self):
         return 'Result:' + str(round(self.result, 2)) + ', Variance: ' + str(round(self.variance, 2))
 
-
     def __eq__(self, other):
         if type(other) is not Prediction:
             return False

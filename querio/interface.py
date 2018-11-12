@@ -21,7 +21,7 @@ class Interface:
 
         """
 
-        self.accessor = da.DataAccessor(False, dbpath, table_name)
+        self.accessor = da.DataAccessor(dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)

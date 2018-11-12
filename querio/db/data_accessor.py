@@ -12,7 +12,7 @@ from .exceptions.querio_database_error import QuerioDatabaseError
 
 class DataAccessor:
 
-    def __init__(self, use_config_file, address):
+    def __init__(self, use_config_file, address, table_name):
 
         if use_config_file:
             self.get_db_address_from_file()
@@ -25,7 +25,8 @@ class DataAccessor:
             self.engine = sqlalchemy.create_engine(self.db_address)
             self.conn = self.engine.connect()
             self.md = sqlalchemy.MetaData()
-            self.table = sqlalchemy.Table('person', self.md, autoload_with=self.engine)
+            self.table = sqlalchemy.Table(table_name, self.md, autoload_with=self.engine)
+            self.table_name = table_name
             self.connected = True
             print("Connection established")
             print(self.get_null_count())
@@ -56,7 +57,7 @@ class DataAccessor:
         """
 
         column_names = self.get_table_column_names()
-        result = self.conn.execute("SELECT * FROM person").fetchone()
+        result = self.conn.execute("SELECT * FROM {}".format(self.table_name)).fetchone()
         return {(column_name, result[column_name]) for column_name in column_names}
 
     def get_table_column_names(self):
@@ -64,13 +65,13 @@ class DataAccessor:
 
     def get_filtered_resultset(self, where, like):
         try:
-            check_where = self.conn.execute("SELECT {} FROM person limit 1".format(where))
+            check_where = self.conn.execute("SELECT {} FROM {} limit 1".format(where, self.table_name))
             where_column = check_where.fetchone()
 
             if type(where_column[0]) is int:
-                rs = pd.read_sql("SELECT * FROM person WHERE {} = {}".format(where, like), self.engine)
+                rs = pd.read_sql("SELECT * FROM {} WHERE {} = {}".format(self.table_name, where, like), self.engine)
             else:
-                rs = pd.read_sql("SELECT * FROM person WHERE {} like '{}'".format(where, like), self.engine)
+                rs = pd.read_sql("SELECT * FROM {} WHERE {} like '{}'".format(self.table_name, where, like), self.engine)
 
             return rs
         except exc.SQLAlchemyError as e:
@@ -78,28 +79,28 @@ class DataAccessor:
 
     def get_user_defined_query(self, function, column, where, like):
         try:
-            check_column = self.conn.execute("SELECT {} FROM person limit 1".format(column))
-            check_where = self.conn.execute("SELECT {} FROM person limit 1".format(where))
+            check_column = self.conn.execute("SELECT {} FROM {} limit 1".format(column, self.table_name))
+            check_where = self.conn.execute("SELECT {} FROM {} limit 1".format(where, self.table_name))
             avg_column = check_column.fetchone()
             where_column = check_where.fetchone()
 
             if function.lower() == 'avg':
                 if type(avg_column[0]) is int or type(avg_column[0]) is float:
                     if type(where_column[0]) is int or type(where_column[0]) is float:
-                        print("SELECT avg({}) FROM person WHERE {} = {}".format(column, where, like))
-                        result = self.conn.execute("SELECT avg({}) FROM person WHERE {} = {}".format(column, where, like))
+                        print("SELECT avg({}) FROM {} WHERE {} = {}".format(column, self.table_name, where, like))
+                        result = self.conn.execute("SELECT avg({}) FROM {} WHERE {} = {}".format(column, self.table_name, where, like))
                         value = result.fetchone()
                     else:
-                        result = self.conn.execute("SELECT avg({}) FROM person WHERE {} like '{}'".format(column, where, like))
+                        result = self.conn.execute("SELECT avg({}) FROM {} WHERE {} like '{}'".format(column, self.table_name, where, like))
                         value = result.fetchone()
                 else:
                     return "Bad parameter type - column has to be int!"
             elif function.lower() == 'count':
                 if type(where_column[0]) is int or type(where_column[0]) is float:
-                    result = self.conn.execute("SELECT count({}) FROM person WHERE {} = {}".format(column, where, like))
+                    result = self.conn.execute("SELECT count({}) FROM {} WHERE {} = {}".format(column, self.table_name, where, like))
                     value = result.fetchone()
                 else:
-                    result = self.conn.execute("SELECT count({}) FROM person WHERE {} like '{}'".format(column, where, like))
+                    result = self.conn.execute("SELECT count({}) FROM {} WHERE {} like '{}'".format(column, self.table_name, where, like))
                     value = result.fetchone()
             else:
                 raise QuerioDatabaseError( "Unknown function '{}' please choose from 'avg' or 'count'!".format(function.lower) )
@@ -110,20 +111,20 @@ class DataAccessor:
             raise QuerioDatabaseError("An error occured while executing database query", e)
 
     def get_population_variance_from_db(self, column):
-        result = self.conn.execute("SELECT var_pop({}) FROM person".format(column))
+        result = self.conn.execute("SELECT var_pop({}) FROM {}".format(column, self.table_name))
         value = result.fetchone()
         return value[0]
 
     def get_variance_from_filtered_rs(self, column, where, like):
         # DOES NOT WORK YET
-        result = self.conn.execute("SELECT var_pop(SELECT {} FROM person where {} = {}) FROM person".format(column, where, like))
+        result = self.conn.execute("SELECT var_pop(SELECT {} FROM {} where {} = {}) FROM {}".format(column, self.table_name, where, like, self.table_name))
         value = result.fetchone()
         return value[0]
 
     def get_all_data(self):
-        return pd.read_sql('SELECT * FROM person WHERE age IS NOT NULL AND income IS NOT NULL', self.engine)
+        return pd.read_sql('SELECT * FROM {} WHERE age IS NOT NULL AND income IS NOT NULL'.format(self.table_name), self.engine)
 
     def get_null_count(self):
-        nulls = pd.read_sql('SELECT count(*) FROM person WHERE age IS NULL OR income IS NULL', self.engine, None)
+        nulls = pd.read_sql('SELECT count(*) FROM {} WHERE age IS NULL OR income IS NULL'.format(self.table_name), self.engine, None)
         value = nulls['count'].to_string(index=False)
         return "There are " + value + " rows with null values. These rows have been ignored."

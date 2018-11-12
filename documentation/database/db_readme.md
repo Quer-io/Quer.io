@@ -1,8 +1,14 @@
 # Database information
 
-The application is currently automatically connected to an extrnal Heroku -supplied Postgres database. **We strongly recommend using the preconfigured database!**. It is also possible to use a local copy of the database.
+The application is currently automatically connected to an extrnal Heroku -supplied Postgres database. This is a very small database of < 10 000 rows mainly used for testing purposes. **We strongly recommend using one of the supplied local databases!**.
 
-## How to install a local copy of the database
+# How to install a local copy of the database
+
+## Installing the docker container with built in example database of 10 000 000 rows
+
+See [Docker readme and install guide](https://github.com/Quer-io/Quer.io/blob/master/docker-environment/README.md)
+
+## Installing a local Postgres instance with a DB of 1000 rows:
 
 NOTE! '< >' refer to user specific values and should be changed accordingly!
 

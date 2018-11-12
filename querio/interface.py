@@ -1,39 +1,86 @@
+from typing import List
 from querio.db import data_accessor as da
-from querio.ml import model, cond
+from querio.ml import model
 from querio.service.save_service import SaveService
-from querio.service.util_service import frequency_count
+from querio.ml.expression.cond import Cond
+from querio.queryobject import QueryObject
+from querio.service.utils import get_frequency_count
 
 
 class Interface:
-    def __init__(self, dbpath, savepath=""):
-        self.accessor = da.DataAccessor(False, dbpath)
+    def __init__(self, dbpath,  table_name, savepath=""):
+        """The base class through which the Querio library can be used effectively.
+        It is recomended to use this class for queries, since it handles all necessary functions
+        for the user.
+
+        Parameters:
+        dbpath: string
+            The path to the database in the form postgres://username:password@DatabaseAddress:Port/DatabaseName
+        savepath: string, optional
+            The path that you wish to save the files into. If left blank will be the path from which the program was called.
+
+        """
+
+        self.accessor = da.DataAccessor(False, dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
 
-    def train(self, xkey, features):
-        print('training new model')
-        if xkey not in self.columns:
-            raise ValueError(xkey + ': No column of this name in database')
-        if type(features) is list:
-            for f in features:
-                if f.feature not in self.columns:
-                    raise ValueError(f.feature + ': No column of this name in database')
-        feature_list = sorted(list({Cond.feature for Cond in features}))
-        feature_names = ""
-        for s in feature_list:
-            feature_names += s
-        self.models[xkey+':'+feature_names] = model.Model(self.accessor.get_all_data(), feature_list, xkey)
-        return self.models[xkey+':'+feature_names]
+    def train(self, target: str, features: list):
+        """Trains a new model for given data using the features provided.
 
-    def query(self, xkey, conditions):
-        feature_names = ""
-        for c in conditions:
-            if c.feature not in feature_names:
-                feature_names += c.feature
-        if xkey+':'+feature_names not in self.models:
-            self.train(xkey, conditions)
-        return self.models[xkey+':'+feature_names].predict(conditions)
+        Arguments:
+            target: string
+                The target of the model that will be trained.
+            features: list of string
+                The column names of features that will be trained for the model
+         """
+        self._validate_columns([target])
+        self._validate_columns(features)
+
+        feature_names = sorted(features)
+        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
+        return self.models[target+':'+''.join(feature_names)]
+
+    def object_query(self, q_object: QueryObject):
+        """Run new query from models using a QueryObject.
+        This will run a query from an existing model,
+        or if no such model is found will train a new one
+        and then query from that.
+
+        Arguments:
+            q_object: QueryObject
+        Returns:
+            A Prediction object that contains the predicted mean and variance of
+            samples matching the given conditions.
+        """
+
+        feature_names = []
+        for c in q_object.expression:
+            if isinstance(c, Cond):
+                if c.feature not in feature_names:
+                    feature_names.append(c.feature)
+
+        feature_names = sorted(feature_names)
+        self._validate_columns(feature_names)
+
+        if q_object.target+':'+''.join(feature_names) not in self.models:
+            self.train(q_object.target, feature_names)
+        return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
+
+    def query(self, target: str, conditions: List[Cond]):
+        feature_names = generate_list(conditions)
+        self._validate_columns(feature_names)
+        if target+':'.join(feature_names) not in self.models:
+            self.train(target, feature_names)
+        if len(conditions) == 1:
+            exp = conditions[0]
+        else:
+            exp = conditions[0] & conditions[1]
+            for i in range(2, len(conditions)):
+                exp = exp & conditions[i]
+        return self.models[target+':'+''.join(feature_names)].query(exp)
+
 
     def save_models(self):
         for m in self.models:
@@ -42,13 +89,20 @@ class Interface:
     def load_models(self):
         names = self.__ss__.get_querio_files()
         for n in names:
-            mod = self.__ss__.load_file(n)
-            features = mod.feature_names
-            output = mod.output_name
-            feature_names = ""
-            for s in features:
-                feature_names += s
-            self.models[output+':'+feature_names] = mod
+            try:
+                mod = self.__ss__.load_file(n)
+                features = mod.model_feature_names
+                output = mod.output_name
+
+                self._validate_columns(features)
+                self._validate_columns([output])
+
+                feature_names = ""
+                for s in features:
+                    feature_names += s
+                self.models[output+':'+feature_names] = mod
+            except QuerioColumnError:
+                continue
 
     def clear_models(self):
         self.models = {}
@@ -62,14 +116,34 @@ class Interface:
     def frequency(self, values):
         data = self.accessor.get_all_data()
         if type(values) != list:
-            if values in self.columns:
-                values = [values]
-            else:
-                raise ValueError(str("Database doesn't contain column with the name '{}'").format(values))
-        else:
-            for val in values:
-                if val in self.columns:
-                    continue
-                else:
-                    raise ValueError(str("Database doesn't contain column with the name '{}'").format(val))
-        return frequency_count(data, values)
+            values = [values]
+        self._validate_columns(values)
+        return get_frequency_count(data, values)
+
+    def list_columns(self):
+        return self.columns
+
+    def _validate_columns(self, to_check: List[str]):
+        for check in to_check:
+            if check not in self.columns:
+                raise QuerioColumnError("No column called {} in database".format(check))
+
+
+def generate_list(conditions):
+    """Generates a list without duplicates from given list
+
+    Arguments:
+        conditions: a list of string
+    Returns:
+        """
+
+    feature_names = []
+    for c in conditions:
+        if c.feature not in feature_names:
+            feature_names.append(c.feature)
+    return sorted(feature_names)
+
+
+class QuerioColumnError(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, args, kwargs)

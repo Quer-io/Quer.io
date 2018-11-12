@@ -5,7 +5,7 @@ import os
 from .exceptions.querio_file_error import QuerioFileError
 
 
-class SaveService():
+class SaveService:
 
     def __init__(self, path=""):
         self._src_folder = path
@@ -36,7 +36,6 @@ class SaveService():
         finally:
             file.close()
 
-
         return model
 
     def clear_querio_files(self):
@@ -46,7 +45,7 @@ class SaveService():
         for file in querio_files:
             os.remove(path + file)
 
-    def set_folder (self, folder_path):
+    def set_folder(self, folder_path):
         self._src_folder = folder_path
 
     def model_is_saved(self, model_name):
@@ -66,7 +65,7 @@ class SaveService():
     def _generate_name_for_model_attributes(self, output_name, feature_names):
         name = 'ON-'   # for attribute outputname
 
-        name += output_name + 'FN-' # for attribute featurenames
+        name += output_name + 'FN-'  # for attribute featurenames
         name += '_'.join(feature_names)
         name += '.querio'
         return name

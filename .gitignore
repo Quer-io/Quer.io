@@ -103,8 +103,12 @@ venv.bak/
 .mypy_cache/
 
 .idea/
+.vscode/
 
 visualizations/
 
 # Querio save files
 *.querio
+
+# Docker data
+docker-environment/data/

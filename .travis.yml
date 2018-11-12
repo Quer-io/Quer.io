@@ -1,14 +1,21 @@
 sudo: required
 language: python
 python: "3.6"
+services:
+  - postgresql
 
 before_install:
+
   - pip install --upgrade pip
   - pip --version
 
 install:
   - pip install Cython
   - pip install -r requirements.txt
+
+before_script: 
+  - psql -c 'create database queriodb;' -U postgres
+  - python travis_data_setup/travis_init_database.py 500000 trows.csv
 
 script:
   - python -m unittest discover

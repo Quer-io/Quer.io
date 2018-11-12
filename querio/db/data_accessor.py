@@ -7,6 +7,8 @@ import os
 import pandas as pd
 import sys
 
+from .exceptions.querio_database_error import QuerioDatabaseError
+
 
 class DataAccessor:
 
@@ -28,9 +30,8 @@ class DataAccessor:
             print("Connection established")
             print(self.get_null_count())
         except exc.OperationalError as e:
-            print("Invalid database settings. No connection to database")
             self.connected = False
-            return
+            raise QuerioDatabaseError("Invalid database settings. Couldn't connect to database", e)
 
     def get_db_address_from_file(self):
         if getattr(sys, 'frozen', False):
@@ -73,8 +74,7 @@ class DataAccessor:
 
             return rs
         except exc.SQLAlchemyError as e:
-            print("Something went wrong!")
-            print(e)
+            raise QuerioDatabaseError("An error occured while executing database query") from e
 
     def get_user_defined_query(self, function, column, where, like):
         try:
@@ -102,12 +102,12 @@ class DataAccessor:
                     result = self.conn.execute("SELECT count({}) FROM person WHERE {} like '{}'".format(column, where, like))
                     value = result.fetchone()
             else:
-                return "Unknown function - please choose from 'avg' or 'count'!"
+                raise QuerioDatabaseError( "Unknown function '{}' please choose from 'avg' or 'count'!".format(function.lower) )
+
             floor = math.floor(value[0])
             return floor
         except exc.SQLAlchemyError as e:
-            print("Something went wrong!")
-            print(e)
+            raise QuerioDatabaseError("An error occured while executing database query", e)
 
     def get_population_variance_from_db(self, column):
         result = self.conn.execute("SELECT var_pop({}) FROM person".format(column))

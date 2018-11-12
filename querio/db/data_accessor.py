@@ -111,13 +111,13 @@ class DataAccessor:
             print(e)
 
     def get_population_variance_from_db(self, column):
-        result = self.conn.execute("SELECT var_pop({}) FROM person".format(column))
+        result = self.conn.execute("SELECT var_pop({}) FROM {}".format(column, self.table_name))
         value = result.fetchone()
         return value[0]
 
     def get_variance_from_filtered_rs(self, column, where, like):
         # DOES NOT WORK YET
-        result = self.conn.execute("SELECT var_pop(SELECT {} FROM person where {} = {}) FROM person".format(column, where, like))
+        result = self.conn.execute("SELECT var_pop(SELECT {} FROM {} where {} = {}) FROM {}".format(column, self.table_name, where, like, self.table_name))
         value = result.fetchone()
         return value[0]
 

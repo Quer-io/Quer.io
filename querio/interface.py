@@ -74,7 +74,6 @@ class Interface:
         self._validate_columns(feature_names)
         if target+':'.join(feature_names) not in self.models:
             self.train(target, feature_names)
-        exp = None
         if len(conditions) == 1:
             exp = conditions[0]
         else:

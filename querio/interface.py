@@ -3,7 +3,6 @@ from querio.db import data_accessor as da
 from querio.ml import model
 from querio.service.save_service import SaveService
 from querio.ml.expression.cond import Cond
-from querio.ml.expression.expression import Expression
 from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
 
@@ -62,11 +61,11 @@ class Interface:
                 if c.feature not in feature_names:
                     feature_names.append(c.feature)
 
+        feature_names = sorted(feature_names)
         self._validate_columns(feature_names)
 
         if q_object.target+':'+''.join(feature_names) not in self.models:
             self.train(q_object.target, feature_names)
-
         return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
@@ -82,6 +81,7 @@ class Interface:
                 exp = exp & conditions[i]
         return self.models[target+':'+''.join(feature_names)].query(exp)
 
+
     def save_models(self):
         for m in self.models:
             self.__ss__.save_model(self.models[m])
@@ -95,7 +95,7 @@ class Interface:
                 output = mod.output_name
 
                 self._validate_columns(features)
-                self._validate_columns(output)
+                self._validate_columns([output])
 
                 feature_names = ""
                 for s in features:

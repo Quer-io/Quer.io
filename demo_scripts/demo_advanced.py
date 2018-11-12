@@ -4,7 +4,8 @@ sys.path = [os.path.dirname(__file__) + '/..'] + sys.path
 import querio as q
 from querio.ml.expression.feature import Feature
 
-dB = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5ca1733389e1dfb1dac5253a@ec2-54-217-250-0.eu-west-1.compute.amazonaws.com:5432/dab0467utv53cp"
+dB = "postgres://queriouser:pass1@0.0.0.0:5432/queriodb"
+#dB = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5ca1733389e1dfb1dac5253a@ec2-54-217-250-0.eu-west-1.compute.amazonaws.com:5432/dab0467utv53cp"
 
 i = q.Interface(dB, "person")
 # i.clear_saved_models()
@@ -16,5 +17,6 @@ print(str(result))  # > (avg age = 30; variance age = 10)
 print(str(i.frequency('height')))
 i.save_models()
 
-for c in i.list_columns():
-    print(c)
+
+#for c in i.list_columns():
+ #   print(c)

@@ -1,6 +1,7 @@
 import unittest
 
 from querio.db.data_accessor import DataAccessor
+from querio.db.exceptions.querio_database_error import QuerioDatabaseError
 
 class DataAccessorTest(unittest.TestCase):
 
@@ -10,6 +11,7 @@ class DataAccessorTest(unittest.TestCase):
     def test_get_filtered_resultset_with_invalid_columns(self):
         da = DataAccessor(False, self.db_url)
 
-        da.get_filtered_resultset("xxx", "120")
+        with self.assertRaises(QuerioDatabaseError):
+            da.get_filtered_resultset("xxx", "120")
 
     

@@ -32,7 +32,7 @@ class DataAccessor:
             print(self.get_null_count())
         except exc.OperationalError as e:
             self.connected = False
-            raise QuerioDatabaseError("Invalid database settings. Couldn't connect to database", e)
+            raise QuerioDatabaseError("Invalid database settings. Couldn't connect to database") from e
 
     def get_db_address_from_file(self):
         if getattr(sys, 'frozen', False):

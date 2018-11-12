@@ -12,6 +12,7 @@ pytz==2018.5
 scikit-learn==0.19.2
 scipy==1.1.0
 six==1.11.0
+interavals==1.6.0
 
 #Style
 pycodestyle==2.4.0

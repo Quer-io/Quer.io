@@ -9,7 +9,9 @@ class PredictTest(unittest.TestCase):
         test_prediction = Prediction(2100.4568, 23.56544)
         prediction_string = str(test_prediction)
 
-        self.assertEqual(prediction_string, 'Result:2100.46, Variance: 23.57')
+        self.assertEqual(
+            prediction_string, 'Result:2100.46, Standard deviation: 4.85'
+        )
 
     def test_prediction_equals_true_if_equals(self):
         test_prediction = Prediction(2100.4568, 23.56544)

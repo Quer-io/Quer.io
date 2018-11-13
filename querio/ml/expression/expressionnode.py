@@ -63,12 +63,28 @@ class ExpressionTreeNode(Expression):
         Parameters:
         condition_evaluator:
         """
+        def or_nodes(left, right, node):
+            if node in left and node in right:
+                return left[node] | right[node]
+            elif node in left:
+                return left[node]
+            elif node in right:
+                return right[node]
+
         left = self.leftcond.eval(condition_evaluator)
         right = self.rightcond.eval(condition_evaluator)
         if self.op is BoolOp.and_:
-            return left & right
+            node_set = left.keys() & right.keys()
+            return {
+                node: left[node] & right[node]
+                for node in node_set
+            }
         elif self.op is BoolOp.or_:
-            return left | right
+            node_set = left.keys() | right.keys()
+            return {
+                node: or_nodes(left, right, node)
+                for node in node_set
+            }
         else:
             raise NotImplementedError(
                 'Unimplemented boolean op {0}'.format(self.op)

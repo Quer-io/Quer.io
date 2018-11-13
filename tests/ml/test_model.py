@@ -4,6 +4,7 @@ import numpy as np
 from parameterized import parameterized
 
 from querio.ml import Model
+from querio.ml.model import NoMatch
 from querio.ml.expression.cond import Cond
 from querio.ml.expression.cond import Op
 from querio.ml.expression.feature import Feature
@@ -55,14 +56,14 @@ class ModelTest(unittest.TestCase):
         ('One feature with categorical', Cond('profession', Op.eq, 'janitor')),
         ('One feature with categorical', Feature('profession') == 'janitor'),
         ('Two features', ExpressionTreeNode(
-            Cond('age', Op.eq, 35), BoolOp.and_, Cond('height', Op.eq, 120)
+            Cond('age', Op.eq, 35), BoolOp.and_, Cond('height', Op.eq, 700)
         )),
-        ('Two features', (Feature('age') == 20) & (Feature('height') == 160)),
-        ('Two features', (Feature('age') == 20) | (Feature('height') == 160)),
-        ('Three features',
-            ((Feature('age') == 20) | (Feature('height') == 160))
-            & (Feature('github_stars') == 50)
-        ),
+        ('Two features', (Feature('age') == 20) & (Feature('height') == 800)),
+        ('Two features', (Feature('age') == 20) | (Feature('height') == 800)),
+        ('Three features', (
+            ((Feature('age') == 20) | (Feature('height') == 800))
+            & (Feature('github_stars') == 300)
+        )),
     ])
     def test_query_gives_value_in_correct_range(self, name, test_conditions):
         prediction = self.models[name].query(
@@ -90,29 +91,32 @@ class ModelTest(unittest.TestCase):
         )
 
     @parameterized.expand([
-        ('1', Cond('age', Op.eq, 42), 10535),
-        ('2', ExpressionTreeNode(
-            Cond('age', Op.eq, 33), BoolOp.and_, Cond('height', Op.eq, 100)
+        ('0', Cond('age', Op.eq, 42), 10535),
+        ('1', ExpressionTreeNode(
+            Cond('age', Op.eq, 33), BoolOp.and_, Cond('height', Op.eq, 600)
         ), 7926.333333333333333),
-        ('3', ExpressionTreeNode(
-            Cond('height', Op.eq, 120), BoolOp.and_,
-            Cond('github_stars', Op.eq, 54)
+        ('2', ExpressionTreeNode(
+            Cond('height', Op.eq, 700), BoolOp.and_,
+            Cond('github_stars', Op.eq, 350)
         ), 3311),
-        ('4', Cond('github_stars', Op.eq, 42), 10685.5),
-        ('5', Feature('age') == 42, 10535),
-        ('6', Feature('height') > 2500, 16404.5),
-        ('7', Feature('github_stars') > 700, 14548.333333333333333333),
-        ('8', Feature('age') > 40, 10535),
-        ('9', ExpressionTreeNode(
+        ('3', Cond('github_stars', Op.eq, 420), 10685.5),
+        ('4', Feature('age') == 42, 10535),
+        ('5', Feature('height') > 2500, 16404.5),
+        ('6', Feature('github_stars') > 700, 14548.333333333333333333),
+        ('7', Feature('age') > 40, 10535),
+        ('8', ExpressionTreeNode(
             Feature('height') < 1000, BoolOp.and_,
             Feature('github_stars') > 700
         ), 10836),
-        ('10', (
-            (Feature('height') == 1000) | (Feature('github_stars') == 100)
-        ), 10535),
-        ('11', (Feature('github_stars') == 100) | (
+        ('9', (  # done
+            (Feature('height') == 1000) | (Feature('github_stars') == 250)
+        ), 7399.2865474884),
+        ('10', (Feature('github_stars') == 100) | (
                 (Feature('github_stars') == 700) & (Feature('height') == 1500)
-        ), 10715.6),
+        ), 10836),
+        ('11', (Feature('github_stars') < 250) | (
+                (Feature('github_stars') == 700) & (Feature('height') == 1500)
+        ), 6977.5935071991),
     ])
     def test_query_same_value_as_pre_calculated(
         self, name, test_conditions, true_result
@@ -120,6 +124,20 @@ class ModelTest(unittest.TestCase):
         model = self.models['Three features']
         prediction = model.query(test_conditions)
         self.assertAlmostEqual(true_result, prediction.result)
+
+    @parameterized.expand([
+        ('Too old', Feature('age') > 100),
+        ('Contradiction', (
+            (Feature('height') > 1000) & (Feature('height') < 900)
+        )),
+        ('Too few github stars', Feature('github_stars') == 100)
+    ])
+    def test_query_raises_NoMatch_when_no_rows_match(
+        self, name, test_condition
+    ):
+        with self.assertRaises(NoMatch):
+            model = self.models['Three features']
+            model.query(test_condition)
 
     def test_query_raises_ValueError_with_bad_feature_names(self):
         with self.assertRaises(ValueError):

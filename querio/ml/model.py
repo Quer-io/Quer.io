@@ -12,6 +12,11 @@ from querio.ml.prediction import Prediction
 from querio.ml.expression.feature import Feature
 from querio.ml.expression.cond import Op
 from querio.ml.expression.expression import Expression
+from querio.ml.noderesult import NodeResultRange
+
+
+class NoMatch(Exception):
+    pass
 
 
 class Model:
@@ -130,16 +135,20 @@ class Model:
                 condition.feature += "_" + condition.threshold
                 condition.threshold = 1.0
 
-        leaf_set = expression.eval(self._query_for_one_condition)
+        leaf_dict = expression.eval(self._query_for_one_condition)
         tree = self.tree.tree_
         leaf_populations = [
             Population(
-                tree.n_node_samples[leaf],
+                tree.n_node_samples[leaf] * leaf_dict[leaf].match_fraction(),
                 tree.value[leaf][0][0],
                 tree.impurity[leaf]
             )
-            for leaf in leaf_set
+            for leaf in leaf_dict.keys()
+            if leaf_dict[leaf].match_fraction() > 0
         ]
+
+        if all(pop.samples == 0 for pop in leaf_populations):
+            raise NoMatch()
 
         result_tuple = calculate_mean_and_variance_from_populations(
             leaf_populations
@@ -155,34 +164,42 @@ class Model:
         else:
             feature_min_max = {'min': 0, 'max': 0}
         return self.__recurse_tree_node(
-            0, feature_index, condition.op, float(condition.threshold),
+            0, feature_index, condition,
             feature_min_max['min'], feature_min_max['max']
         )
 
     def __recurse_tree_node(
-        self, node_index, feature_index, op, threshold, min, max
+        self, node_index, feature_index, cond, min, max
     ):
+        op = cond.op
+        threshold = cond.threshold
+
         def recurse_both_children(isSkipping=False):
-            return recurse_right_child() | recurse_left_child()
+            right = recurse_right_child(isSkipping)
+            left = recurse_left_child(isSkipping)
+            left.update(right)
+            return left
 
         def recurse_right_child(isSkipping=False):
             next_min = min if isSkipping else tree.threshold[node_index]
             return self.__recurse_tree_node(
-                tree.children_right[node_index], feature_index, op, threshold,
+                tree.children_right[node_index], feature_index, cond,
                 next_min, max
             )
 
         def recurse_left_child(isSkipping=False):
             next_max = max if isSkipping else tree.threshold[node_index]
             return self.__recurse_tree_node(
-                tree.children_left[node_index], feature_index, op, threshold,
+                tree.children_left[node_index], feature_index, cond,
                 min, next_max
             )
 
         tree = self.tree.tree_
 
         if self.__is_leaf_node(node_index):
-            return {node_index}
+            return {
+                node_index: NodeResultRange.from_cond_and_range(min, max, cond)
+            }
 
         if tree.feature[node_index] == feature_index:
             if op is Op.eq:

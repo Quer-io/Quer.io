@@ -69,6 +69,7 @@ class Interface:
         return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
+        
         feature_names = generate_list(conditions)
         self._validate_columns(feature_names)
         if target+':'.join(feature_names) not in self.models:
@@ -81,12 +82,17 @@ class Interface:
                 exp = exp & conditions[i]
         return self.models[target+':'+''.join(feature_names)].query(exp)
 
-
     def save_models(self):
+        """Saves the models of this interface as .querio files in the path specified by savepath.
+        These can later be loaded to another interface with the load_models command."""
         for m in self.models:
             self.__ss__.save_model(self.models[m])
 
     def load_models(self):
+        """Loads models from the savepath to the interface.
+        Will only load models that are from a table with the same name as current and with the same columns
+        Will ignore any files that do not belong to current table.
+        If two tables share same table name and same column names will load the model."""
         names = self.__ss__.get_querio_files()
         for n in names:
             try:
@@ -105,12 +111,17 @@ class Interface:
                 continue
 
     def clear_models(self):
+        """Clears the models in this interface.
+        Will not delete the save files, but will remove any models in this interface instance."""
         self.models = {}
 
     def clear_saved_models(self):
+        """Removes all save files from the save path.
+        Will not remove files stored in any interface instance, but will remove all save files."""
         self.__ss__.clear_querio_files()
 
     def get_saved_models(self):
+        """Returns the names of all saved files in save path."""
         return self.__ss__.get_querio_files()
 
     def frequency(self, values):

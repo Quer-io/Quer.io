@@ -51,6 +51,10 @@ class DataAccessor:
         """
         column_names = self.get_table_column_names()
         result = self.conn.execute("SELECT * FROM {}".format(self.table_name)).fetchone()
+
+        if result is None:
+            raise QuerioDatabaseError("Could not fetch an example row from table '{}'".format(self.table_name))
+
         return {(column_name, result[column_name]) for column_name in column_names}
 
     def get_table_column_names(self):
@@ -69,7 +73,11 @@ class DataAccessor:
         :return:
             value of the variance as float
         """
-        result = self.conn.execute("SELECT var_pop({}) FROM {}".format(column, self.table_name))
+        try:
+            result = self.conn.execute("SELECT var_pop({}) FROM {}".format(column, self.table_name))
+        except exc.ProgrammingError as e:
+            raise QuerioDatabaseError("Invalid column type for '{}'. Could not get population variance".format(column)) from e
+        
         value = result.fetchone()
         return value[0]
 

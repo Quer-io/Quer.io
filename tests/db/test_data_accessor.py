@@ -8,10 +8,7 @@ class DataAccessorTest(unittest.TestCase):
     def setUp(self):
         self.db_url = "postgres://queriouser:pass1@0.0.0.0:5432/queriodb"
 
-    def test_get_filtered_resultset_with_invalid_columns(self):
-        da = DataAccessor(False, self.db_url)
-
-        with self.assertRaises(QuerioDatabaseError):
-            da.get_filtered_resultset("xxx", "120")
-
+    def test_create_data_accessor_with_invalid_table_name(self):
+       # with self.assertRaises(QuerioDatabaseError):
+        da = DataAccessor(False, self.db_url, "INVALID TABLE")
     

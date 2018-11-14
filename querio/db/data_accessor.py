@@ -27,14 +27,19 @@ class DataAccessor:
             self.engine = sqlalchemy.create_engine(self.db_address)
             self.conn = self.engine.connect()
             self.md = sqlalchemy.MetaData()
-            self.table = sqlalchemy.Table(table_name, self.md, autoload_with=self.engine)
+
+            try:
+                self.table = sqlalchemy.Table(table_name, self.md, autoload_with=self.engine)
+            except exc.NoSuchTableError as e:
+                raise QuerioDatabaseError("Could not find table '{}'".format(table_name)) from e
+
             self.table_name = table_name
             self.connected = True
             print("Connection established")
             print(self.get_null_count())
         except exc.OperationalError as e:
             self.connected = False
-            raise QuerioDatabaseError("Invalid database settings. Couldn't connect to database") from e
+            raise QuerioDatabaseError("Could not form a connection to the database") from e
 
     def get_example_row_from_db(self):
         """ Gets the first row of the database

@@ -17,8 +17,8 @@ from querio.ml.expression.expression import Expression
 
 
 class Model:
-    """A decision tree regressor extension capable of more compex queries.
-    Model uses a decision tree regressor as a foundation to predict
+    """A random forest regressor extension capable of more compex queries.
+    Model uses a random forest regressor as a foundation to predict
     the mean and variance for samples matching a compex query.
 
     Parameters:
@@ -31,7 +31,7 @@ class Model:
         The name of the column used to calculate the mean and the variance in
         queries.
     max_depth: int, optional
-        A limit to the maximum depth of the underlying decision tree.
+        A limit to the maximum depth of the underlying random forest.
 
     Queries:
     The queries can contain conditions for equalities and inequalities
@@ -142,21 +142,24 @@ class Model:
         return Prediction(mean, var)
 
     def get_score_for_test(self):
-        """Return the R^2 score of the decision tree on the test data."""
+        """Return the R^2 score of the random forest on the test data."""
         return self.test_score
 
     def get_score_for_train(self):
-        """Return the R^2 score of the decision tree on the training data."""
+        """Return the R^2 score of the random forest on the training data."""
         return self.train_score
 
-    # def export_graphviz(self):
-    #     """Return a visualization of the decision tree in graphviz format."""
-    #     return sklearn.tree.export_graphviz(
-    #         self.tree, out_file=None,
-    #         feature_names=self.model_feature_names,
-    #         filled=True, rounded=True,
-    #         special_characters=True
-    #     )
+    def export_graphviz(self):
+        """Return a visualizations of the decision trees in graphviz format."""
+        return [
+            sklearn.tree.export_graphviz(
+                tree, out_file=None,
+                feature_names=self.model_feature_names,
+                filled=True, rounded=True,
+                special_characters=True
+            )
+            for tree in self.tree.estimators_
+        ]
 
     def _get_features(self):
         """Return a dict containing the type and columns of all features."""

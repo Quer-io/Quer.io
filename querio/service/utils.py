@@ -19,6 +19,8 @@ def get_frequency_count(data, values):
             result_list.append(get_frequency_count_int(data, value))
         elif item_type is str:
             result_list.append(get_frequency_count_str(data, value))
+        elif item_type is bool:
+            result_list.append(get_frequency_count_bool(data, value))
     return result_list
 
 
@@ -68,3 +70,25 @@ def get_frequency_count_str(data, value):
     frequency_values_dict["{} frequencies".format(value)] = tmp_dict
     return frequency_values_dict
 
+
+def get_frequency_count_bool(data, value):
+    """Counts frequency for columns containing type boolean
+
+         :param data: (Pandas) DataFrame
+            data from database
+        :param value: string
+            name of the column
+        :return:
+            dictionary named by the value name and containing all frequencies
+            for rows as integer values
+        """
+    frequency_values_dict = {}
+    tmp_dict = {}
+    feature_list = data['%s' % value].values.tolist()
+    for feature in feature_list:
+        if feature not in tmp_dict :
+            tmp_dict[feature] = 1
+        else:
+            tmp_dict[feature] = tmp_dict.get(feature) + 1
+    frequency_values_dict["{} frequencies".format(value)] = tmp_dict
+    return frequency_values_dict

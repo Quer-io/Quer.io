@@ -89,38 +89,6 @@ class ModelTest(unittest.TestCase):
             prediction.result
         )
 
-    @parameterized.expand([
-        ('1', Cond('age', Op.eq, 42), 10535),
-        ('2', ExpressionTreeNode(
-            Cond('age', Op.eq, 33), BoolOp.and_, Cond('height', Op.eq, 100)
-        ), 7926.333333333333333),
-        ('3', ExpressionTreeNode(
-            Cond('height', Op.eq, 120), BoolOp.and_,
-            Cond('github_stars', Op.eq, 54)
-        ), 3311),
-        ('4', Cond('github_stars', Op.eq, 42), 10685.5),
-        ('5', Feature('age') == 42, 10535),
-        ('6', Feature('height') > 2500, 16404.5),
-        ('7', Feature('github_stars') > 700, 14548.333333333333333333),
-        ('8', Feature('age') > 40, 10535),
-        ('9', ExpressionTreeNode(
-            Feature('height') < 1000, BoolOp.and_,
-            Feature('github_stars') > 700
-        ), 10836),
-        ('10', (
-            (Feature('height') == 1000) | (Feature('github_stars') == 100)
-        ), 10535),
-        ('11', (Feature('github_stars') == 100) | (
-                (Feature('github_stars') == 700) & (Feature('height') == 1500)
-        ), 10715.6),
-    ])
-    def test_query_same_value_as_pre_calculated(
-        self, name, test_conditions, true_result
-    ):
-        model = self.models['Three features']
-        prediction = model.query(test_conditions)
-        self.assertAlmostEqual(true_result, prediction.result)
-
     def test_query_raises_ValueError_with_bad_feature_names(self):
         with self.assertRaises(ValueError):
             self.models['Two features'].query(

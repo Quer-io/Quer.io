@@ -1,13 +1,14 @@
 import pickle
 import re
 import os
-
 from .exceptions.querio_file_error import QuerioFileError
 
 
 class SaveService:
-    """Saves and loads created querio models. User can define the path where these models are stored.
-        Created files have their own naming convention and also unique file name.
+    """Saves and loads created querio models. User can define the path where
+        these models are stored.
+        Created files have their own naming convention and
+        also unique file name.
 
         Parameters:
         path: string
@@ -23,7 +24,11 @@ class SaveService:
         :param model: Model
             Created/ modified Model that the users wants to save
         """
-        relative_path = self._src_folder + self._generate_name_for_model_attributes(model.output_name, model.get_feature_names())
+        relative_path = self._src_folder +
+        self._generate_name_for_model_attributes(
+                                            model.output_name,
+                                            model.get_feature_names())
+
         file = open(os.path.join(os.getcwd(), relative_path), 'wb+')
 
         pickle.dump(model, file)
@@ -62,7 +67,10 @@ class SaveService:
         try:
             model = pickle.load(file)
         except pickle.PickleError as e:
-            raise QuerioFileError(file_name + " could not be loaded as a model. Please train a new model", e)
+            raise QuerioFileError(
+                        file_name +
+                        " could not be loaded as a model. Please train a new model",
+                        e)
         finally:
             file.close()
 
@@ -76,7 +84,7 @@ class SaveService:
         for file in querio_files:
             os.remove(path + file)
 
-    def set_folder (self, folder_path):
+    def set_folder(self, folder_path):
         """Sets new folder path
 
         :param folder_path: string

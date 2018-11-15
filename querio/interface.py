@@ -10,14 +10,16 @@ from querio.service.utils import get_frequency_count
 class Interface:
     def __init__(self, dbpath,  table_name, savepath=""):
         """The base class through which the Querio library can be used effectively.
-        It is recomended to use this class for queries, since it handles all necessary functions
-        for the user.
+        It is recomended to use this class for queries, since it handles all
+        necessary functions for the user.
 
         Parameters:
         dbpath: string
-            The path to the database in the form postgres://username:password@DatabaseAddress:Port/DatabaseName
+            The path to the database in the form
+            postgres://username:password@DatabaseAddress:Port/DatabaseName
         savepath: string, optional
-            The path that you wish to save the files into. If left blank will be the path from which the program was called.
+            The path that you wish to save the files into.
+            If left blank will be the path from which the program was called.
 
         """
 
@@ -51,8 +53,8 @@ class Interface:
         Arguments:
             q_object: QueryObject
         Returns:
-            A Prediction object that contains the predicted mean and variance of
-            samples matching the given conditions.
+            A Prediction object that contains the predicted mean and variance
+            of samples matching the given conditions.
         """
 
         feature_names = []

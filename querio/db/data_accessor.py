@@ -84,7 +84,7 @@ class DataAccessor:
         query_end = ''.join(query_end)
         return pd.read_sql(
             (query_start + query_end).format(self.table_name),
-            self.engine, chunksize=100000
+            self.engine, chunksize=1000000
         )
 
     def get_null_count(self):

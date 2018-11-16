@@ -24,7 +24,10 @@ class Model:
 
     Parameters:
     data: pandas.DataFrame
-        The data that is queried.
+        The data that is queried. If the DataFrame was created with a pandas
+        read-method with chunksize set, one decision tree is created for each
+        chunk. Queries then return the mean result of all the query on all
+        of the trees.
     feature_names: list of string
         The names of the columns in the data that are used to narrow down the
         rows.
@@ -173,11 +176,11 @@ class Model:
         return Prediction(mean, var)
 
     def get_score_for_test(self):
-        """Return the R^2 score of the random forest on the test data."""
+        """Return the mean R^2 score of the decision trees on the test data."""
         return sum(self.test_scores) / len(self.test_scores)
 
     def get_score_for_train(self):
-        """Return the R^2 score of the random forest on the training data."""
+        """Return the mean R^2 score of the decision trees on the training data."""  # noqa
         return sum(self.train_scores) / len(self.train_scores)
 
     def export_graphviz(self):
@@ -189,7 +192,7 @@ class Model:
                 filled=True, rounded=True,
                 special_characters=True
             )
-            for tree in self.tree.estimators_
+            for tree in self.trees
         ]
 
     def _get_features(self):

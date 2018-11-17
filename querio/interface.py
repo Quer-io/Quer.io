@@ -41,7 +41,10 @@ class Interface:
         self._validate_columns(features)
 
         feature_names = sorted(features)
-        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
+        self.models[target+':'+''.join(feature_names)] = model.Model(
+                                    self.accessor.get_all_data(),
+                                    features,
+                                    target)
         return self.models[target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
@@ -68,7 +71,8 @@ class Interface:
 
         if q_object.target+':'+''.join(feature_names) not in self.models:
             self.train(q_object.target, feature_names)
-        return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
+        return self.models[q_object.target+':'+''.join(feature_names)].query(
+                                                        q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
         feature_names = generate_list(conditions)
@@ -82,7 +86,6 @@ class Interface:
             for i in range(2, len(conditions)):
                 exp = exp & conditions[i]
         return self.models[target+':'+''.join(feature_names)].query(exp)
-
 
     def save_models(self):
         for m in self.models:
@@ -128,7 +131,8 @@ class Interface:
     def _validate_columns(self, to_check: List[str]):
         for check in to_check:
             if check not in self.columns:
-                raise QuerioColumnError("No column called {} in database".format(check))
+                raise QuerioColumnError(
+                    "No column called {} in database".format(check))
 
 
 def generate_list(conditions):

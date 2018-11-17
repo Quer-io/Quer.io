@@ -73,7 +73,7 @@ class SaveService:
         except pickle.PickleError as e:
             raise QuerioFileError(
                         file_name +
-                        """ could not be loaded as a model. 
+                        """ could not be loaded as a model.
                         Please train a new model""",
                         e)
         finally:

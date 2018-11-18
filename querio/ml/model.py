@@ -3,30 +3,31 @@ import sys
 import operator
 import sklearn
 import sklearn.tree
+import sklearn.ensemble
 import sklearn.model_selection
 from functools import reduce
 import numpy as np
 import pandas as pd
 from querio.ml.utils import *
+from querio.ml.treetraversal import query_one_tree
 from querio.ml.prediction import Prediction
 from querio.ml.expression.feature import Feature
 from querio.ml.expression.cond import Op
 from querio.ml.expression.expression import Expression
-from querio.ml.noderesult import NodeResultRange
-
-
-class NoMatch(Exception):
-    pass
 
 
 class Model:
     """A decision tree regressor extension capable of more compex queries.
+
     Model uses a decision tree regressor as a foundation to predict
     the mean and variance for samples matching a compex query.
 
     Parameters:
     data: pandas.DataFrame
-        The data that is queried.
+        The data that is queried. If the DataFrame was created with a pandas
+        read-method with chunksize set, one decision tree is created for each
+        chunk. Queries then return the mean result of all the query on all
+        of the trees.
     feature_names: list of string
         The names of the columns in the data that are used to narrow down the
         rows.
@@ -52,32 +53,63 @@ class Model:
         feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
         self.features = {}
+        self.feature_names = feature_names
         self.model_feature_names = []
-        self.feature_min_max_count = get_feature_min_max_count(
-            data, feature_names
-        )
-        data = self.__preprocess_data__(data, feature_names)
+        self.test_scores = []
+        self.train_scores = []
         if max_depth is None:
-            max_depth = sys.getrecursionlimit()
+            self.max_depth = sys.getrecursionlimit()
+        else:
+            self.max_depth = max_depth
 
-        self.tree = sklearn.tree.DecisionTreeRegressor(
+        self.trees = []
+
+        self.feature_min_max_count = None
+        if isinstance(data, pd.DataFrame):
+            self.process_chunk(data)
+        else:
+            for i, chunk in enumerate(data):
+                self.process_chunk(chunk)
+
+    def process_chunk(self, chunk):
+        def update_min_max_count_dict(key, dict1, dict2):
+            return {
+                'max': max(dict1[key]['max'], dict2[key]['max']),
+                'min': max(dict1[key]['min'], dict2[key]['min']),
+                'count': dict1[key]['count'] + dict2[key]['count'],
+            }
+
+        new_min_max_count = get_feature_min_max_count(
+            chunk, self.feature_names
+        )
+        if self.feature_min_max_count is None:
+            self.feature_min_max_count = new_min_max_count
+        else:
+            self.feature_min_max_count = {
+                key: update_min_max_count_dict(
+                    key, self.feature_min_max_count, new_min_max_count
+                )
+                for key in self.feature_names
+            }
+        chunk = self.__preprocess_data(chunk, self.feature_names)
+        tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
             random_state=42,
-            max_depth=min(max_depth, sys.getrecursionlimit() / 2 - 10)
+            max_depth=min(self.max_depth, sys.getrecursionlimit() / 2 - 10),
         )
-
         train, test = sklearn.model_selection.train_test_split(
-            data, random_state=42
+            chunk, random_state=42
         )
-        self.tree.fit(train[self.model_feature_names], train[self.output_name])
-        self.test_score = self.tree.score(
+        tree.fit(train[self.model_feature_names], train[self.output_name])
+        self.test_scores.append(tree.score(
             test[self.model_feature_names], test[self.output_name]
-        )
-        self.train_score = self.tree.score(
+        ))
+        self.train_scores.append(tree.score(
             train[self.model_feature_names], train[self.output_name]
-        )
+        ))
+        self.trees.append(tree)
 
-    def __preprocess_data__(self, data, feature_names):
+    def __preprocess_data(self, data, feature_names):
         categorical_features = []
         data_columns = data.columns.copy()
         for col in data_columns:
@@ -135,115 +167,125 @@ class Model:
                 condition.feature += "_" + condition.threshold
                 condition.threshold = 1.0
 
-        leaf_dict = expression.eval(self._query_for_one_condition)
-        tree = self.tree.tree_
-        leaf_populations = [
-            Population(
-                tree.n_node_samples[leaf] * leaf_dict[leaf].match_fraction(),
-                tree.value[leaf][0][0],
-                tree.impurity[leaf]
-            )
-            for leaf in leaf_dict.keys()
-            if leaf_dict[leaf].match_fraction() > 0
+    #     leaf_dict = expression.eval(self._query_for_one_condition)
+    #     tree = self.tree.tree_
+    #     leaf_populations = [
+    #         Population(
+    #             tree.n_node_samples[leaf] * leaf_dict[leaf].match_fraction(),
+    #             tree.value[leaf][0][0],
+    #             tree.impurity[leaf]
+    #         )
+    #         for leaf in leaf_dict.keys()
+    #         if leaf_dict[leaf].match_fraction() > 0
+    #     ]
+    #
+    #     if all(pop.samples == 0 for pop in leaf_populations):
+    #         raise NoMatch()
+    #
+    #     result_tuple = calculate_mean_and_variance_from_populations(
+    #         leaf_populations
+    #     )
+    #     return Prediction(result_tuple[0], result_tuple[1])
+    #
+    # def _query_for_one_condition(self, condition):
+    #     """Return the set of node indexes that match the condition."""
+    #     feature_index = self.model_feature_names.index(condition.feature)
+    #     tree = self.tree.tree_
+    #     if condition.feature in self.feature_min_max_count:
+    #         feature_min_max = self.feature_min_max_count[condition.feature]
+    #     else:
+    #         feature_min_max = {'min': 0, 'max': 0}
+    #     return self.__recurse_tree_node(
+    #         0, feature_index, condition,
+    #         feature_min_max['min'], feature_min_max['max']
+    #     )
+    #
+    # def __recurse_tree_node(
+    #     self, node_index, feature_index, cond, min, max
+    # ):
+    #     op = cond.op
+    #     threshold = cond.threshold
+    #
+    #     def recurse_both_children(isSkipping=False):
+    #         right = recurse_right_child(isSkipping)
+    #         left = recurse_left_child(isSkipping)
+    #         left.update(right)
+    #         return left
+    #
+    #     def recurse_right_child(isSkipping=False):
+    #         next_min = min if isSkipping else tree.threshold[node_index]
+    #         return self.__recurse_tree_node(
+    #             tree.children_right[node_index], feature_index, cond,
+    #             next_min, max
+    #         )
+    #
+    #     def recurse_left_child(isSkipping=False):
+    #         next_max = max if isSkipping else tree.threshold[node_index]
+    #         return self.__recurse_tree_node(
+    #             tree.children_left[node_index], feature_index, cond,
+    #             min, next_max
+    #         )
+    #
+    #     tree = self.tree.tree_
+    #
+    #     if self.__is_leaf_node(node_index):
+    #         return {
+    #             node_index: NodeResultRange.from_cond_and_range(min, max, cond)
+    #         }
+    #
+    #     if tree.feature[node_index] == feature_index:
+    #         if op is Op.eq:
+    #             if threshold <= tree.threshold[node_index]:
+    #                 return recurse_left_child()
+    #             else:
+    #                 return recurse_right_child()
+    #         elif op is Op.lt:
+    #             if threshold <= tree.threshold[node_index]:
+    #                 return recurse_left_child()
+    #             else:
+    #                 return recurse_both_children()
+    #         elif op is Op.gt:
+    #             if threshold < tree.threshold[node_index]:
+    #                 return recurse_both_children()
+    #             else:
+    #                 return recurse_right_child()
+    #         else:
+    #             raise NotImplementedError(
+    #                 'Unimplemented comparison {0}'.format(op)
+    #             )
+    #     else:
+    #         return recurse_both_children(isSkipping=True)
+    #
+    # def __is_leaf_node(self, node_index):
+    #     tree = self.tree.tree_
+    #     return tree.children_left[node_index] == sklearn.tree._tree.TREE_LEAF
+        results = [
+            query_one_tree(decision_tree, expression, self.model_feature_names, self.feature_min_max_count)
+            for decision_tree in self.trees
         ]
-
-        if all(pop.samples == 0 for pop in leaf_populations):
-            raise NoMatch()
-
-        result_tuple = calculate_mean_and_variance_from_populations(
-            leaf_populations
-        )
-        return Prediction(result_tuple[0], result_tuple[1])
-
-    def _query_for_one_condition(self, condition):
-        """Return the set of node indexes that match the condition."""
-        feature_index = self.model_feature_names.index(condition.feature)
-        tree = self.tree.tree_
-        if condition.feature in self.feature_min_max_count:
-            feature_min_max = self.feature_min_max_count[condition.feature]
-        else:
-            feature_min_max = {'min': 0, 'max': 0}
-        return self.__recurse_tree_node(
-            0, feature_index, condition,
-            feature_min_max['min'], feature_min_max['max']
-        )
-
-    def __recurse_tree_node(
-        self, node_index, feature_index, cond, min, max
-    ):
-        op = cond.op
-        threshold = cond.threshold
-
-        def recurse_both_children(isSkipping=False):
-            right = recurse_right_child(isSkipping)
-            left = recurse_left_child(isSkipping)
-            left.update(right)
-            return left
-
-        def recurse_right_child(isSkipping=False):
-            next_min = min if isSkipping else tree.threshold[node_index]
-            return self.__recurse_tree_node(
-                tree.children_right[node_index], feature_index, cond,
-                next_min, max
-            )
-
-        def recurse_left_child(isSkipping=False):
-            next_max = max if isSkipping else tree.threshold[node_index]
-            return self.__recurse_tree_node(
-                tree.children_left[node_index], feature_index, cond,
-                min, next_max
-            )
-
-        tree = self.tree.tree_
-
-        if self.__is_leaf_node(node_index):
-            return {
-                node_index: NodeResultRange.from_cond_and_range(min, max, cond)
-            }
-
-        if tree.feature[node_index] == feature_index:
-            if op is Op.eq:
-                if threshold <= tree.threshold[node_index]:
-                    return recurse_left_child()
-                else:
-                    return recurse_right_child()
-            elif op is Op.lt:
-                if threshold <= tree.threshold[node_index]:
-                    return recurse_left_child()
-                else:
-                    return recurse_both_children()
-            elif op is Op.gt:
-                if threshold < tree.threshold[node_index]:
-                    return recurse_both_children()
-                else:
-                    return recurse_right_child()
-            else:
-                raise NotImplementedError(
-                    'Unimplemented comparison {0}'.format(op)
-                )
-        else:
-            return recurse_both_children(isSkipping=True)
-
-    def __is_leaf_node(self, node_index):
-        tree = self.tree.tree_
-        return tree.children_left[node_index] == sklearn.tree._tree.TREE_LEAF
+        mean = sum([result[0] for result in results]) / len(results)
+        var = sum([result[1] for result in results]) / len(results)
+        return Prediction(mean, var)
 
     def get_score_for_test(self):
-        """Return the R^2 score of the decision tree on the test data."""
-        return self.test_score
+        """Return the mean R^2 score of the decision trees on the test data."""
+        return sum(self.test_scores) / len(self.test_scores)
 
     def get_score_for_train(self):
-        """Return the R^2 score of the decision tree on the training data."""
-        return self.train_score
+        """Return the mean R^2 score of the decision trees on the training data."""  # noqa
+        return sum(self.train_scores) / len(self.train_scores)
 
     def export_graphviz(self):
-        """Return a visualization of the decision tree in graphviz format."""
-        return sklearn.tree.export_graphviz(
-            self.tree, out_file=None,
-            feature_names=self.model_feature_names,
-            filled=True, rounded=True,
-            special_characters=True
-        )
+        """Return a visualizations of the decision trees in graphviz format."""
+        return [
+            sklearn.tree.export_graphviz(
+                tree, out_file=None,
+                feature_names=self.model_feature_names,
+                filled=True, rounded=True,
+                special_characters=True
+            )
+            for tree in self.trees
+        ]
 
     def _get_features(self):
         """Return a dict containing the type and columns of all features."""

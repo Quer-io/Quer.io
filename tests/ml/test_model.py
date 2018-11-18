@@ -2,9 +2,10 @@ import unittest
 import pandas as pd
 import numpy as np
 from parameterized import parameterized
+import os.path
 
 from querio.ml import Model
-from querio.ml.model import NoMatch
+from querio.ml import NoMatch
 from querio.ml.expression.cond import Cond
 from querio.ml.expression.cond import Op
 from querio.ml.expression.feature import Feature
@@ -91,41 +92,6 @@ class ModelTest(unittest.TestCase):
         )
 
     @parameterized.expand([
-        ('0', Cond('age', Op.eq, 42), 10535),
-        ('1', ExpressionTreeNode(
-            Cond('age', Op.eq, 33), BoolOp.and_, Cond('height', Op.eq, 600)
-        ), 7926.333333333333333),
-        ('2', ExpressionTreeNode(
-            Cond('height', Op.eq, 700), BoolOp.and_,
-            Cond('github_stars', Op.eq, 350)
-        ), 3311),
-        ('3', Cond('github_stars', Op.eq, 420), 10685.5),
-        ('4', Feature('age') == 42, 10535),
-        ('5', Feature('height') > 2500, 16404.5),
-        ('6', Feature('github_stars') > 700, 14548.333333333333333333),
-        ('7', Feature('age') > 40, 10535),
-        ('8', ExpressionTreeNode(
-            Feature('height') < 1000, BoolOp.and_,
-            Feature('github_stars') > 700
-        ), 10836),
-        ('9', (  # done
-            (Feature('height') == 1000) | (Feature('github_stars') == 250)
-        ), 7399.2865474884),
-        ('10', (Feature('github_stars') == 100) | (
-                (Feature('github_stars') == 700) & (Feature('height') == 1500)
-        ), 10836),
-        ('11', (Feature('github_stars') < 250) | (
-                (Feature('github_stars') == 700) & (Feature('height') == 1500)
-        ), 6977.5935071991),
-    ])
-    def test_query_same_value_as_pre_calculated(
-        self, name, test_conditions, true_result
-    ):
-        model = self.models['Three features']
-        prediction = model.query(test_conditions)
-        self.assertAlmostEqual(true_result, prediction.result)
-
-    @parameterized.expand([
         ('Too old', Feature('age') > 100),
         ('Contradiction', (
             (Feature('height') > 1000) & (Feature('height') < 900)
@@ -174,6 +140,14 @@ class ModelTest(unittest.TestCase):
     def test_test_score_is_sensible(self, name):
         score = self.models[name].get_score_for_test()
         self.assertLessEqual(score, 1)
+
+    def test_loading_by_chunk(self):
+        data = pd.read_csv(
+            os.path.join(os.path.dirname(__file__), '1000.csv'), chunksize=100
+        )
+        model = Model(data, ['age', 'height'], 'income')
+        pred = model.query(Feature('age') > 20)
+        self.assertEqual(len(model.trees), 10)
 
     def __render_graph(self, model, name):
         import graphviz

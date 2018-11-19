@@ -10,14 +10,16 @@ from querio.service.utils import get_frequency_count
 class Interface:
     def __init__(self, dbpath,  table_name, savepath=""):
         """The base class through which the Querio library can be used effectively.
-        It is recomended to use this class for queries, since it handles all necessary functions
-        for the user.
+        It is recomended to use this class for queries, since it handles all
+        necessary functions for the user.
 
         Parameters:
         dbpath: string
-            The path to the database in the form postgres://username:password@DatabaseAddress:Port/DatabaseName
+            The path to the database in the form
+            postgres://username:password@DatabaseAddress:Port/DatabaseName
         savepath: string, optional
-            The path that you wish to save the files into. If left blank will be the path from which the program was called.
+            The path that you wish to save the files into.
+            If left blank will be the path from which the program was called.
 
         """
 
@@ -39,7 +41,10 @@ class Interface:
         self._validate_columns(features)
 
         feature_names = sorted(features)
-        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
+        self.models[target+':'+''.join(feature_names)] = model.Model(
+                                    self.accessor.get_all_data(),
+                                    features,
+                                    target)
         return self.models[target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
@@ -51,8 +56,8 @@ class Interface:
         Arguments:
             q_object: QueryObject
         Returns:
-            A Prediction object that contains the predicted mean and variance of
-            samples matching the given conditions.
+            A Prediction object that contains the predicted mean and variance
+            of samples matching the given conditions.
         """
 
         feature_names = []
@@ -66,7 +71,8 @@ class Interface:
 
         if q_object.target+':'+''.join(feature_names) not in self.models:
             self.train(q_object.target, feature_names)
-        return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
+        return self.models[q_object.target+':'+''.join(feature_names)].query(
+                                                        q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
         feature_names = generate_list(conditions)
@@ -80,7 +86,6 @@ class Interface:
             for i in range(2, len(conditions)):
                 exp = exp & conditions[i]
         return self.models[target+':'+''.join(feature_names)].query(exp)
-
 
     def save_models(self):
         for m in self.models:
@@ -126,7 +131,8 @@ class Interface:
     def _validate_columns(self, to_check: List[str]):
         for check in to_check:
             if check not in self.columns:
-                raise QuerioColumnError("No column called {} in database".format(check))
+                raise QuerioColumnError(
+                    "No column called {} in database".format(check))
 
 
 def generate_list(conditions):

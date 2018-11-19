@@ -2,6 +2,7 @@ import unittest
 import pandas as pd
 import numpy as np
 from parameterized import parameterized
+import os.path
 
 from querio.ml import Model
 from querio.ml.expression.cond import Cond
@@ -124,6 +125,14 @@ class ModelTest(unittest.TestCase):
     def test_test_score_is_sensible(self, name):
         score = self.models[name].get_score_for_test()
         self.assertLessEqual(score, 1)
+
+    def test_loading_by_chunk(self):
+        data = pd.read_csv(
+            os.path.join(os.path.dirname(__file__), '1000.csv'), chunksize=100
+        )
+        model = Model(data, ['age', 'height'], 'income')
+        pred = model.query(Feature('age') > 20)
+        self.assertEqual(len(model.trees), 10)
 
     def __render_graph(self, model, name):
         import graphviz

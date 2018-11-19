@@ -17,13 +17,17 @@ from querio.ml.expression.expression import Expression
 
 
 class Model:
-    """A random forest regressor extension capable of more compex queries.
-    Model uses a random forest regressor as a foundation to predict
+    """A decision tree regressor extension capable of more compex queries.
+
+    Model uses a decision tree regressor as a foundation to predict
     the mean and variance for samples matching a compex query.
 
     Parameters:
     data: pandas.DataFrame
-        The data that is queried.
+        The data that is queried. If the DataFrame was created with a pandas
+        read-method with chunksize set, one decision tree is created for each
+        chunk. Queries then return the mean result of all the query on all
+        of the trees.
     feature_names: list of string
         The names of the columns in the data that are used to narrow down the
         rows.
@@ -31,7 +35,7 @@ class Model:
         The name of the column used to calculate the mean and the variance in
         queries.
     max_depth: int, optional
-        A limit to the maximum depth of the underlying random forest.
+        A limit to the maximum depth of the underlying decision tree.
 
     Queries:
     The queries can contain conditions for equalities and inequalities
@@ -49,33 +53,63 @@ class Model:
         feature_names = make_into_list_if_scalar(feature_names)
         self.output_name = output_name
         self.features = {}
+        self.feature_names = feature_names
         self.model_feature_names = []
-        self.feature_min_max_count = get_feature_min_max_count(
-            data, feature_names
-        )
-        data = self.__preprocess_data__(data, feature_names)
+        self.test_scores = []
+        self.train_scores = []
         if max_depth is None:
-            max_depth = sys.getrecursionlimit()
+            self.max_depth = sys.getrecursionlimit()
+        else:
+            self.max_depth = max_depth
 
-        self.tree = sklearn.ensemble.RandomForestRegressor(
+        self.trees = []
+
+        self.feature_min_max_count = None
+        if isinstance(data, pd.DataFrame):
+            self.process_chunk(data)
+        else:
+            for i, chunk in enumerate(data):
+                self.process_chunk(chunk)
+
+    def process_chunk(self, chunk):
+        def update_min_max_count_dict(key, dict1, dict2):
+            return {
+                'max': max(dict1[key]['max'], dict2[key]['max']),
+                'min': max(dict1[key]['min'], dict2[key]['min']),
+                'count': dict1[key]['count'] + dict2[key]['count'],
+            }
+
+        new_min_max_count = get_feature_min_max_count(
+            chunk, self.feature_names
+        )
+        if self.feature_min_max_count is None:
+            self.feature_min_max_count = new_min_max_count
+        else:
+            self.feature_min_max_count = {
+                key: update_min_max_count_dict(
+                    key, self.feature_min_max_count, new_min_max_count
+                )
+                for key in self.feature_names
+            }
+        chunk = self.__preprocess_data(chunk, self.feature_names)
+        tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
             random_state=42,
-            max_depth=min(max_depth, sys.getrecursionlimit() / 2 - 10),
-            n_estimators=10,
+            max_depth=min(self.max_depth, sys.getrecursionlimit() / 2 - 10),
         )
-
         train, test = sklearn.model_selection.train_test_split(
-            data, random_state=42
+            chunk, random_state=42
         )
-        self.tree.fit(train[self.model_feature_names], train[self.output_name])
-        self.test_score = self.tree.score(
+        tree.fit(train[self.model_feature_names], train[self.output_name])
+        self.test_scores.append(tree.score(
             test[self.model_feature_names], test[self.output_name]
-        )
-        self.train_score = self.tree.score(
+        ))
+        self.train_scores.append(tree.score(
             train[self.model_feature_names], train[self.output_name]
-        )
+        ))
+        self.trees.append(tree)
 
-    def __preprocess_data__(self, data, feature_names):
+    def __preprocess_data(self, data, feature_names):
         categorical_features = []
         data_columns = data.columns.copy()
         for col in data_columns:
@@ -135,19 +169,19 @@ class Model:
 
         results = [
             query_one_tree(decision_tree, expression, self.model_feature_names)
-            for decision_tree in self.tree.estimators_
+            for decision_tree in self.trees
         ]
         mean = sum([result[0] for result in results]) / len(results)
         var = sum([result[1] for result in results]) / len(results)
         return Prediction(mean, var)
 
     def get_score_for_test(self):
-        """Return the R^2 score of the random forest on the test data."""
-        return self.test_score
+        """Return the mean R^2 score of the decision trees on the test data."""
+        return sum(self.test_scores) / len(self.test_scores)
 
     def get_score_for_train(self):
-        """Return the R^2 score of the random forest on the training data."""
-        return self.train_score
+        """Return the mean R^2 score of the decision trees on the training data."""  # noqa
+        return sum(self.train_scores) / len(self.train_scores)
 
     def export_graphviz(self):
         """Return a visualizations of the decision trees in graphviz format."""
@@ -158,7 +192,7 @@ class Model:
                 filled=True, rounded=True,
                 special_characters=True
             )
-            for tree in self.tree.estimators_
+            for tree in self.trees
         ]
 
     def _get_features(self):

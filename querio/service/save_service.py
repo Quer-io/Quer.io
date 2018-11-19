@@ -14,6 +14,7 @@ class SaveService:
         path: string
             File path where the models are stored
     """
+
     def __init__(self, path=""):
         """Initialize the SaveService"""
         self._src_folder = path

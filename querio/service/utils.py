@@ -67,4 +67,3 @@ def get_frequency_count_str(data, value):
             tmp_dict[feature] = tmp_dict.get(feature) + 1
     frequency_values_dict["{} frequencies".format(value)] = tmp_dict
     return frequency_values_dict
-

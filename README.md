@@ -6,6 +6,8 @@
 ## Documentation links
 See [Documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/) for Documentation
 
+See [Usage guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/querio101.md) for a basic rundown on how to use Quer.io
+
 See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for Database Schema
 
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation

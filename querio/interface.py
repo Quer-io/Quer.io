@@ -69,6 +69,12 @@ class Interface:
         return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
+        """
+
+        :param target: string
+        :param conditions: list[Cond]
+        :return: a prediction object
+        """
         
         feature_names = generate_list(conditions)
         self._validate_columns(feature_names)
@@ -99,7 +105,6 @@ class Interface:
                 mod = self.__ss__.load_file(n)
                 features = mod.model_feature_names
                 output = mod.output_name
-
                 self._validate_columns(features)
                 self._validate_columns([output])
 
@@ -121,7 +126,10 @@ class Interface:
         self.__ss__.clear_querio_files()
 
     def get_saved_models(self):
-        """Returns the names of all saved files in save path."""
+        """
+
+        :return: A list containing the names of all save files.
+        """
         return self.__ss__.get_querio_files()
 
     def frequency(self, values):

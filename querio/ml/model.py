@@ -3,11 +3,13 @@ import sys
 import operator
 import sklearn
 import sklearn.tree
+import sklearn.ensemble
 import sklearn.model_selection
 from functools import reduce
 import numpy as np
 import pandas as pd
 from querio.ml.utils import *
+from querio.ml.treetraversal import query_one_tree
 from querio.ml.prediction import Prediction
 from querio.ml.expression.feature import Feature
 from querio.ml.expression.cond import Op
@@ -15,8 +17,8 @@ from querio.ml.expression.expression import Expression
 
 
 class Model:
-    """A decision tree regressor extension capable of more compex queries.
-    Model uses a decision tree regressor as a foundation to predict
+    """A random forest regressor extension capable of more compex queries.
+    Model uses a random forest regressor as a foundation to predict
     the mean and variance for samples matching a compex query.
 
     Parameters:
@@ -29,7 +31,7 @@ class Model:
         The name of the column used to calculate the mean and the variance in
         queries.
     max_depth: int, optional
-        A limit to the maximum depth of the underlying decision tree.
+        A limit to the maximum depth of the underlying random forest.
 
     Queries:
     The queries can contain conditions for equalities and inequalities
@@ -42,9 +44,10 @@ class Model:
     (Feature('height') > 180) | ((Feature('age') < 50) & (Feature('age') > 40))
     """
 
-    def __init__(self, data, feature_names, output_name, max_depth=None):
+    def __init__(self, data, table_name, feature_names, output_name, max_depth=None):
         """Initialize the Model."""
         feature_names = make_into_list_if_scalar(feature_names)
+        self.table_name = table_name
         self.output_name = output_name
         self.features = {}
         self.model_feature_names = []
@@ -55,10 +58,11 @@ class Model:
         if max_depth is None:
             max_depth = sys.getrecursionlimit()
 
-        self.tree = sklearn.tree.DecisionTreeRegressor(
+        self.tree = sklearn.ensemble.RandomForestRegressor(
             criterion='mse',
             random_state=42,
-            max_depth=min(max_depth, sys.getrecursionlimit() / 2 - 10)
+            max_depth=min(max_depth, sys.getrecursionlimit() / 2 - 10),
+            n_estimators=10,
         )
 
         train, test = sklearn.model_selection.train_test_split(
@@ -130,96 +134,33 @@ class Model:
                 condition.feature += "_" + condition.threshold
                 condition.threshold = 1.0
 
-        leaf_set = expression.eval(self._query_for_one_condition)
-        tree = self.tree.tree_
-        leaf_populations = [
-            Population(
-                tree.n_node_samples[leaf],
-                tree.value[leaf][0][0],
-                tree.impurity[leaf]
-            )
-            for leaf in leaf_set
+        results = [
+            query_one_tree(decision_tree, expression, self.model_feature_names)
+            for decision_tree in self.tree.estimators_
         ]
-
-        result_tuple = calculate_mean_and_variance_from_populations(
-            leaf_populations
-        )
-        return Prediction(result_tuple[0], result_tuple[1])
-
-    def _query_for_one_condition(self, condition):
-        """Return the set of node indexes that match the condition."""
-        feature_index = self.model_feature_names.index(condition.feature)
-        tree = self.tree.tree_
-        return self.__recurse_tree_node(
-            0, feature_index, condition.op, float(condition.threshold)
-        )
-
-    def __recurse_tree_node(self, node_index, feature_index, op, threshold):
-        def recurse_both_children():
-            return self.__recurse_tree_node(
-                tree.children_left[node_index], feature_index, op, threshold
-            ) | self.__recurse_tree_node(
-                tree.children_right[node_index], feature_index, op, threshold
-            )
-
-        def recurse_right_child():
-            return self.__recurse_tree_node(
-                tree.children_right[node_index], feature_index, op, threshold
-            )
-
-        def recurse_left_child():
-            return self.__recurse_tree_node(
-                tree.children_left[node_index], feature_index, op, threshold
-            )
-
-        tree = self.tree.tree_
-
-        if self.__is_leaf_node(node_index):
-            return {node_index}
-
-        if tree.feature[node_index] == feature_index:
-            if op is Op.eq:
-                if threshold <= tree.threshold[node_index]:
-                    return recurse_left_child()
-                else:
-                    return recurse_right_child()
-            elif op is Op.lt:
-                if threshold <= tree.threshold[node_index]:
-                    return recurse_left_child()
-                else:
-                    return recurse_both_children()
-            elif op is Op.gt:
-                if threshold < tree.threshold[node_index]:
-                    return recurse_both_children()
-                else:
-                    return recurse_right_child()
-            else:
-                raise NotImplementedError(
-                    'Unimplemented comparison {0}'.format(op)
-                )
-        else:
-            return recurse_both_children()
-
-    def __is_leaf_node(self, node_index):
-        tree = self.tree.tree_
-        return tree.children_left[node_index] == sklearn.tree._tree.TREE_LEAF
+        mean = sum([result[0] for result in results]) / len(results)
+        var = sum([result[1] for result in results]) / len(results)
+        return Prediction(mean, var)
 
     def get_score_for_test(self):
-        """Return the R^2 score of the decision tree on the test data."""
+        """Return the R^2 score of the random forest on the test data."""
         return self.test_score
 
     def get_score_for_train(self):
-        """Return the R^2 score of the decision tree on the training data."""
+        """Return the R^2 score of the random forest on the training data."""
         return self.train_score
 
     def export_graphviz(self):
-        """Return a visualization of the decision tree in graphviz format."""
-        return sklearn.tree.export_graphviz(
-            self.tree, out_file=None,
-            feature_names=self.model_feature_names,
-            filled=True, rounded=True,
-            special_characters=True
-        )
+        """Return a visualizations of the decision trees in graphviz format."""
+        return [
+            sklearn.tree.export_graphviz(
+                tree, out_file=None,
+                feature_names=self.model_feature_names,
+                filled=True, rounded=True,
+                special_characters=True
+            )
+            for tree in self.tree.estimators_
+        ]
 
     def _get_features(self):
         """Return a dict containing the type and columns of all features."""

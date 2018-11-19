@@ -20,7 +20,7 @@ class Interface:
             The path that you wish to save the files into. If left blank will be the path from which the program was called.
 
         """
-
+        self.table_name = table_name
         self.accessor = da.DataAccessor(dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
@@ -39,7 +39,7 @@ class Interface:
         self._validate_columns(features)
 
         feature_names = sorted(features)
-        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), features, target)
+        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), self.table_name, features, target)
         return self.models[target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
@@ -48,9 +48,9 @@ class Interface:
         or if no such model is found will train a new one
         and then query from that.
 
-        Arguments:
-            q_object: QueryObject
-        Returns:
+        :param q_object: QueryObject
+            user defined QueryObject.
+        :return:
             A Prediction object that contains the predicted mean and variance of
             samples matching the given conditions.
         """
@@ -141,11 +141,13 @@ class Interface:
 
 
 def generate_list(conditions):
-    """Generates a list without duplicates from given list
+    """Generates a sorted list without duplicates from given list
+    So a list ['b', 'b', 'a'] becomes ['a', 'b']
 
     Arguments:
         conditions: a list of string
     Returns:
+        a sorted list with only one instance of each string.
         """
 
     feature_names = []

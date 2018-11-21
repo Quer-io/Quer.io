@@ -16,9 +16,6 @@ class EqIntervalClass:
         else:
             return NotImplemented
 
-    def __len__(self):
-        return 1
-
 
 class NodeResultRange:
     EqInterval = EqIntervalClass()
@@ -30,9 +27,15 @@ class NodeResultRange:
             else:
                 interval = i.empty()
         elif cond.op is Op.lt:
-            interval = i.open(min, cond.threshold)
+            if cond.threshold <= max:
+                interval = i.open(min, cond.threshold)
+            else:
+                interval = i.open(min, max)
         elif cond.op is Op.gt:
-            interval = i.open(cond.threshold, max)
+            if cond.threshold >= min:
+                interval = i.open(cond.threshold, max)
+            else:
+                interval = i.open(min, max)
         else:
             raise NotImplementedError(
                 'Unimplemented comparison {0}'.format(op)
@@ -48,14 +51,17 @@ class NodeResultRange:
     def range(self):
         return self.max - self.min
 
-    def match_lenght(self):
-        return len(self.match_interval)
+    def match_length(self):
+        if self.match_interval is NodeResultRange.EqInterval:
+            return 1
+        else:
+            return sum(int.upper - int.lower for int in self.match_interval)
 
     def match_fraction(self):
         if self.range() == 0:
             return 1
         else:
-            return self.match_lenght() / self.range()
+            return self.match_length() / self.range()
 
     def __and__(self, other):
         if isinstance(other, NodeResult):

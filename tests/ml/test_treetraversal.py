@@ -42,15 +42,15 @@ class TreeTraversalTest(unittest.TestCase):
         ('0', Cond('age', Op.eq, 42), 10535),
         ('1', ExpressionTreeNode(
             Cond('age', Op.eq, 33), BoolOp.and_, Cond('height', Op.eq, 600)
-        ), 7926.333333333333333),
+        ), 5191.320987654321),
         ('2', ExpressionTreeNode(
             Cond('height', Op.eq, 700), BoolOp.and_,
             Cond('github_stars', Op.eq, 350)
         ), 3311),
-        ('3', Cond('github_stars', Op.eq, 420), 10685.5),
+        ('3', Cond('github_stars', Op.eq, 420), 6977.576923076923),
         ('4', Feature('age') == 42, 10535),
-        ('5', Feature('height') > 2500, 16404.5),
-        ('6', Feature('github_stars') > 700, 14548.333333333333333333),
+        ('5', Feature('height') > 2500, 17872.891891891893),
+        ('6', Feature('github_stars') > 700, 14071.329608938544),
         ('7', Feature('age') > 40, 10535),
         ('8', ExpressionTreeNode(
             Feature('height') < 1000, BoolOp.and_,

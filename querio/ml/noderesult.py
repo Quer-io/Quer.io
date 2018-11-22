@@ -3,6 +3,7 @@ from querio.ml.expression.cond import Op
 
 
 class EqIntervalClass:
+    """Used in place of an interval when the condition is an equality."""
 
     def __and__(self, other):
         if isinstance(other, i.Interval) or isinstance(other, EqIntervalClass):
@@ -18,6 +19,15 @@ class EqIntervalClass:
 
 
 class NodeResultRange:
+    """Represents a decision tree node for a condition.
+
+    Contains the minimum and maximum values of the condition's feature in the
+    samples this node contains and the interval that matches the condition.
+
+    Supports & and | operators with other NodeResultRanges.
+    nrr1 & nrr2 evaluates to a NodeResultRange if both nrr1.feature_name ==
+    nrr2.feature_name.
+    """
     EqInterval = EqIntervalClass()
 
     def from_cond_and_range(min, max, cond):

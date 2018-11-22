@@ -1,4 +1,4 @@
-import intervals as i
+import intervals
 from querio.ml.expression.cond import Op
 
 
@@ -25,17 +25,17 @@ class NodeResultRange:
             if min <= cond.threshold <= max:
                 interval = NodeResultRange.EqInterval
             else:
-                interval = i.empty()
+                interval = intervals.empty()
         elif cond.op is Op.lt:
             if cond.threshold <= max:
-                interval = i.open(min, cond.threshold)
+                interval = intervals.open(min, cond.threshold)
             else:
-                interval = i.open(min, max)
+                interval = intervals.open(min, max)
         elif cond.op is Op.gt:
             if cond.threshold >= min:
-                interval = i.open(cond.threshold, max)
+                interval = intervals.open(cond.threshold, max)
             else:
-                interval = i.open(min, max)
+                interval = intervals.open(min, max)
         else:
             raise NotImplementedError(
                 'Unimplemented comparison {0}'.format(op)

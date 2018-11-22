@@ -139,13 +139,15 @@ class Model:
         return data
 
     def query(self, expression):
-        """Return the predicted mean and variance for the given condition
+        """Return the predicted mean and variance for the given condition.
 
         Arguments:
         expression -- an Expression
         Returns:
         A Prediction object that contains the predicted mean and variance of
         samples matching the given conditions.
+        Throws:
+        NoMatch when no rows match the expression.
         """
         if not isinstance(expression, Expression):
             raise TypeError('expression must be an Expression')

@@ -7,12 +7,16 @@ import sklearn.tree
 
 
 class NoMatch(Exception):
+    """Thrown from Model.query when no rows match the expression."""
     pass
 
 
-def query_one_tree(decision_tree, expression, feature_names, feature_min_maxes):
+def query_one_tree(
+    decision_tree, expression, feature_names, feature_min_maxes
+):
     leaf_dict = expression.eval(functools.partial(
-        query_for_one_condition, decision_tree, feature_names, feature_min_maxes
+        query_for_one_condition, decision_tree, feature_names,
+        feature_min_maxes
     ))
     tree = decision_tree.tree_
     leaf_populations = [
@@ -31,7 +35,9 @@ def query_one_tree(decision_tree, expression, feature_names, feature_min_maxes):
     return calculate_mean_and_variance_from_populations(leaf_populations)
 
 
-def query_for_one_condition(decision_tree, feature_names, feature_min_maxes, condition):
+def query_for_one_condition(
+    decision_tree, feature_names, feature_min_maxes, condition
+):
     """Return the set of node indexes that match the condition."""
     tree = decision_tree.tree_
     feature_index = feature_names.index(condition.feature)

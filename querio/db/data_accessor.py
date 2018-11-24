@@ -60,7 +60,7 @@ class DataAccessor:
             the values are the values of the table corresponding to the columns
         """
         self.logger.debug("Fetching an example row from table '{}'"
-                         .format(self.table_name))
+                          .format(self.table_name))
         column_names = self.get_table_column_names()
         result = self.conn.execute("SELECT * FROM {}"
                                    .format(self.table_name)).fetchone()
@@ -70,7 +70,7 @@ class DataAccessor:
                                 from the database""")
             raise QuerioDatabaseError("""Could not fetch an example row
                                      from table '{}'"""
-                                     .format(self.table_name))
+                                      .format(self.table_name))
 
         return {(column_name, result[column_name]) for column_name in
                 column_names}

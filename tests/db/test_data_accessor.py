@@ -6,23 +6,24 @@ import sqlalchemy
 from querio.db.data_accessor import DataAccessor
 from querio.db.exceptions.querio_database_error import QuerioDatabaseError
 
+
 class DataAccessorTest(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = testing.postgresql.Postgresql()
         self.engine = sqlalchemy.create_engine(self.postgresql.url())
         self.conn = self.engine.connect()
- 
+
         for command in self.commands():
             self.conn.execute(command)
-    
+
     def tearDown(self):
         self.postgresql.stop()
 
     def test_create_data_accessor_with_invalid_table_name(self):
         with self.assertRaises(QuerioDatabaseError):
             da = DataAccessor(self.postgresql.url(), "animal")
-    
+
     def test_get_example_row_if_table_empty(self):
         da = DataAccessor(self.postgresql.url(), "car")
         with self.assertRaises(QuerioDatabaseError):
@@ -50,9 +51,9 @@ class DataAccessorTest(unittest.TestCase):
                 car_price INTEGER NOT NULL
             )
             """,
-            """
-            CREATE TABLE shop (
-                shop_id SERIAL PRIMARY KEY,
-                shop_name VARCHAR(255) NOT NULL
-            )
-            """)
+                """
+                CREATE TABLE shop (
+                    shop_id SERIAL PRIMARY KEY,
+                    shop_name VARCHAR(255) NOT NULL
+                )
+                """)

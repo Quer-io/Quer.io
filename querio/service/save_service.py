@@ -2,7 +2,7 @@ import pickle
 import re
 import os
 from .exceptions.querio_file_error import QuerioFileError
-
+import logging
 
 class SaveService:
     """Saves and loads created querio models. User can define the path where
@@ -18,6 +18,7 @@ class SaveService:
     def __init__(self, path=""):
         """Initialize the SaveService"""
         self._src_folder = path
+        self.logger = logging.getLogger("QuerioSaveService")
 
     def save_model(self, model):
         """Saves the model into a querio file.
@@ -35,6 +36,7 @@ class SaveService:
         pickle.dump(model, file)
 
         file.close()
+        self.logger.debug("Saved a model to {}".format(relative_path))
 
     def load_model(self, output_name, feature_names):
         """Loads specific Model
@@ -61,10 +63,13 @@ class SaveService:
             Model from the file
         """
         relative_path = self._src_folder + file_name
+        
+        self.logger.debug("Loading a model from '{}'".format(relative_path))
 
         try:
             file = open(os.path.join(os.getcwd(), relative_path), 'rb')
         except FileNotFoundError as e:
+            self.logger.error("Could not find a saved model from '{}'".format(relative_path))
             raise QuerioFileError(
                 "No model found with following name: " +
                 file_name, e)
@@ -72,6 +77,7 @@ class SaveService:
         try:
             model = pickle.load(file)
         except pickle.PickleError as e:
+            self.logger.error("{} could not be loaded as a model".format(file_name))
             raise QuerioFileError(
                         file_name +
                         """ could not be loaded as a model.

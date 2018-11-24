@@ -25,8 +25,8 @@ class SaveService:
         :param model: Model
             Created/ modified Model that the users wants to save
         """
-        relative_path = (self._src_folder
-                         + self._generate_name_for_model_attributes(
+        relative_path = (self._src_folder +
+                         self._generate_name_for_model_attributes(
                                             model.output_name,
                                             model.get_feature_names()))
 

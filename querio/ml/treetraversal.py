@@ -21,12 +21,12 @@ def query_one_tree(
     tree = decision_tree.tree_
     leaf_populations = [
         Population(
-            tree.n_node_samples[leaf] * leaf_dict[leaf].match_fraction(),
+            tree.n_node_samples[leaf] * leaf_dict[leaf].combined_match_fraction(),
             tree.value[leaf][0][0],
             tree.impurity[leaf]
         )
         for leaf in leaf_dict.keys()
-        if leaf_dict[leaf].match_fraction() > 0
+        if leaf_dict[leaf].combined_match_fraction() > 0
     ]
 
     if all(pop.samples == 0 for pop in leaf_populations):

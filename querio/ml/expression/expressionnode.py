@@ -65,7 +65,7 @@ class ExpressionTreeNode(Expression):
         """
         def or_nodes(left, right, node):
             if node in left and node in right:
-                return left[node] | right[node]
+                return (left[node].invert() & right[node].invert()).invert()
             elif node in left:
                 return left[node]
             elif node in right:

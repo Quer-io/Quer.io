@@ -96,6 +96,10 @@ class ModelTest(unittest.TestCase):
         ('Contradiction', (
             (Feature('height') > 1000) & (Feature('height') < 900)
         )),
+        ('Hard contradiction', (
+            ((Feature('height') > 1000) & (Feature('age') == 40))
+            & (Feature('height') < 900)
+        )),
         ('Too few github stars', Feature('github_stars') == 100)
     ])
     def test_query_raises_NoMatch_when_no_rows_match(

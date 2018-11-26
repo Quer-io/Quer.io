@@ -82,6 +82,13 @@ the children as follows:
 node and *nrr* being a NodeResultRange for the
 condition and *min* and *max*.
 
+NodeResultRange objects contain the *min* and *max*
+values calculated earlier, the feature they represent
+and the subset of the interval (*min*, *max*) that
+matches the condition. They also have a match_fraction
+method that calculates the fraction of samples that
+match the condition in their node.
+
 The dictionaries returned by all encountered leaf nodes
 are combined into one result for the condition. As
 each leaf is only encountered once, the dictionaries
@@ -99,6 +106,10 @@ decision tree. NodeResultRange objects come from the
 leaf nodes, who's dictionaries come from the decision
 tree traversal made earlier. NodeResult
 objects are created during later.
+
+NodeResult objects contain a match_fraction field
+that represents the fraction of samples in the node
+that match the part of the query that they represent.
 
 Starting from the parents
 of leaf nodes, the children of a node are combined

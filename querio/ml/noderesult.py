@@ -25,8 +25,9 @@ class NodeResultRange:
     samples this node contains and the interval that matches the condition.
 
     Supports & and | operators with other NodeResultRanges.
-    nrr1 & nrr2 evaluates to a NodeResultRange if both nrr1.feature_name ==
-    nrr2.feature_name.
+    nrr1 & nrr2 and nrr1 | nrr2 evaluate to a NodeResultRange if both
+    nrr1.feature_name == nrr2.feature_name. Otherwise, they evaluate into a
+    NodeResult object.
     """
     EqInterval = EqIntervalClass()
 
@@ -62,6 +63,7 @@ class NodeResultRange:
         return self.max - self.min
 
     def match_length(self):
+        """Length of the match_interval."""
         if self.match_interval is NodeResultRange.EqInterval:
             return 1
         else:
@@ -107,6 +109,8 @@ class NodeResultRange:
 
 
 class NodeResult:
+    """Represents the fraction of samples that match an expression for a node.
+    """
 
     def __init__(self, fraction):
         self.fraction = fraction

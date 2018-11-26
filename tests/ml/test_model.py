@@ -61,9 +61,9 @@ class ModelTest(unittest.TestCase):
         ('Two features', (Feature('age') == 20) & (Feature('height') == 160)),
         ('Two features', (Feature('age') == 20) | (Feature('height') == 160)),
         ('Three features',
-            ((Feature('age') == 20) | (Feature('height') == 160))
-            & (Feature('github_stars') == 50)
-        ),
+            ((Feature('age') == 20) | (Feature('height') == 160)) &
+            (Feature('github_stars') == 50)
+         ),
     ])
     def test_query_gives_value_in_correct_range(self, name, test_conditions):
         prediction = self.models[name].query(

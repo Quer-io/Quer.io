@@ -24,7 +24,7 @@ class Interface:
             If left blank will be the path from which the program was called.
 
         """
-        self.logger =logging.getLogger("QuerioInterface")
+        self.logger = logging.getLogger("QuerioInterface")
         self.accessor = da.DataAccessor(dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
@@ -42,7 +42,8 @@ class Interface:
         self._validate_columns([target])
         self._validate_columns(features)
 
-        self.logger.info("Training a model for '{}' based on '{}'".format(target, ", ".join(features)))
+        self.logger.info("Training a model for '{}' based on '{}'"
+                         .format(target, ", ".join(features)))
 
         feature_names = sorted(features)
         self.models[target+':'+''.join(feature_names)] = model.Model(
@@ -74,7 +75,10 @@ class Interface:
         self._validate_columns(feature_names)
 
         if q_object.target+':'+''.join(feature_names) not in self.models:
-            self.logger.info("No model for '{}' based on '{}' found. Training a new one...".format(q_object.target, ", ".join(feature_names)))
+            self.logger.info("""No model for '{}' based on '{}' found.
+                              Training a new one..."""
+                             .format(q_object.target, ", "
+                                     .join(feature_names)))
             self.train(q_object.target, feature_names)
         return self.models[q_object.target+':'+''.join(feature_names)].query(
                                                         q_object.expression)
@@ -112,7 +116,9 @@ class Interface:
                     feature_names += s
                 self.models[output+':'+feature_names] = mod
             except QuerioColumnError:
-                self.logger.error("Encountered an error when loading file '{}'. This model could not be loaded".format(n))
+                self.logger.error("""Encountered an error when loading file
+                                   '{}'. This model could not be loaded"""
+                                  .format(n))
                 continue
 
     def clear_models(self):
@@ -138,7 +144,8 @@ class Interface:
     def _validate_columns(self, to_check: List[str]):
         for check in to_check:
             if check not in self.columns:
-                self.logger.error("No column called '{}' in database".format(check))
+                self.logger.error("No column called '{}' in database"
+                                  .format(check))
                 raise QuerioColumnError(
                     "No column called {} in database".format(check))
 

@@ -68,7 +68,8 @@ df = pd.DataFrame(
 )
 print('Max age {0}, min age: {1}'.format(age.max(), age.min()))
 print('Max income {0}, min income: {1}'.format(income.max(), income.min()))
-print('Max stars {0}, min stars: {1}'.format(github_stars.max(), github_stars.min()))
+print('Max stars {0}, min stars: {1}'.format(github_stars.max(),
+                                             github_stars.min()))
 print('Max height {0}, min height: {1}'.format(height.max(), height.min()))
 print('Profession counts')
 print(df.profession.value_counts())
@@ -78,7 +79,8 @@ print(df[0:20])
 
 
 try:
-    conn = psycopg2.connect(host="localhost", port="5432", user="postgres", password="", dbname="queriodb")
+    conn = psycopg2.connect(host="localhost", port="5432", user="postgres",
+                            password="", dbname="queriodb")
 except (Exception, psycopg2.DatabaseError) as error:
         print("Could not connect to database. Aborting...")
         print(error)
@@ -95,7 +97,14 @@ try:
     print("Creating table 'person'")
     cursor.execute("DROP TABLE IF EXISTS person;")
 
-    create_person_command = "CREATE TABLE public.person (  id integer,age decimal, income decimal, github_stars decimal,height decimal, profession character varying, is_client boolean);"
+    create_person_command = """CREATE TABLE public.person (id integer,
+                                                          age decimal,
+                                                          income decimal,
+                                                          github_stars decimal,
+                                                          height decimal,
+                                                          profession varchar,
+                                                          is_client boolean);
+                                                          """
 
     cursor.execute(create_person_command)
 

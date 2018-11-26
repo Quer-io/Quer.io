@@ -8,7 +8,9 @@ See [Documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation
 
 See [Usage guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/querio101.md) for a basic rundown on how to use Quer.io
 
-See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for Database Schema
+See [Database Schema 1](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for single table sample database schema
+
+See [Database Schema 2](https://github.com/Quer-io/) for normalized sample database schema
 
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 of the machine learning model quer.io uses
@@ -25,7 +27,7 @@ Chosen implementation is Python for the application and Postgres for the databas
 
 This project is done with Python version 3.6
 
-See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install PostgreSQL database dumps as local databases.
+See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install the sample databases this application was tested on.
 
 See [Application Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/install.md) for information how to install the application and all its dependencies.
 

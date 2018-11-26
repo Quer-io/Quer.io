@@ -9,9 +9,8 @@ class Prediction:
 
     def __str__(self):
         return (
-            'Result:' + str(round(self.result, 2))
-            + ', Standard deviation: '
-            + str(round(self.standard_deviation(), 2))
+            'Result:' + str(round(self.result, 2)) + ', Standard deviation: ' +
+            str(round(self.standard_deviation(), 2))
         )
 
     def __eq__(self, other):

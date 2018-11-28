@@ -22,13 +22,13 @@ class ModelTest(unittest.TestCase):
         github_stars = [age * 20 + 10 for age in ages]
         professions = [
             'accountant', 'janitor', 'president', 'janitor',
-            'accountant', 'programmer', 'janitor', 'programmer'
+            'accountant', 'programmer', 'janitor', 'account_manager'
         ]
         is_client = [True, True, False, True, False, False, False, True]
         self.data = pd.DataFrame({
             'age': ages, 'income': incomes, 'height': heights,
             'github_stars': github_stars, 'profession': professions,
-            'is_client': is_client
+            'is_client': is_client, 'prof_with_underscore': professions
         })
         self.models = {
             'One feature': Model(self.data, 'age', 'income'),
@@ -37,6 +37,12 @@ class ModelTest(unittest.TestCase):
             ),
             'One feature with categorical': Model(
                 self.data, 'profession', 'income'
+            ),
+            'One feature with categorical_underscore': Model(
+                self.data, 'prof_with_underscore', 'income'
+            ),
+            'Two features with categorical': Model(
+                self.data, ['age', 'profession'], 'income'
             ),
             'Two features': Model(
                 self.data, ['age', 'height'], 'income'
@@ -54,6 +60,12 @@ class ModelTest(unittest.TestCase):
         ('One feature with boolean', Cond('is_client', Op.eq, True)),
         ('One feature with boolean', Feature('is_client') == 1),
         ('One feature with categorical', Cond('profession', Op.eq, 'janitor')),
+        ('One feature with categorical_underscore', (
+            Feature('prof_with_underscore') == 'janitor'
+        )),
+        ('One feature with categorical_underscore', (
+            Feature('prof_with_underscore') == 'account_manager'
+        )),
         ('One feature with categorical', Feature('profession') == 'janitor'),
         ('Two features', ExpressionTreeNode(
             Cond('age', Op.eq, 35), BoolOp.and_, Cond('height', Op.eq, 120)
@@ -133,6 +145,33 @@ class ModelTest(unittest.TestCase):
         model = Model(data, ['age', 'height'], 'income')
         pred = model.query(Feature('age') > 20)
         self.assertEqual(len(model.trees), 10)
+
+    @parameterized.expand([
+        ('Two features with categorical', 'profession'),
+        ('One feature with categorical_underscore', 'prof_with_underscore')
+    ])
+    def test_get_categories_for_feature_returns_categories(self, model, feat):
+        model = self.models[model]
+        categories = model.get_categories_for_feature(feat)
+        true_categories = [
+            'accountant', 'janitor', 'president',
+            'programmer', 'account_manager'
+        ]
+        true_categories.sort()
+        categories.sort()
+        self.assertEqual(categories, true_categories)
+
+    @parameterized.expand([
+        ('age'),
+        ('income'),
+        ('not_feature')
+    ])
+    def test_get_categories_for_feature_raises_with_not_categorical(
+        self, feature
+    ):
+        model = self.models['Two features with categorical']
+        with self.assertRaises(ValueError):
+            model.get_categories_for_feature(feature)
 
     def __render_graph(self, model, name):
         import graphviz

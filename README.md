@@ -10,7 +10,7 @@ See [Usage guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/q
 
 See [Database Schema 1](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for single table sample database schema
 
-See [Database Schema 2](https://github.com/Quer-io/) for normalized sample database schema
+See [Database Schema 2](https://github.com/Quer-io/Quer.io/blob/db/normalized/documentation/database/normalized_schema.md) for normalized sample database schema
 
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 of the machine learning model quer.io uses

@@ -301,6 +301,14 @@ class Model:
         """Return the categories for a categorical feature."""
         categories = []
         if feature_name in [*self.features]:
-            for col in self.features[feature_name]["columns"]:
-                categories.append(col.split(feature_name + "_", 1)[1])
+            columns = self.features[feature_name]['columns']
+            if len(columns) > 1:
+                for col in columns:
+                    categories.append(col.split(feature_name + "_", 1)[1])
+            else:
+                raise ValueError(
+                    '{0} is not categorical.'.format(feature_name)
+                )
+        else:
+            raise ValueError('{0} is not a feature.'.format(feature_name))
         return categories

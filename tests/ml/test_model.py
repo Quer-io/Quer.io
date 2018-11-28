@@ -5,6 +5,7 @@ from parameterized import parameterized
 import os.path
 
 from querio.ml import Model
+from querio.ml import NoMatch
 from querio.ml.expression.cond import Cond
 from querio.ml.expression.cond import Op
 from querio.ml.expression.feature import Feature
@@ -56,14 +57,14 @@ class ModelTest(unittest.TestCase):
         ('One feature with categorical', Cond('profession', Op.eq, 'janitor')),
         ('One feature with categorical', Feature('profession') == 'janitor'),
         ('Two features', ExpressionTreeNode(
-            Cond('age', Op.eq, 35), BoolOp.and_, Cond('height', Op.eq, 120)
+            Cond('age', Op.eq, 35), BoolOp.and_, Cond('height', Op.eq, 700)
         )),
-        ('Two features', (Feature('age') == 20) & (Feature('height') == 160)),
-        ('Two features', (Feature('age') == 20) | (Feature('height') == 160)),
-        ('Three features',
-            ((Feature('age') == 20) | (Feature('height') == 160)) &
-            (Feature('github_stars') == 50)
-         ),
+        ('Two features', (Feature('age') == 20) & (Feature('height') == 800)),
+        ('Two features', (Feature('age') == 20) | (Feature('height') == 800)),
+        ('Three features', (
+            ((Feature('age') == 20) | (Feature('height') == 800))
+            & (Feature('github_stars') == 300)
+        )),
     ])
     def test_query_gives_value_in_correct_range(self, name, test_conditions):
         prediction = self.models[name].query(
@@ -89,6 +90,20 @@ class ModelTest(unittest.TestCase):
             ]])[0],
             prediction.result
         )
+
+    @parameterized.expand([
+        ('Too old', Feature('age') > 100),
+        ('Contradiction', (
+            (Feature('height') > 1000) & (Feature('height') < 900)
+        )),
+        ('Too few github stars', Feature('github_stars') == 100)
+    ])
+    def test_query_raises_NoMatch_when_no_rows_match(
+        self, name, test_condition
+    ):
+        with self.assertRaises(NoMatch):
+            model = self.models['Three features']
+            model.query(test_condition)
 
     def test_query_raises_ValueError_with_bad_feature_names(self):
         with self.assertRaises(ValueError):

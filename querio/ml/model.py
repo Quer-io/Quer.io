@@ -139,13 +139,15 @@ class Model:
         return data
 
     def query(self, expression):
-        """Return the predicted mean and variance for the given condition
+        """Return the predicted mean and variance for the given condition.
 
         Arguments:
         expression -- an Expression
         Returns:
         A Prediction object that contains the predicted mean and variance of
         samples matching the given conditions.
+        Throws:
+        NoMatch when no rows match the expression.
         """
         if not isinstance(expression, Expression):
             raise TypeError('expression must be an Expression')
@@ -167,8 +169,100 @@ class Model:
                 condition.feature += "_" + condition.threshold
                 condition.threshold = 1.0
 
+    #     leaf_dict = expression.eval(self._query_for_one_condition)
+    #     tree = self.tree.tree_
+    #     leaf_populations = [
+    #         Population(
+    #             tree.n_node_samples[leaf] * leaf_dict[leaf].match_fraction(),
+    #             tree.value[leaf][0][0],
+    #             tree.impurity[leaf]
+    #         )
+    #         for leaf in leaf_dict.keys()
+    #         if leaf_dict[leaf].match_fraction() > 0
+    #     ]
+    #
+    #     if all(pop.samples == 0 for pop in leaf_populations):
+    #         raise NoMatch()
+    #
+    #     result_tuple = calculate_mean_and_variance_from_populations(
+    #         leaf_populations
+    #     )
+    #     return Prediction(result_tuple[0], result_tuple[1])
+    #
+    # def _query_for_one_condition(self, condition):
+    #     """Return the set of node indexes that match the condition."""
+    #     feature_index = self.model_feature_names.index(condition.feature)
+    #     tree = self.tree.tree_
+    #     if condition.feature in self.feature_min_max_count:
+    #         feature_min_max = self.feature_min_max_count[condition.feature]
+    #     else:
+    #         feature_min_max = {'min': 0, 'max': 0}
+    #     return self.__recurse_tree_node(
+    #         0, feature_index, condition,
+    #         feature_min_max['min'], feature_min_max['max']
+    #     )
+    #
+    # def __recurse_tree_node(
+    #     self, node_index, feature_index, cond, min, max
+    # ):
+    #     op = cond.op
+    #     threshold = cond.threshold
+    #
+    #     def recurse_both_children(isSkipping=False):
+    #         right = recurse_right_child(isSkipping)
+    #         left = recurse_left_child(isSkipping)
+    #         left.update(right)
+    #         return left
+    #
+    #     def recurse_right_child(isSkipping=False):
+    #         next_min = min if isSkipping else tree.threshold[node_index]
+    #         return self.__recurse_tree_node(
+    #             tree.children_right[node_index], feature_index, cond,
+    #             next_min, max
+    #         )
+    #
+    #     def recurse_left_child(isSkipping=False):
+    #         next_max = max if isSkipping else tree.threshold[node_index]
+    #         return self.__recurse_tree_node(
+    #             tree.children_left[node_index], feature_index, cond,
+    #             min, next_max
+    #         )
+    #
+    #     tree = self.tree.tree_
+    #
+    #     if self.__is_leaf_node(node_index):
+    #         return {
+    #             node_index: NodeResultRange.from_cond_and_range(min, max, cond)
+    #         }
+    #
+    #     if tree.feature[node_index] == feature_index:
+    #         if op is Op.eq:
+    #             if threshold <= tree.threshold[node_index]:
+    #                 return recurse_left_child()
+    #             else:
+    #                 return recurse_right_child()
+    #         elif op is Op.lt:
+    #             if threshold <= tree.threshold[node_index]:
+    #                 return recurse_left_child()
+    #             else:
+    #                 return recurse_both_children()
+    #         elif op is Op.gt:
+    #             if threshold < tree.threshold[node_index]:
+    #                 return recurse_both_children()
+    #             else:
+    #                 return recurse_right_child()
+    #         else:
+    #             raise NotImplementedError(
+    #                 'Unimplemented comparison {0}'.format(op)
+    #             )
+    #     else:
+    #         return recurse_both_children(isSkipping=True)
+    #
+    # def __is_leaf_node(self, node_index):
+    #     tree = self.tree.tree_
+    #     return tree.children_left[node_index] == sklearn.tree._tree.TREE_LEAF
         results = [
-            query_one_tree(decision_tree, expression, self.model_feature_names)
+            query_one_tree(decision_tree, expression, self.model_feature_names, self.feature_min_max_count)
             for decision_tree in self.trees
         ]
         mean = sum([result[0] for result in results]) / len(results)

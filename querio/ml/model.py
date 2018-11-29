@@ -8,6 +8,7 @@ import sklearn.model_selection
 from functools import reduce
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from querio.ml.utils import *
 from querio.ml.treetraversal import query_one_tree
 from querio.ml.prediction import Prediction
@@ -65,6 +66,7 @@ class Model:
         self.trees = []
 
         self.feature_min_max_count = None
+        self.plot_data = None
         if isinstance(data, pd.DataFrame):
             self.process_chunk(data)
         else:
@@ -100,6 +102,13 @@ class Model:
         train, test = sklearn.model_selection.train_test_split(
             chunk, random_state=42
         )
+        plot, _ = sklearn.model_selection.train_test_split(
+            chunk, random_state=42, train_size=100, test_size=0
+        )
+        if self.plot_data is None:
+            self.plot_data = plot
+        else:
+            self.plot_data.append(plot)
         tree.fit(train[self.model_feature_names], train[self.output_name])
         self.test_scores.append(tree.score(
             test[self.model_feature_names], test[self.output_name]
@@ -199,6 +208,17 @@ class Model:
             )
             for tree in self.trees
         ]
+
+    def visualize_decision(self, feature):
+        min_max = self.feature_min_max_count[feature]
+        min = min_max['min']
+        max = min_max['max']
+        xs = np.linspace(min, max, 1000)
+        plt.plot(xs, [self.query(Feature(feature) == x).result for x in xs])
+        plt.plot(
+            self.plot_data[feature], self.plot_data[self.output_name], 'ro'
+        )
+        plt.show()
 
     def _get_features(self):
         """Return a dict containing the type and columns of all features."""

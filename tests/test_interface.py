@@ -4,6 +4,7 @@ from querio.ml.expression.feature import Feature
 from querio.queryobject import QueryObject
 import pandas as pd
 from querio.interface import QuerioColumnError
+import logging
 
 
 class MockDataAccessor:
@@ -21,6 +22,7 @@ def mock_constructor(self, data):
     self.accessor = MockDataAccessor(data)
     self.models = {}
     self.columns = self.accessor.get_table_column_names()
+    self.logger = logging.getLogger("QuerioInterface")
 
 
 class ModelTest(unittest.TestCase):
@@ -52,13 +54,13 @@ class ModelTest(unittest.TestCase):
 
     def test_query_works_with_valid_string_and_boolean_columns(self):
         try:
-            self.i.query("github_stars", [Feature('profession') == 'janitor', Feature('is_client') == False])
+            self.i.query("github_stars", [Feature('profession') == 'janitor', Feature('is_client') == True])
         except (ValueError, TypeError, QuerioColumnError):
             self.fail()
 
     def test_query_works_with_untrained_output(self):
         try:
-            self.i.query("age", [Feature('profession') == 'janitor', Feature('is_client') == False])
+            self.i.query("age", [Feature('profession') == 'janitor', Feature('is_client') == True])
         except (ValueError, TypeError, QuerioColumnError):
             self.fail()
 

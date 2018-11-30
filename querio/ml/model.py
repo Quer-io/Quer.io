@@ -103,7 +103,8 @@ class Model:
             chunk, random_state=42
         )
         plot, _ = sklearn.model_selection.train_test_split(
-            chunk, random_state=42, train_size=100, test_size=0
+            chunk, random_state=42,
+            train_size=min(100, len(chunk) - 1), test_size=0
         )
         if self.plot_data is None:
             self.plot_data = plot

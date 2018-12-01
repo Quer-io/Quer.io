@@ -8,7 +8,6 @@ import sklearn.model_selection
 from functools import reduce
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from querio.ml.utils import *
 from querio.ml.treetraversal import query_one_tree
 from querio.ml.prediction import Prediction
@@ -66,12 +65,14 @@ class Model:
         self.trees = []
 
         self.feature_min_max_count = None
-        self.plot_data = None
+        self.plot_data_frames = []
         if isinstance(data, pd.DataFrame):
             self.process_chunk(data)
         else:
-            for i, chunk in enumerate(data):
+            for chunk in data:
                 self.process_chunk(chunk)
+        self.plot_data = pd.concat(self.plot_data_frames, ignore_index=True)
+        # del self.plot_data_frames
 
     def process_chunk(self, chunk):
         def update_min_max_count_dict(key, dict1, dict2):
@@ -106,10 +107,7 @@ class Model:
             chunk, random_state=42,
             train_size=min(100, len(chunk) - 1), test_size=0
         )
-        if self.plot_data is None:
-            self.plot_data = plot
-        else:
-            self.plot_data.append(plot)
+        self.plot_data_frames.append(plot)
         tree.fit(train[self.model_feature_names], train[self.output_name])
         self.test_scores.append(tree.score(
             test[self.model_feature_names], test[self.output_name]
@@ -210,16 +208,51 @@ class Model:
             for tree in self.trees
         ]
 
-    def visualize_decision(self, feature):
+    def visualize_decision(
+        self, feature, axis, prediction_style='b-', actual_style='r.',
+        query_points=100, param_dict={}
+    ):
+        """Plot the prediction with some real data points.
+
+        Plots query(Feature(feature) == x) for points in the range of the
+        feature. Also plots 100 points per chunk of actual data passed to
+        the Model constructor. By default the prediction is plotted with a
+        blue line and the actual points are plotted as red dots. It's
+        recommended to plot the actual points with points, as their order
+        in the dataset is arbitrary.
+
+        Parameters:
+        feature: str
+            The feature to plot.
+        axis: matplotlib.axes.Axes object
+            The axis object the plot is made to.
+        prediction_style: str
+            The style of the prediction. Default blue line (b-)
+        actual_style: str
+            The style of the actual points. Default red dot (r.)
+        query_points: int
+            The number of points the model is queried at. Default 100
+        param_dict:
+            Extra arguments passed to the axis object for plotting.
+
+        Example:
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        model.visualize_decision('age', ax)
+        fig.show()
+        """
         min_max = self.feature_min_max_count[feature]
         min = min_max['min']
         max = min_max['max']
-        xs = np.linspace(min, max, 1000)
-        plt.plot(xs, [self.query(Feature(feature) == x).result for x in xs])
-        plt.plot(
-            self.plot_data[feature], self.plot_data[self.output_name], 'ro'
+        xs = np.linspace(min, max, query_points)
+        axis.plot(
+            xs, [self.query(Feature(feature) == x).result for x in xs],
+            prediction_style, **param_dict
         )
-        plt.show()
+        axis.plot(
+            self.plot_data[feature], self.plot_data[self.output_name],
+            actual_style, **param_dict
+        )
 
     def _get_features(self):
         """Return a dict containing the type and columns of all features."""

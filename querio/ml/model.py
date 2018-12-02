@@ -209,7 +209,8 @@ class Model:
         ]
 
     def visualize_decision(
-        self, feature, axis, prediction_style='b-', actual_style='r.',
+        self, feature, axis, expression=None,
+        prediction_style='b-', actual_style='r.',
         query_points=100, param_dict={}
     ):
         """Plot the prediction with some real data points.
@@ -226,6 +227,12 @@ class Model:
             The feature to plot.
         axis: matplotlib.axes.Axes object
             The axis object the plot is made to.
+        expression: Expression
+            An expression limiting the query range. Only query points and
+            actual points that match the expression are plotted. If the
+            expression is very restrictive compared to the range of the
+            plotted feature, ensure that query_points is set high enough to
+            get an appropriate number of points in the plot.
         prediction_style: str
             The style of the prediction. Default blue line (b-)
         actual_style: str
@@ -245,12 +252,22 @@ class Model:
         min = min_max['min']
         max = min_max['max']
         xs = np.linspace(min, max, query_points)
+        if expression is not None:
+            xs = [x for x in xs if expression.match(feature, x)]
+            matching_rows = self.plot_data[
+                self.plot_data.apply(
+                    lambda row: expression.match(feature, row[feature]),
+                    axis=1
+                )
+            ]
+        else:
+            matching_rows = self.plot_data
         axis.plot(
             xs, [self.query(Feature(feature) == x).result for x in xs],
             prediction_style, **param_dict
         )
         axis.plot(
-            self.plot_data[feature], self.plot_data[self.output_name],
+            matching_rows[feature], matching_rows[self.output_name],
             actual_style, **param_dict
         )
 

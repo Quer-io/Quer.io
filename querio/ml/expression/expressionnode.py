@@ -89,3 +89,15 @@ class ExpressionTreeNode(Expression):
             raise NotImplementedError(
                 'Unimplemented boolean op {0}'.format(self.op)
             )
+
+    def match(self, feature, value):
+        left = self.leftcond.match(feature, value)
+        right = self.rightcond.match(feature, value)
+        if self.op is BoolOp.and_:
+            return left and right
+        elif self.op is BoolOp.or_:
+            return left or right
+        else:
+            raise NotImplementedError(
+                'Unimplemented boolean op {0}'.format(self.op)
+            )

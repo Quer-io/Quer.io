@@ -121,6 +121,20 @@ class Interface:
                                   .format(n))
                 continue
 
+    def retrain_saved_models(self):
+        names = self.get_saved_models()
+        for n in names:
+            try:
+                mod = self.__ss__.load_file(n)
+                features = mod.model_feature_names
+                output = mod.output_name
+                self.train(features, output)
+            except QuerioColumnError:
+                self.logger.error("""Encountered an error when loading file
+                                      '{}'. This model could not be loaded"""
+                                  .format(n))
+                continue
+
     def clear_models(self):
         self.models = {}
 

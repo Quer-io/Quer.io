@@ -41,3 +41,15 @@ class Cond(Expression):
 
     def eval(self, condition_evaluator):
         return condition_evaluator(self)
+
+    def match(self, feature, value):
+        if feature != self.feature:
+            return True
+        elif self.op is Op.eq:
+            return value == self.threshold
+        elif self.op is Op.lt:
+            return value < self.threshold
+        elif self.op is Op.gt:
+            return value > self.threshold
+        else:
+            raise NotImplementedError('{0} is not implemented'.format(self.op))

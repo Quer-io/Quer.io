@@ -7,21 +7,26 @@ from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
 import logging
 
+import logging
+
 
 class Interface:
     def __init__(self, dbpath,  table_name, savepath=""):
         """The base class through which the Querio library can be used effectively.
-        It is recomended to use this class for queries, since it handles all necessary functions
-        for the user.
+        It is recomended to use this class for queries, since it handles all
+        necessary functions for the user.
 
         Parameters:
         dbpath: string
-            The path to the database in the form postgres://username:password@DatabaseAddress:Port/DatabaseName
+            The path to the database in the form
+            postgres://username:password@DatabaseAddress:Port/DatabaseName
         savepath: string, optional
-            The path that you wish to save the files into. If left blank will be the path from which the program was called.
+            The path that you wish to save the files into.
+            If left blank will be the path from which the program was called.
 
         """
         self.table_name = table_name
+        self.logger = logging.getLogger("QuerioInterface")
         self.accessor = da.DataAccessor(dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
@@ -39,8 +44,15 @@ class Interface:
         self._validate_columns([target])
         self._validate_columns(features)
 
+        self.logger.info("Training a model for '{}' based on '{}'"
+                         .format(target, ", ".join(features)))
+
         feature_names = sorted(features)
-        self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), self.table_name, features, target)
+        self.models[target+':'+''.join(feature_names)] = model.Model(
+                                    self.accessor.get_all_data(),
+                                    features,
+                                    target)
+        return self.models[target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
         """Run new query from models using a QueryObject.
@@ -65,8 +77,13 @@ class Interface:
         self._validate_columns(feature_names)
 
         if q_object.target+':'+''.join(feature_names) not in self.models:
+            self.logger.info("""No model for '{}' based on '{}' found.
+                              Training a new one..."""
+                             .format(q_object.target, ", "
+                                     .join(feature_names)))
             self.train(q_object.target, feature_names)
-        return self.models[q_object.target+':'+''.join(feature_names)].query(q_object.expression)
+        return self.models[q_object.target+':'+''.join(feature_names)].query(
+                                                        q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
         """
@@ -125,6 +142,9 @@ class Interface:
                     feature_names += s
                 self.models[output+':'+feature_names] = mod
             except QuerioColumnError:
+                self.logger.error("""Encountered an error when loading file
+                                   '{}'. This model could not be loaded"""
+                                  .format(n))
                 continue
 
     def clear_models(self):
@@ -135,6 +155,7 @@ class Interface:
     def clear_saved_models(self):
         """Removes all save files from the save path.
         Will not remove files stored in any interface instance, but will remove all save files."""
+        self.logger.debug("Clearing all the Querio-files...")
         self.__ss__.clear_querio_files()
 
     def get_saved_models(self):
@@ -157,7 +178,10 @@ class Interface:
     def _validate_columns(self, to_check: List[str]):
         for check in to_check:
             if check not in self.columns:
-                raise QuerioColumnError("No column called {} in database".format(check))
+                self.logger.error("No column called '{}' in database"
+                                  .format(check))
+                raise QuerioColumnError(
+                    "No column called {} in database".format(check))
 
 
 def generate_list(conditions):

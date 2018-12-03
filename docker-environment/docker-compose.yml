@@ -19,5 +19,8 @@ services:
       - db
     command: ["./wait-for-it.sh", "db:5432", "--", "python", "-u", "init_database.py", "10000000", "rows.csv"]
 
-
-
+  normalized-db-populator:
+    build: .
+    depends_on:
+      - db
+    command: ["./wait-for-it.sh", "db:5432", "--", "python", "-u", "init_normalized_database.py", "10000"]

@@ -30,21 +30,21 @@ class ModelTest(unittest.TestCase):
             'is_client': is_client
         })
         self.models = {
-            'One feature': Model(self.data, 'age', 'income'),
+            'One feature': Model(self.data, 'table', 'age', 'income'),
             'One feature with boolean': Model(
-                self.data, 'is_client', 'income'
+                self.data, 'table', 'is_client', 'income'
             ),
             'One feature with categorical': Model(
-                self.data, 'profession', 'income'
+                self.data, 'table', 'profession', 'income'
             ),
             'Two features': Model(
-                self.data, ['age', 'height'], 'income'
+                self.data, 'table', ['age', 'height'], 'income'
             ),
             'Two features reverse': Model(
-                self.data, ['height', 'age'], 'income'
+                self.data, 'table', ['height', 'age'], 'income' 
             ),
             'Three features': Model(
-                self.data, ['age', 'height', 'github_stars'], 'income'
+                self.data, 'table', ['age', 'height', 'github_stars'], 'income'
             )
         }
 

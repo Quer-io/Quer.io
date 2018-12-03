@@ -5,6 +5,7 @@ from querio.service.save_service import SaveService
 from querio.ml.expression.cond import Cond
 from querio.queryobject import QueryObject
 from querio.service.utils import get_frequency_count
+import logging
 
 
 class Interface:
@@ -40,7 +41,6 @@ class Interface:
 
         feature_names = sorted(features)
         self.models[target+':'+''.join(feature_names)] = model.Model(self.accessor.get_all_data(), self.table_name, features, target)
-        return self.models[target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
         """Run new query from models using a QueryObject.
@@ -88,11 +88,23 @@ class Interface:
                 exp = exp & conditions[i]
         return self.models[target+':'+''.join(feature_names)].query(exp)
 
-    def save_models(self):
+    def save_models(self, names=None):
         """Saves the models of this interface as .querio files in the path specified by savepath.
-        These can later be loaded to another interface with the load_models command."""
-        for m in self.models:
-            self.__ss__.save_model(self.models[m])
+        These can later be loaded to another interface with the load_models command.
+        Can be given a list of strings to give custom names for models."""
+        if names is None:
+            for m in self.models:
+                self.__ss__.save_model(self.models[m])
+        elif len(names) != len(self.models):
+            logging.warning("List length does not match number of models. Length is "
+                            + str(len(names))+" should be " + str(len(self.models)))
+        else:
+            for m, n in zip(self.models, names):
+                self.__ss__.save_model(self.models[m], n)
+
+    def get_models(self):
+        """Returns the models in this interface."""
+        return self.models.values()
 
     def load_models(self):
         """Loads models from the savepath to the interface.

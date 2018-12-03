@@ -160,6 +160,7 @@ class ModelTest(unittest.TestCase):
         model = Model(data, ['age', 'height'], 'income')
         pred = model.query(Feature('age') > 20)
         self.assertEqual(len(model.trees), 10)
+        self.assertEqual(len(model.plot_data), 990)
 
     @parameterized.expand([
         ('Two features with categorical', 'profession'),

@@ -6,6 +6,7 @@ import configparser
 import os
 import pandas as pd
 import sys
+import logging
 
 from .exceptions.querio_database_error import QuerioDatabaseError
 
@@ -23,39 +24,56 @@ class DataAccessor:
     def __init__(self, address, table_name):
         """Initialize the class"""
         self.db_address = address
+        self.logger = logging.getLogger("QuerioDataAccessor")
         try:
+            self.logger.debug("Connecting to database in '{}'"
+                              .format(self.db_address))
             self.engine = sqlalchemy.create_engine(self.db_address)
             self.conn = self.engine.connect()
             self.md = sqlalchemy.MetaData()
 
             try:
-                self.table = sqlalchemy.Table(table_name, self.md, autoload_with=self.engine)
+                self.table = sqlalchemy.Table(table_name, self.md,
+                                              autoload_with=self.engine)
             except exc.NoSuchTableError as e:
-                raise QuerioDatabaseError("Could not find table '{}'".format(table_name)) from e
+                raise QuerioDatabaseError("Could not find table '{}'"
+                                          .format(table_name)) from e
 
             self.table_name = table_name
             self.connected = True
-            print("Connection established")
-            print(self.get_null_count())
+            self.logger.info("Established a connection to the database")
+            self.logger.debug(self.get_null_count())
         except exc.OperationalError as e:
             self.connected = False
-            raise QuerioDatabaseError("Could not form a connection to the database") from e
+            self.logger.critical("""Could not connect to the database.
+                                Check database settings or that the
+                                database is running""")
+            raise QuerioDatabaseError("""Could not form a connection
+                                     to the database""") from e
 
     def get_example_row_from_db(self):
         """ Gets the first row of the database
 
         :return:
             A dictionary.
-            The keys of the dictionary are the column names of the database table,
+            The keys of the dictionary are column names of the database table,
             the values are the values of the table corresponding to the columns
         """
+        self.logger.debug("Fetching an example row from table '{}'"
+                          .format(self.table_name))
         column_names = self.get_table_column_names()
-        result = self.conn.execute("SELECT * FROM {}".format(self.table_name)).fetchone()
+        result = self.conn.execute("SELECT * FROM {}"
+                                   .format(self.table_name)).fetchone()
 
         if result is None:
-            raise QuerioDatabaseError("Could not fetch an example row from table '{}'".format(self.table_name))
+            self.logger.error("""Error when fetching example row
+                                from the database""")
+            raise QuerioDatabaseError("""Could not fetch an example row
+                                     from table '{}'"""
+                                      .format(self.table_name))
 
-        return {(column_name, result[column_name]) for column_name in column_names}
+        return {(column_name, result[column_name]) for column_name in
+                column_names}
 
     def get_table_column_names(self):
         """ Gets the names of the table columns
@@ -74,10 +92,17 @@ class DataAccessor:
             value of the variance as float
         """
         try:
-            result = self.conn.execute("SELECT var_pop({}) FROM {}".format(column, self.table_name))
+            self.logger.debug("Getting variance from column '{}'"
+                              .format(column))
+            result = self.conn.execute("SELECT var_pop({}) FROM {}"
+                                       .format(column, self.table_name))
         except exc.ProgrammingError as e:
-            raise QuerioDatabaseError("Invalid column type for '{}'. Could not get population variance".format(column)) from e
-        
+            self.logger.error("Could not fetch variance for column '{}'"
+                              .format(column))
+            raise QuerioDatabaseError("""Invalid column type for '{}'.
+                                      Could not get population variance"""
+                                      .format(column)) from e
+
         value = result.fetchone()
         return value[0]
 
@@ -87,6 +112,8 @@ class DataAccessor:
         :return:
             table data as (pandas) DataFrame
         """
+        self.logger.debug("Getting all data from table '{}'"
+                          .format(self.table_name))
         column_names = self.get_table_column_names()
         query_start = 'SELECT * FROM {} WHERE'
         query_end = []
@@ -96,7 +123,10 @@ class DataAccessor:
             else:
                 query_end.append(' AND {} IS NOT NULL'.format(column))
         query_end = ''.join(query_end)
-        return pd.read_sql((query_start + query_end).format(self.table_name), self.engine)
+        return pd.read_sql(
+            (query_start + query_end).format(self.table_name),
+            self.engine, chunksize=1000000
+        )
 
     def get_null_count(self):
         """ Gets the count of rows with null values from database table
@@ -113,6 +143,8 @@ class DataAccessor:
             else:
                 query_end.append(' OR {} IS NULL'.format(column))
         query_end = ''.join(query_end)
-        nulls = pd.read_sql((query_start + query_end).format(self.table_name), self.engine)
+        nulls = pd.read_sql((query_start + query_end)
+                            .format(self.table_name), self.engine)
         value = nulls['count'].to_string(index=False)
-        return "There are " + value + " rows with null values. These rows have been ignored."
+        return "There are " + value + """ rows with null values.
+                                     These rows have been ignored."""

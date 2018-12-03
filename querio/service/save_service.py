@@ -1,21 +1,25 @@
 import pickle
 import re
 import os
-
 from .exceptions.querio_file_error import QuerioFileError
+import logging
 
 
 class SaveService:
-    """Saves and loads created querio models. User can define the path where these models are stored.
-        Created files have their own naming convention and also unique file name.
+    """Saves and loads created querio models. User can define the path where
+        these models are stored.
+        Created files have their own naming convention and
+        also unique file name.
 
         Parameters:
         path: string
             File path where the models are stored
     """
+
     def __init__(self, path=""):
         """Initialize the SaveService"""
         self._src_folder = path
+        self.logger = logging.getLogger("QuerioSaveService")
 
     def save_model(self, model, name=None):
         """Saves the model into a querio file.
@@ -24,7 +28,9 @@ class SaveService:
             Created/ modified Model that the users wants to save
         """
         if name is None:
-            file_name = self._generate_name_for_model_attributes(model.output_name, model.get_feature_names())
+            file_name = self._generate_name_for_model_attributes(
+                                            model.output_name,
+                                            model.get_feature_names()))
         else:
             file_name = name + ".querio"
         relative_path = self._src_folder + file_name
@@ -33,20 +39,23 @@ class SaveService:
         pickle.dump(model, file)
 
         file.close()
+        self.logger.debug("Saved a model to {}".format(relative_path))
 
     def load_model(self, output_name, feature_names):
         """Loads specific Model
 
          :param output_name: string
-            The name of the column used to calculate the mean and the variance in
-            queries.
+            The name of the column used to calculate the mean and the
+            variance in queries.
         :param feature_names: list of strings
-            The names of the columns in the data that are used to narrow down the
-            rows.
+            The names of the columns in the data that are used
+            to narrow down the rows.
         :return:
             Model defined by the parameters
         """
-        return self.load_file(self._generate_name_for_model_attributes(output_name, feature_names))
+        return self.load_file(self._generate_name_for_model_attributes(
+                                                                output_name,
+                                                                feature_names))
 
     def load_file(self, file_name):
         """Returns Model from the specific file
@@ -58,15 +67,27 @@ class SaveService:
         """
         relative_path = self._src_folder + file_name
 
+        self.logger.debug("Loading a model from '{}'".format(relative_path))
+
         try:
             file = open(os.path.join(os.getcwd(), relative_path), 'rb')
         except FileNotFoundError as e:
-            raise QuerioFileError("No model found with following name: " + file_name, e)
+            self.logger.error("Could not find a saved model from '{}'"
+                              .format(relative_path))
+            raise QuerioFileError(
+                "No model found with following name: " +
+                file_name, e)
 
         try:
             model = pickle.load(file)
         except pickle.PickleError as e:
-            raise QuerioFileError(file_name + " could not be loaded as a model. Please train a new model", e)
+            self.logger.error("{} could not be loaded as a model"
+                              .format(file_name))
+            raise QuerioFileError(
+                        file_name +
+                        """ could not be loaded as a model.
+                        Please train a new model""",
+                        e)
         finally:
             file.close()
 
@@ -80,7 +101,7 @@ class SaveService:
         for file in querio_files:
             os.remove(path + file)
 
-    def set_folder (self, folder_path):
+    def set_folder(self, folder_path):
         """Sets new folder path
 
         :param folder_path: string
@@ -126,4 +147,3 @@ class SaveService:
         files = os.listdir(os.path.join(os.getcwd(), self._src_folder))
         querio_files = [file for file in files if self._is_querio_file(file)]
         return querio_files
-

@@ -77,7 +77,8 @@ df = pd.DataFrame(
 )
 print('Max age {0}, min age: {1}'.format(age.max(), age.min()))
 print('Max income {0}, min income: {1}'.format(income.max(), income.min()))
-print('Max stars {0}, min stars: {1}'.format(github_stars.max(), github_stars.min()))
+print('Max stars {0}, min stars: {1}'.format(github_stars.max(),
+                                             github_stars.min()))
 print('Max height {0}, min height: {1}'.format(height.max(), height.min()))
 print('Profession counts')
 print(df.Profession.value_counts())

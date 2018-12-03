@@ -44,8 +44,8 @@ class SaveServiceTest(unittest.TestCase):
 
         loaded_model = self.save_service.load_model(self.test_model.output_name, self.test_model.get_feature_names())
 
-        self.assertEqual(self.test_model.test_score, loaded_model.test_score)
-        self.assertEqual(self.test_model.train_score, loaded_model.train_score)
+        self.assertEqual(self.test_model.get_score_for_test(), loaded_model.get_score_for_test())
+        self.assertEqual(self.test_model.get_score_for_train(), loaded_model.get_score_for_train())
         self.assertEqual(self.test_model.output_name, loaded_model.output_name)
         self.assertEqual(self.test_model.get_feature_names(), loaded_model.get_feature_names())
 
@@ -54,8 +54,8 @@ class SaveServiceTest(unittest.TestCase):
 
         loaded_model = self.save_service.load_file(self.save_service._generate_name_for_model_attributes(self.test_model.output_name, self.test_model.get_feature_names()))
 
-        self.assertEqual(self.test_model.test_score, loaded_model.test_score)
-        self.assertEqual(self.test_model.train_score, loaded_model.train_score)
+        self.assertEqual(self.test_model.get_score_for_test(), loaded_model.get_score_for_test())
+        self.assertEqual(self.test_model.get_score_for_train(), loaded_model.get_score_for_train())
         self.assertEqual(self.test_model.output_name, loaded_model.output_name)
         self.assertEqual(self.test_model.get_feature_names(), loaded_model.get_feature_names())
 

@@ -1,8 +1,6 @@
-# Database information
+# How to install a local copy of the sample database
 
-The application is currently automatically connected to an extrnal Heroku -supplied Postgres database. This is a very small database of < 10 000 rows mainly used for testing purposes. **We strongly recommend using one of the supplied local databases!**.
-
-# How to install a local copy of the database
+We recommend using docker.
 
 ## Installing the docker container with built in example database of 10 000 000 rows
 
@@ -23,7 +21,7 @@ $> sudo apt-get install postgresql
 
 - Current database dump is set to public as default
 
-### Installing a database through a dump file
+### Installing a sample database through a dump file
 - Download the the dump file
 
 - Create a new empty database

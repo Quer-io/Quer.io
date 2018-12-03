@@ -17,13 +17,17 @@ from querio.ml.expression.expression import Expression
 
 
 class Model:
-    """A random forest regressor extension capable of more compex queries.
-    Model uses a random forest regressor as a foundation to predict
+    """A decision tree regressor extension capable of more compex queries.
+
+    Model uses a decision tree regressor as a foundation to predict
     the mean and variance for samples matching a compex query.
 
     Parameters:
     data: pandas.DataFrame
-        The data that is queried.
+        The data that is queried. If the DataFrame was created with a pandas
+        read-method with chunksize set, one decision tree is created for each
+        chunk. Queries then return the mean result of all the query on all
+        of the trees.
     feature_names: list of string
         The names of the columns in the data that are used to narrow down the
         rows.
@@ -31,7 +35,7 @@ class Model:
         The name of the column used to calculate the mean and the variance in
         queries.
     max_depth: int, optional
-        A limit to the maximum depth of the underlying random forest.
+        A limit to the maximum depth of the underlying decision tree.
 
     Queries:
     The queries can contain conditions for equalities and inequalities
@@ -50,33 +54,71 @@ class Model:
         self.table_name = table_name
         self.output_name = output_name
         self.features = {}
+        self.feature_names = feature_names
         self.model_feature_names = []
-        self.feature_min_max_count = get_feature_min_max_count(
-            data, feature_names
-        )
-        data = self.__preprocess_data__(data, feature_names)
+        self.test_scores = []
+        self.train_scores = []
         if max_depth is None:
-            max_depth = sys.getrecursionlimit()
+            self.max_depth = sys.getrecursionlimit()
+        else:
+            self.max_depth = max_depth
 
-        self.tree = sklearn.ensemble.RandomForestRegressor(
+        self.trees = []
+
+        self.feature_min_max_count = None
+        self.plot_data_frames = []
+        if isinstance(data, pd.DataFrame):
+            self.process_chunk(data)
+        else:
+            for chunk in data:
+                self.process_chunk(chunk)
+        self.plot_data = pd.concat(self.plot_data_frames, ignore_index=True)
+        # del self.plot_data_frames
+
+    def process_chunk(self, chunk):
+        def update_min_max_count_dict(key, dict1, dict2):
+            return {
+                'max': max(dict1[key]['max'], dict2[key]['max']),
+                'min': max(dict1[key]['min'], dict2[key]['min']),
+                'count': dict1[key]['count'] + dict2[key]['count'],
+            }
+
+        new_min_max_count = get_feature_min_max_count(
+            chunk, self.feature_names
+        )
+        if self.feature_min_max_count is None:
+            self.feature_min_max_count = new_min_max_count
+        else:
+            self.feature_min_max_count = {
+                key: update_min_max_count_dict(
+                    key, self.feature_min_max_count, new_min_max_count
+                )
+                for key in self.feature_names
+            }
+        chunk = self.__preprocess_data(chunk, self.feature_names)
+        tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
             random_state=42,
-            max_depth=min(max_depth, sys.getrecursionlimit() / 2 - 10),
-            n_estimators=10,
+            max_depth=min(self.max_depth, sys.getrecursionlimit() / 2 - 10),
         )
-
         train, test = sklearn.model_selection.train_test_split(
-            data, random_state=42
+            chunk, random_state=42
         )
-        self.tree.fit(train[self.model_feature_names], train[self.output_name])
-        self.test_score = self.tree.score(
+        plot, _ = sklearn.model_selection.train_test_split(
+            chunk, random_state=42,
+            train_size=min(100, len(chunk) - 1), test_size=0
+        )
+        self.plot_data_frames.append(plot)
+        tree.fit(train[self.model_feature_names], train[self.output_name])
+        self.test_scores.append(tree.score(
             test[self.model_feature_names], test[self.output_name]
-        )
-        self.train_score = self.tree.score(
+        ))
+        self.train_scores.append(tree.score(
             train[self.model_feature_names], train[self.output_name]
-        )
+        ))
+        self.trees.append(tree)
 
-    def __preprocess_data__(self, data, feature_names):
+    def __preprocess_data(self, data, feature_names):
         categorical_features = []
         data_columns = data.columns.copy()
         for col in data_columns:
@@ -106,13 +148,15 @@ class Model:
         return data
 
     def query(self, expression):
-        """Return the predicted mean and variance for the given condition
+        """Return the predicted mean and variance for the given condition.
 
         Arguments:
         expression -- an Expression
         Returns:
         A Prediction object that contains the predicted mean and variance of
         samples matching the given conditions.
+        Throws:
+        NoMatch when no rows match the expression.
         """
         if not isinstance(expression, Expression):
             raise TypeError('expression must be an Expression')
@@ -135,20 +179,23 @@ class Model:
                 condition.threshold = 1.0
 
         results = [
-            query_one_tree(decision_tree, expression, self.model_feature_names)
-            for decision_tree in self.tree.estimators_
+            query_one_tree(
+                decision_tree, expression, self.model_feature_names,
+                self.feature_min_max_count
+            )
+            for decision_tree in self.trees
         ]
         mean = sum([result[0] for result in results]) / len(results)
         var = sum([result[1] for result in results]) / len(results)
         return Prediction(mean, var)
 
     def get_score_for_test(self):
-        """Return the R^2 score of the random forest on the test data."""
-        return self.test_score
+        """Return the mean R^2 score of the decision trees on the test data."""
+        return sum(self.test_scores) / len(self.test_scores)
 
     def get_score_for_train(self):
-        """Return the R^2 score of the random forest on the training data."""
-        return self.train_score
+        """Return the mean R^2 score of the decision trees on the training data."""  # noqa
+        return sum(self.train_scores) / len(self.train_scores)
 
     def export_graphviz(self):
         """Return a visualizations of the decision trees in graphviz format."""
@@ -159,8 +206,71 @@ class Model:
                 filled=True, rounded=True,
                 special_characters=True
             )
-            for tree in self.tree.estimators_
+            for tree in self.trees
         ]
+
+    def visualize_decision(
+        self, feature, axis, expression=None,
+        prediction_style='b-', actual_style='r.',
+        query_points=100, param_dict={}
+    ):
+        """Plot the prediction with some real data points.
+
+        Plots query(Feature(feature) == x) for points in the range of the
+        feature. Also plots 100 points per chunk of actual data passed to
+        the Model constructor. By default the prediction is plotted with a
+        blue line and the actual points are plotted as red dots. It's
+        recommended to plot the actual points with points, as their order
+        in the dataset is arbitrary.
+
+        Parameters:
+        feature: str
+            The feature to plot.
+        axis: matplotlib.axes.Axes object
+            The axis object the plot is made to.
+        expression: Expression
+            An expression limiting the query range. Only query points and
+            actual points that match the expression are plotted. If the
+            expression is very restrictive compared to the range of the
+            plotted feature, ensure that query_points is set high enough to
+            get an appropriate number of points in the plot.
+        prediction_style: str
+            The style of the prediction. Default blue line (b-)
+        actual_style: str
+            The style of the actual points. Default red dot (r.)
+        query_points: int
+            The number of points the model is queried at. Default 100
+        param_dict:
+            Extra arguments passed to the axis object for plotting.
+
+        Example:
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        model.visualize_decision('age', ax)
+        fig.show()
+        """
+        min_max = self.feature_min_max_count[feature]
+        min = min_max['min']
+        max = min_max['max']
+        xs = np.linspace(min, max, query_points)
+        if expression is not None:
+            xs = [x for x in xs if expression.match(feature, x)]
+            matching_rows = self.plot_data[
+                self.plot_data.apply(
+                    lambda row: expression.match(feature, row[feature]),
+                    axis=1
+                )
+            ]
+        else:
+            matching_rows = self.plot_data
+        axis.plot(
+            xs, [self.query(Feature(feature) == x).result for x in xs],
+            prediction_style, **param_dict
+        )
+        axis.plot(
+            matching_rows[feature], matching_rows[self.output_name],
+            actual_style, **param_dict
+        )
 
     def _get_features(self):
         """Return a dict containing the type and columns of all features."""
@@ -174,6 +284,14 @@ class Model:
         """Return the categories for a categorical feature."""
         categories = []
         if feature_name in [*self.features]:
-            for col in self.features[feature_name]["columns"]:
-                categories.append(col.split(feature_name + "_", 1)[1])
+            columns = self.features[feature_name]['columns']
+            if len(columns) > 1:
+                for col in columns:
+                    categories.append(col.split(feature_name + "_", 1)[1])
+            else:
+                raise ValueError(
+                    '{0} is not categorical.'.format(feature_name)
+                )
+        else:
+            raise ValueError('{0} is not a feature.'.format(feature_name))
         return categories

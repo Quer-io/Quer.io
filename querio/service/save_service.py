@@ -1,6 +1,7 @@
 import pickle
 import re
 import os
+import shutil
 from .exceptions.querio_file_error import QuerioFileError
 import logging
 
@@ -21,25 +22,27 @@ class SaveService:
         self._src_folder = path
         self.logger = logging.getLogger("QuerioSaveService")
 
-    def save_model(self, model):
+    def save_model(self, model, model_name: str):
         """Saves the model into a querio file.
 
         :param model: Model
             Created/ modified Model that the users wants to save
+        :param model_name: string
+            Name of the model
         """
-        relative_path = (self._src_folder +
-                         self._generate_name_for_model_attributes(
-                                            model.output_name,
-                                            model.get_feature_names()))
+        file_relative_path = model_name
+        dir_relative_path = os.path.join(os.getcwd(), self._src_folder +
+                                         file_relative_path[:len(file_relative_path) - 7])
 
-        file = open(os.path.join(os.getcwd(), relative_path), 'wb+')
+        if not os.path.exists(dir_relative_path):
+            os.mkdir(dir_relative_path)
 
+        file = open(os.path.join(dir_relative_path, file_relative_path), 'wb+')
         pickle.dump(model, file)
-
         file.close()
-        self.logger.debug("Saved a model to {}".format(relative_path))
+        self.logger.debug("Saved a model to {}".format(dir_relative_path))
 
-    def load_model(self, output_name, feature_names):
+    def load_model(self, output_name: str, feature_names: list, model_name: str):
         """Loads specific Model
 
          :param output_name: string
@@ -48,12 +51,23 @@ class SaveService:
         :param feature_names: list of strings
             The names of the columns in the data that are used
             to narrow down the rows.
+        :param model_name: string
+            name of the model
         :return:
             Model defined by the parameters
         """
-        return self.load_file(self._generate_name_for_model_attributes(
-                                                                output_name,
-                                                                feature_names))
+        if model_name != "":
+            return self.load_file(model_name)
+        elif output_name != "" and len(feature_names) > 0:
+            return self.load_file(self._generate_name_for_model_attributes(
+                output_name,
+                feature_names))
+        else:
+            if output_name == "" or len(feature_names) < 1:
+                raise QuerioFileError("Error loading model with output name: '" + output_name + "' " +
+                                      "and features: '" + ", ".join(feature_names) + "'")
+            elif model_name == "":
+                raise QuerioFileError("Error loading model by name: '" + model_name + "'")
 
     def load_file(self, file_name):
         """Returns Model from the specific file
@@ -63,15 +77,17 @@ class SaveService:
         :return:
             Model from the file
         """
-        relative_path = self._src_folder + file_name
+        relative_folder_path = self._src_folder + file_name[:len(file_name) - 7]
+        relative_file_path = self._src_folder + file_name
 
-        self.logger.debug("Loading a model from '{}'".format(relative_path))
+        self.logger.debug("Loading a model from '{}'".format(relative_file_path))
 
         try:
-            file = open(os.path.join(os.getcwd(), relative_path), 'rb')
+            folder = os.path.join(os.getcwd(), relative_folder_path)
+            file = open(os.path.join(folder, relative_file_path), 'rb')
         except FileNotFoundError as e:
             self.logger.error("Could not find a saved model from '{}'"
-                              .format(relative_path))
+                              .format(relative_file_path))
             raise QuerioFileError(
                 "No model found with following name: " +
                 file_name, e)
@@ -97,7 +113,8 @@ class SaveService:
         querio_files = self.get_querio_files()
 
         for file in querio_files:
-            os.remove(path + file)
+            querio_file_folder = path + file[:len(file) - 7]
+            shutil.rmtree(querio_file_folder)
 
     def set_folder(self, folder_path):
         """Sets new folder path
@@ -124,15 +141,42 @@ class SaveService:
         return False
 
     def _is_querio_file(self, filename):
-        filename_pattern = '^(ON-){1}(\S)+(FN-){1}(\S)+(.querio){1}$'
+        filename_pattern = '^(QUERI_){1}(\S)+(.querio){1}$'
 
         return re.match(filename_pattern, filename)
 
-    def _generate_name_for_model_attributes(self, output_name, feature_names):
-        name = 'ON-'   # for attribute outputname
+    def _is_querio_folder(self, folder_name):
+        folder_name_pattern = '^(QUERI_){1}(\S)+'
 
-        name += output_name + 'FN-'  # for attribute featurenames
-        name += '_'.join(feature_names)
+        return re.match(folder_name_pattern, folder_name)
+
+    def generate_querio_name(self, output_name: str, feature_names: list, model_name: str):
+        if output_name != "" and len(feature_names) > 0:
+            return self._generate_name_for_model_attributes(output_name, feature_names)
+        elif model_name != "":
+            if len(model_name) > 255:
+                raise QuerioFileError("The file name is too long '>255 characters'")
+            else:
+                invalid_char_list = self._invalid_file_naming_characters(model_name)
+                if len(invalid_char_list) > 0:
+                    invalid_characters_string = "'" + ", ".join(invalid_char_list) + "'"
+                    raise QuerioFileError("The file name contains following illegal characters: " +
+                                          str(invalid_characters_string))
+            return 'QUERI_' + model_name + '.querio'
+        else:
+            raise QuerioFileError("Could not generate querio name. Have at least output name and feature names or " +
+                                  "just model name. Current output name = '" + output_name + "'" +
+                                  ". Feature names: '" + " ,".join(feature_names) + "'" +
+                                  ". Model name: '" + model_name + "'")
+
+    def _generate_name_for_model_attributes(self, output_name, feature_names):
+        name = 'QUERI_'  # for attribute outputname
+
+        name += output_name + '_IN'  # for attribute featurenames
+        while (len(name) < 100 and len(feature_names) > 0):
+            name += '_' + feature_names.pop(0)
+        if len(feature_names) > 0:
+            name += '_..._'
         name += '.querio'
         return name
 
@@ -142,6 +186,25 @@ class SaveService:
          :return:
             list of querio files
         """
-        files = os.listdir(os.path.join(os.getcwd(), self._src_folder))
-        querio_files = [file for file in files if self._is_querio_file(file)]
+        path = os.path.join(os.getcwd(), self._src_folder)
+        path_files = os.listdir(path)
+        querio_folders = [folder for folder in path_files if self._is_querio_folder(folder)]
+        querio_files = []
+        for folder in querio_folders:
+            folder_files = os.listdir(os.path.join(path, folder))
+            found_files = [file for file in folder_files if self._is_querio_file(file)]
+            for file in found_files:
+                querio_files.append(file)
         return querio_files
+
+    def _invalid_file_naming_characters(self, file_name):
+        # regarding to file naming convention: file name should not exceed 255 characters and
+        # should not contain following: / \ " ' * ; - ? [ ] ( ) ~ ! $ { } < > # @ & | space tab newline
+        result = re.search(r'[\/\\\"\'\*\;\-\?\[\]\(\)\~\!\$\{\}\<\>\#\@\&\|\s]+', file_name)
+        if result is None:
+            return []
+        else:
+            invalid_char_list = []
+            for char in result.group():
+                invalid_char_list.append(char)
+            return invalid_char_list

@@ -29,8 +29,9 @@ class Interface:
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
+        self._load_models()
 
-    def train(self, target: str, features: list):
+    def train(self, target: str, features: list, model_name: str):
         """Trains a new model for given data using the features provided.
 
         Arguments:
@@ -38,6 +39,8 @@ class Interface:
                 The target of the model that will be trained.
             features: list of string
                 The column names of features that will be trained for the model
+            model_name
+                Name of the model
          """
         self._validate_columns([target])
         self._validate_columns(features)
@@ -45,14 +48,14 @@ class Interface:
         self.logger.info("Training a model for '{}' based on '{}'"
                          .format(target, ", ".join(features)))
 
-        feature_names = sorted(features)
-        self.models[target+':'+''.join(feature_names)] = model.Model(
+        self.models[model_name] = model.Model(
                                     self.accessor.get_all_data(),
                                     features,
                                     target)
-        return self.models[target+':'+''.join(feature_names)]
+        self._save_model(model_name)
+        return self.models[model_name]
 
-    def object_query(self, q_object: QueryObject):
+    def object_query(self, q_object: QueryObject, model_name=""):
         """Run new query from models using a QueryObject.
         This will run a query from an existing model,
         or if no such model is found will train a new one
@@ -71,16 +74,27 @@ class Interface:
                 if c.feature not in feature_names:
                     feature_names.append(c.feature)
 
+        if model_name is "":
+            model_name = self.__ss__.generate_querio_name(q_object.target, feature_names, "")
+        else:
+            model_name = self.__ss__.generate_querio_name("", [], model_name)
+
+        feature_names = []
+        for c in q_object.expression:
+            if isinstance(c, Cond):
+                if c.feature not in feature_names:
+                    feature_names.append(c.feature)
+
         feature_names = sorted(feature_names)
         self._validate_columns(feature_names)
 
-        if q_object.target+':'+''.join(feature_names) not in self.models:
+        if model_name not in self.models:
             self.logger.info("""No model for '{}' based on '{}' found.
                               Training a new one..."""
                              .format(q_object.target, ", "
                                      .join(feature_names)))
-            self.train(q_object.target, feature_names)
-        return self.models[q_object.target+':'+''.join(feature_names)].query(
+            self.train(q_object.target, feature_names, model_name)
+        return self.models[model_name].query(
                                                         q_object.expression)
 
     def query(self, target: str, conditions: List[Cond]):
@@ -96,16 +110,15 @@ class Interface:
                 exp = exp & conditions[i]
         return self.models[target+':'+''.join(feature_names)].query(exp)
 
-    def save_models(self):
-        for m in self.models:
-            self.__ss__.save_model(self.models[m])
+    def _save_model(self, model_name):
+            self.__ss__.save_model(self.models[model_name], model_name)
 
-    def load_models(self):
+    def _load_models(self):
         names = self.__ss__.get_querio_files()
         for n in names:
             try:
                 mod = self.__ss__.load_file(n)
-                features = mod.model_feature_names
+                features = mod.feature_names
                 output = mod.output_name
 
                 self._validate_columns(features)
@@ -114,7 +127,7 @@ class Interface:
                 feature_names = ""
                 for s in features:
                     feature_names += s
-                self.models[output+':'+feature_names] = mod
+                self.models[n] = mod
             except QuerioColumnError:
                 self.logger.error("""Encountered an error when loading file
                                    '{}'. This model could not be loaded"""

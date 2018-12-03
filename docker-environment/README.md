@@ -47,6 +47,18 @@ First you have to install Docker-CE and Docker Compose according to following in
   After it's done with installing everything it will launch `init_db.py`. This python script connects to the postgres database and creates a table named **person**.
   After this it generates a fixed number of rows exactly like the data generator in the tools folder. Rows are saved into a .csv-file and copied to the database. 
 
+  ### **normalized-db-populator**
+  This container is identical to db-populator but will create a normalized database with four tables.
+
+ ## Database connection
+
+ After running `docker-compose up`, databases can be connected with the following addresses:
+
+ This is the connection address to the database with one table named *person* with 10 000 000 rows.
+ `postgres://queriouser:pass1@localhost:5432/queriodb`
+
+ This is the connection address to the normalized database with 10 000 rows in each table
+ `postgres://queriouser:pass1@localhost:5432/normaldb`
   
 ## Additional steps for Windows
 

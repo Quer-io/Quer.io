@@ -40,10 +40,10 @@ class ModelTest(unittest.TestCase):
                 self.data, 'table', 'profession', 'income'
             ),
             'One feature with categorical_underscore': Model(
-                self.data, 'prof_with_underscore', 'income'
+                self.data,'table', 'prof_with_underscore', 'income'
             ),
             'Two features with categorical': Model(
-                self.data, ['age', 'profession'], 'income'
+                self.data,'table', ['age', 'profession'], 'income'
             ),
             'Two features': Model(
                 self.data, 'table', ['age', 'height'], 'income'
@@ -157,7 +157,7 @@ class ModelTest(unittest.TestCase):
         data = pd.read_csv(
             os.path.join(os.path.dirname(__file__), '1000.csv'), chunksize=100
         )
-        model = Model(data, ['age', 'height'], 'income')
+        model = Model(data, 'table', ['age', 'height'], 'income')
         pred = model.query(Feature('age') > 20)
         self.assertEqual(len(model.trees), 10)
         self.assertEqual(len(model.plot_data), 990)

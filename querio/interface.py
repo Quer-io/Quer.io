@@ -1,4 +1,7 @@
 from typing import List
+
+from docutils.nodes import target
+
 from querio.db import data_accessor as da
 from querio.ml import model
 from querio.service.save_service import SaveService
@@ -32,27 +35,28 @@ class Interface:
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
 
-    def train(self, target: str, features: list):
+    def train(self, query_target: str, features: list):
         """Trains a new model for given data using the features provided.
 
         Arguments:
-            target: string
-                The target of the model that will be trained.
+            query_target: string
+                The query_target of the model that will be trained.
             features: list of string
                 The column names of features that will be trained for the model
          """
-        self._validate_columns([target])
+        self._validate_columns([query_target])
         self._validate_columns(features)
 
         self.logger.info("Training a model for '{}' based on '{}'"
-                         .format(target, ", ".join(features)))
+                         .format(query_target, ", ".join(features)))
 
         feature_names = sorted(features)
-        self.models[target+':'+''.join(feature_names)] = model.Model(
+        self.models[query_target+':'+''.join(feature_names)] = model.Model(
                                     self.accessor.get_all_data(),
+                                    self.table_name,
                                     features,
-                                    target)
-        return self.models[target+':'+''.join(feature_names)]
+                                    query_target)
+        return self.models[query_target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
         """Run new query from models using a QueryObject.

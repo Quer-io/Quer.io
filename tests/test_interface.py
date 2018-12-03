@@ -20,6 +20,7 @@ class MockDataAccessor:
 
 def mock_constructor(self, data):
     self.accessor = MockDataAccessor(data)
+    self.table_name = 'table'
     self.models = {}
     self.columns = self.accessor.get_table_column_names()
     self.logger = logging.getLogger("QuerioInterface")

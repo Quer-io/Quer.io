@@ -30,7 +30,7 @@ class SaveService:
         if name is None:
             file_name = self._generate_name_for_model_attributes(
                                             model.output_name,
-                                            model.get_feature_names()))
+                                            model.get_feature_names())
         else:
             file_name = name + ".querio"
         relative_path = self._src_folder + file_name

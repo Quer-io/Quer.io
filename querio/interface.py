@@ -25,14 +25,16 @@ class Interface:
             If left blank will be the path from which the program was called.
 
         """
+        self.dbpath = dbpath
         self.table_name = table_name
         self.logger = logging.getLogger("QuerioInterface")
         self.accessor = da.DataAccessor(dbpath, table_name)
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
+        self._load_models()
 
-    def train(self, query_target: str, features: list):
+    def train(self, query_target: str, features: list, model_name: str):
         """Trains a new model for given data using the features provided.
 
         Arguments:
@@ -40,6 +42,8 @@ class Interface:
                 The query_target of the model that will be trained.
             features: list of string
                 The column names of features that will be trained for the model
+            model_name
+                Name of the model
          """
         self._validate_columns([query_target])
         self._validate_columns(features)
@@ -47,15 +51,17 @@ class Interface:
         self.logger.info("Training a model for '{}' based on '{}'"
                          .format(query_target, ", ".join(features)))
 
-        feature_names = sorted(features)
-        self.models[query_target+':'+''.join(feature_names)] = model.Model(
+        self.models[model_name] = model.Model(
                                     self.accessor.get_all_data(),
                                     self.table_name,
+                                    model_name,
                                     features,
-                                    query_target)
-        return self.models[query_target+':'+''.join(feature_names)]
+                                    query_target,
+                                    dbpath=self.dbpath)
+        self.__ss__.save_model(self.models[model_name], model_name)
+        return self.models[model_name]
 
-    def object_query(self, q_object: QueryObject):
+    def object_query(self, q_object: QueryObject, model_name=""):
         """Run new query from models using a QueryObject.
         This will run a query from an existing model,
         or if no such model is found will train a new one
@@ -74,37 +80,82 @@ class Interface:
                 if c.feature not in feature_names:
                     feature_names.append(c.feature)
 
+        if model_name is "":
+            model_name = self.__ss__.generate_querio_name(q_object.target, feature_names, "")
+        else:
+            model_name = self.__ss__.generate_querio_name("", [], model_name)
+
+        feature_names = []
+        for c in q_object.expression:
+            if isinstance(c, Cond):
+                if c.feature not in feature_names:
+                    feature_names.append(c.feature)
+
         feature_names = sorted(feature_names)
         self._validate_columns(feature_names)
 
-        if q_object.target+':'+''.join(feature_names) not in self.models:
+        if model_name in self.models:
+            return self.models[model_name].query(q_object.expression)
+        else:
+            query_model_feature_set = set(feature_names)
+            for model in self.models.values():
+                compare_model_feature_set = set(model.feature_names)
+                if model.output_name == q_object.target:
+                    if query_model_feature_set == compare_model_feature_set:
+                        self.__ss__.rename_querio_file(model.model_name, model_name)
+                        model.model_name = model_name
+                        self.models[model_name] = model
+                        return model.query(q_object.expression)
             self.logger.info("""No model for '{}' based on '{}' found.
-                              Training a new one..."""
+                                                                  Training a new one..."""
                              .format(q_object.target, ", "
                                      .join(feature_names)))
-            self.train(q_object.target, feature_names)
-        return self.models[q_object.target+':'+''.join(feature_names)].query(
-                                                        q_object.expression)
+            self.train(q_object.target, feature_names, model_name)
+            return self.models[model_name].query(q_object.expression)
 
-    def query(self, target: str, conditions: List[Cond]):
+    def query(self, target: str, conditions: List[Cond], model_name=""):
         """
 
         :param target: string
         :param conditions: list[Cond]
         :return: a prediction object
         """
-        
+
         feature_names = generate_list(conditions)
         self._validate_columns(feature_names)
-        if target+':'.join(feature_names) not in self.models:
-            self.train(target, feature_names)
+
+        if model_name is "":
+            model_name = self.__ss__.generate_querio_name(target, feature_names, "")
+        else:
+            model_name = self.__ss__.generate_querio_name("", [], model_name)
+
+        feature_names = generate_list(conditions)
+        self._validate_columns(feature_names)
+
         if len(conditions) == 1:
             exp = conditions[0]
         else:
             exp = conditions[0] & conditions[1]
             for i in range(2, len(conditions)):
                 exp = exp & conditions[i]
-        return self.models[target+':'+''.join(feature_names)].query(exp)
+
+        if model_name not in self.models:
+            query_model_feature_set = set(feature_names)
+            for model in self.models.values():
+                compare_model_feature_set = set(model.feature_names)
+                if model.output_name == target:
+                    if query_model_feature_set == compare_model_feature_set:
+                        self.__ss__.rename_querio_file(model.model_name, model_name)
+                        model.model_name = model_name
+                        self.models[model_name] = model
+                        return model.query(exp)
+            self.logger.info("""No model for '{}' based on '{}' found.
+                                                                              Training a new one..."""
+                             .format(target, ", "
+                                     .join(feature_names)))
+            self.train(target, feature_names, model_name)
+
+        return self.models[model_name].query(exp)
 
     def save_models(self, names=None):
         """Saves the models of this interface as .querio files in the path specified by savepath.
@@ -124,7 +175,7 @@ class Interface:
         """Returns the models in this interface."""
         return self.models.values()
 
-    def load_models(self):
+    def _load_models(self):
         """Loads models from the savepath to the interface.
         Will only load models that are from a table with the same name as current and with the same columns
         Will ignore any files that do not belong to current table.
@@ -133,34 +184,28 @@ class Interface:
         for n in names:
             try:
                 mod = self.__ss__.load_file(n)
-                features = mod.get_feature_names()
+                features = mod.feature_names
                 output = mod.output_name
+
                 self._validate_columns(features)
                 self._validate_columns([output])
 
                 feature_names = ""
                 for s in features:
                     feature_names += s
-                self.models[output+':'+feature_names] = mod
+                self.models[n] = mod
             except QuerioColumnError:
                 self.logger.error("""Encountered an error when loading file
                                    '{}'. This model could not be loaded"""
                                   .format(n))
                 continue
 
-    def retrain_saved_models(self):
-        names = self.get_saved_models()
-        for n in names:
-            try:
-                mod = self.__ss__.load_file(n)
-                features = mod.get_feature_names()
-                output = mod.output_name
-                self.train(features, output)
-            except QuerioColumnError:
-                self.logger.error("""Encountered an error when loading file
-                                      '{}'. This model could not be loaded"""
-                                  .format(n))
-                continue
+    def retrain_models(self):
+        for m in self.get_models():
+            features = m.get_feature_names()
+            output = m.output_name
+            name = m.model_name
+            self.train(output, features, name)
 
     def clear_models(self):
         """Clears the models in this interface.

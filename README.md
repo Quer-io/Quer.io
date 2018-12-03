@@ -31,7 +31,7 @@ This project is done with Python version 3.6
 
 See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install the sample databases this application was tested on.
 
-See [Application Installation guide](https://github.com/Quero-io/Quer.io/tree/master/documentation/install.md) for information how to install the application and all its dependencies.
+See [Application Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/install.md) for information how to install the application and all its dependencies.
 
 ### Tests
 Currently the project contains tests that are done using the [unittest](https://docs.python.org/3/library/unittest.html) library. Tests can be run with the following command from the project root

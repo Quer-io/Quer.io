@@ -151,7 +151,7 @@ class Interface:
                 continue
 
     def retrain_models(self):
-        for m in self.models:
+        for m in self.get_models():
             features = m.get_feature_names()
             output = m.output_name
             self.train(output, features)

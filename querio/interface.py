@@ -127,6 +127,9 @@ class Interface:
         else:
             model_name = self.__ss__.generate_querio_name("", [], model_name)
 
+        feature_names = generate_list(conditions)
+        self._validate_columns(feature_names)
+
         if len(conditions) == 1:
             exp = conditions[0]
         else:

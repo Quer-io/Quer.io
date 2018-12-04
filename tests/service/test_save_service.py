@@ -9,6 +9,7 @@ from querio.ml.model import Model
 class SaveServiceTest(unittest.TestCase):
 
     def setUp(self):
+        self.save_service = SaveService()
         ages = [22, 44, 36, 64, 32, 86, 11, 45]
         incomes = [age * 301 for age in ages]
         heights = [age * 50 for age in ages]
@@ -17,9 +18,8 @@ class SaveServiceTest(unittest.TestCase):
             'age': ages, 'income': incomes, 'height': heights,
             'github_stars': github_stars
         })
-
-        self.test_model = Model(self.data, 'table', ['height', 'age'], 'income')
-        self.save_service = SaveService()
+        generated_name = self.save_service.generate_querio_name('income', ['height', 'age'], "")
+        self.test_model = Model(self.data, 'table', generated_name, ['height', 'age'], 'income')
 
     def tearDown(self):
         self.save_service.clear_querio_files()

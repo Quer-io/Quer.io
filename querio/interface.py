@@ -50,13 +50,13 @@ class Interface:
         self.logger.info("Training a model for '{}' based on '{}'"
                          .format(query_target, ", ".join(features)))
 
-        feature_names = sorted(features)
         self.models[model_name] = model.Model(
                                     self.accessor.get_all_data(),
                                     self.table_name,
+                                    model_name,
                                     features,
                                     query_target)
-        self._save_model(model_name)
+        self.__ss__.save_model(self.models[model_name], model_name)
         return self.models[model_name]
 
     def object_query(self, q_object: QueryObject, model_name=""):
@@ -92,16 +92,26 @@ class Interface:
         feature_names = sorted(feature_names)
         self._validate_columns(feature_names)
 
-        if model_name not in self.models:
+        if model_name in self.models:
+            return self.models[model_name].query(q_object.expression)
+        else:
+            query_model_feature_set = set(feature_names)
+            for model in self.models.values():
+                compare_model_feature_set = set(model.feature_names)
+                if model.output_name == q_object.target:
+                    if query_model_feature_set == compare_model_feature_set:
+                        self.__ss__.rename_querio_file(model.model_name, model_name)
+                        model.model_name = model_name
+                        self.models[model_name] = model
+                        return model.query(q_object.expression)
             self.logger.info("""No model for '{}' based on '{}' found.
-                              Training a new one..."""
+                                                                  Training a new one..."""
                              .format(q_object.target, ", "
                                      .join(feature_names)))
             self.train(q_object.target, feature_names, model_name)
-        return self.models[model_name].query(
-                                                        q_object.expression)
+            return self.models[model_name].query(q_object.expression)
 
-    def query(self, target: str, conditions: List[Cond]):
+    def query(self, target: str, conditions: List[Cond], model_name=""):
         """
 
         :param target: string
@@ -111,15 +121,36 @@ class Interface:
 
         feature_names = generate_list(conditions)
         self._validate_columns(feature_names)
-        if target+':'.join(feature_names) not in self.models:
-            self.train(target, feature_names)
+
+        if model_name is "":
+            model_name = self.__ss__.generate_querio_name(target, feature_names, "")
+        else:
+            model_name = self.__ss__.generate_querio_name("", [], model_name)
+
         if len(conditions) == 1:
             exp = conditions[0]
         else:
             exp = conditions[0] & conditions[1]
             for i in range(2, len(conditions)):
                 exp = exp & conditions[i]
-        return self.models[target+':'+''.join(feature_names)].query(exp)
+
+        if model_name not in self.models:
+            query_model_feature_set = set(feature_names)
+            for model in self.models.values():
+                compare_model_feature_set = set(model.feature_names)
+                if model.output_name == target:
+                    if query_model_feature_set == compare_model_feature_set:
+                        self.__ss__.rename_querio_file(model.model_name, model_name)
+                        model.model_name = model_name
+                        self.models[model_name] = model
+                        return model.query(exp)
+            self.logger.info("""No model for '{}' based on '{}' found.
+                                                                              Training a new one..."""
+                             .format(target, ", "
+                                     .join(feature_names)))
+            self.train(target, feature_names, model_name)
+
+        return self.models[model_name].query(exp)
 
     def save_models(self, names=None):
         """Saves the models of this interface as .querio files in the path specified by savepath.
@@ -169,9 +200,9 @@ class Interface:
         for n in names:
             try:
                 mod = self.__ss__.load_file(n)
-                features = mod.model_feature_names
+                features = mod.feature_names
                 output = mod.output_name
-                self.train(features, output)
+                self.train(output, features, n)
             except QuerioColumnError:
                 self.logger.error("""Encountered an error when loading file
                                       '{}'. This model could not be loaded"""

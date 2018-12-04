@@ -15,6 +15,8 @@ See [Database Schema 2](https://github.com/Quer-io/Quer.io/blob/db/normalized/do
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 of the machine learning model quer.io uses
 
+See [Scheduler usage](https://github.com/Quer-io/Quer.io/tree/master/documentation/scheduler/scheduler.md) for a guide on how to use the scheduler to retrain models periodically
+
 ## Project description
 
 This project is built to the specifications and requirements provided by Prof. Michael Mathioudakis and is a course work project for course TKT20007 Software Engineering Lab at the University of Helsinki, department of Computer Science.

@@ -28,6 +28,7 @@ class Interface:
         self.table_name = table_name
         self.logger = logging.getLogger("QuerioInterface")
         self.accessor = da.DataAccessor(dbpath, table_name)
+        self.dbpath = dbpath
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
         self.__ss__ = SaveService(savepath)
@@ -52,7 +53,8 @@ class Interface:
                                     self.accessor.get_all_data(),
                                     self.table_name,
                                     features,
-                                    query_target)
+                                    query_target,
+                                    self.dbpath)
         return self.models[query_target+':'+''.join(feature_names)]
 
     def object_query(self, q_object: QueryObject):
@@ -148,19 +150,11 @@ class Interface:
                                   .format(n))
                 continue
 
-    def retrain_saved_models(self):
-        names = self.get_saved_models()
-        for n in names:
-            try:
-                mod = self.__ss__.load_file(n)
-                features = mod.get_feature_names()
-                output = mod.output_name
-                self.train(features, output)
-            except QuerioColumnError:
-                self.logger.error("""Encountered an error when loading file
-                                      '{}'. This model could not be loaded"""
-                                  .format(n))
-                continue
+    def retrain_models(self):
+        for m in self.models:
+            features = m.get_feature_names()
+            output = m.output_name
+            self.train(output, features)
 
     def clear_models(self):
         """Clears the models in this interface.

@@ -133,7 +133,7 @@ class Interface:
         for n in names:
             try:
                 mod = self.__ss__.load_file(n)
-                features = mod.model_feature_names
+                features = mod.get_feature_names()
                 output = mod.output_name
                 self._validate_columns(features)
                 self._validate_columns([output])
@@ -153,7 +153,7 @@ class Interface:
         for n in names:
             try:
                 mod = self.__ss__.load_file(n)
-                features = mod.model_feature_names
+                features = mod.get_feature_names()
                 output = mod.output_name
                 self.train(features, output)
             except QuerioColumnError:

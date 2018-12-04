@@ -187,7 +187,7 @@ class SaveService:
             list of querio files
         """
         path = os.path.join(os.getcwd(), self._src_folder)
-        path_files = os.listdir(path)
+        path_files = [file for file in os.listdir(path) if os.path.isdir(file)]
         querio_folders = [folder for folder in path_files if self._is_querio_folder(folder)]
         querio_files = []
         for folder in querio_folders:

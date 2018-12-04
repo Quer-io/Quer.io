@@ -52,47 +52,47 @@ class ModelTest(unittest.TestCase):
 
     def test_query_works_with_valid_number_columns(self):
         try:
-            self.i.query("github_stars", [Feature('age') > 30, Feature('income') > 6000], self.model_name)
+            self.i.query("github_stars", [Feature('age') > 30, Feature('income') > 6000], "")
         except (ValueError, TypeError, QuerioColumnError):
             self.fail()
 
     def test_query_works_with_valid_string_and_boolean_columns(self):
         try:
-            self.i.query("github_stars", [Feature('profession') == 'janitor', Feature('is_client') == True], self.model_name)
+            self.i.query("github_stars", [Feature('profession') == 'janitor', Feature('is_client') == True], "")
         except (ValueError, TypeError, QuerioColumnError):
             self.fail()
 
     def test_query_works_with_untrained_output(self):
         try:
-            self.i.query("age", [Feature('profession') == 'janitor', Feature('is_client') == True], self.model_name)
+            self.i.query("age", [Feature('profession') == 'janitor', Feature('is_client') == True], "")
         except (ValueError, TypeError, QuerioColumnError):
             self.fail()
 
     def test_query_works_with_untrained_feature_name(self):
         try:
-            self.i.query("github_stars", [Feature('height') > 150, Feature('is_client') == False], self.model_name)
+            self.i.query("github_stars", [Feature('height') > 150, Feature('is_client') == False], "")
         except (ValueError, TypeError, QuerioColumnError):
             self.fail()
 
     def test_query_errors_with_non_existing_feature_name(self):
         with self.assertRaises(QuerioColumnError):
-            self.i.query("github_stars", [Feature('asldjglsagh') == 'janitor', Feature('is_client') == False], self.model_name)
+            self.i.query("github_stars", [Feature('asldjglsagh') == 'janitor', Feature('is_client') == False], "")
 
     def test_query_errors_with_non_existing_output_name(self):
         with self.assertRaises(QuerioColumnError):
-            self.i.query("adfasdfaf", [Feature('profession') == 'janitor', Feature('is_client') == False], self.model_name)
+            self.i.query("adfasdfaf", [Feature('profession') == 'janitor', Feature('is_client') == False], "")
 
     def test_query_errors_with_wrong_conditional(self):
         with self.assertRaises(TypeError):
-            self.i.query("github_stars", [Feature('profession') > 'janitor', Feature('is_client') > False], self.model_name)
+            self.i.query("github_stars", [Feature('profession') > 'janitor', Feature('is_client') > False], "")
 
     def test_query_errors_with_invalid_feature(self):
         with self.assertRaises(AttributeError):
-            self.i.query("github_stars", "aslfjakfldja", self.model_name)
+            self.i.query("github_stars", "aslfjakfldja", "")
 
     def test_query_errors_with_invalid_output_type(self):
         with self.assertRaises(TypeError):
-            self.i.query(123, [Feature('profession') == 'janitor', Feature('is_client') == False], self.model_name)
+            self.i.query(123, [Feature('profession') == 'janitor', Feature('is_client') == False], "")
 
     def test_query_works_with_query_object(self):
         qo = QueryObject("github_stars")

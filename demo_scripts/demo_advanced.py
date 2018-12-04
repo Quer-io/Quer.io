@@ -8,13 +8,15 @@ dB = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5ca17333
 
 i = q.Interface(dB, "person")
 # i.clear_saved_models()
-i.load_models()
+# i.load_models()
 result = i.query("height", [Feature('age') > 30, Feature('income') > 6000])
 print(str(result))  # > (avg income = 1000; variance income = 4000)
 result = i.query("age", [Feature('income') == 5000])
 print(str(result))  # > (avg age = 30; variance age = 10)
 print(str(i.frequency('height')))
-i.save_models()
-
-for c in i.list_columns():
-    print(c)
+print(len(i.models))
+# i.save_models(["age", "height"])
+for m in i.get_models():
+    print(m.output_name)
+#for c in i.list_columns():
+#   print(c)

@@ -21,17 +21,19 @@ class SaveService:
         self._src_folder = path
         self.logger = logging.getLogger("QuerioSaveService")
 
-    def save_model(self, model):
+    def save_model(self, model, name=None):
         """Saves the model into a querio file.
 
         :param model: Model
             Created/ modified Model that the users wants to save
         """
-        relative_path = (self._src_folder +
-                         self._generate_name_for_model_attributes(
+        if name is None:
+            file_name = self._generate_name_for_model_attributes(
                                             model.output_name,
-                                            model.get_feature_names()))
-
+                                            model.get_feature_names())
+        else:
+            file_name = name + ".querio"
+        relative_path = self._src_folder + file_name
         file = open(os.path.join(os.getcwd(), relative_path), 'wb+')
 
         pickle.dump(model, file)

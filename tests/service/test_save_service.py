@@ -18,7 +18,7 @@ class SaveServiceTest(unittest.TestCase):
             'github_stars': github_stars
         })
 
-        self.test_model = Model(self.data, ['height', 'age'], 'income')
+        self.test_model = Model(self.data, 'table', ['height', 'age'], 'income')
         self.save_service = SaveService()
 
     def tearDown(self):

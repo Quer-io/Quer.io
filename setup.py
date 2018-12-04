@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="",
     author_email="",
-    description="",
+    description="A python library for quickly estimating database results",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="",

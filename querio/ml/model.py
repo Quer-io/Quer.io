@@ -65,11 +65,14 @@ class Model:
         self.trees = []
 
         self.feature_min_max_count = None
+        self.plot_data_frames = []
         if isinstance(data, pd.DataFrame):
             self.process_chunk(data)
         else:
-            for i, chunk in enumerate(data):
+            for chunk in data:
                 self.process_chunk(chunk)
+        self.plot_data = pd.concat(self.plot_data_frames, ignore_index=True)
+        # del self.plot_data_frames
 
     def process_chunk(self, chunk):
         def update_min_max_count_dict(key, dict1, dict2):
@@ -100,6 +103,11 @@ class Model:
         train, test = sklearn.model_selection.train_test_split(
             chunk, random_state=42
         )
+        plot, _ = sklearn.model_selection.train_test_split(
+            chunk, random_state=42,
+            train_size=min(100, len(chunk) - 1), test_size=0
+        )
+        self.plot_data_frames.append(plot)
         tree.fit(train[self.model_feature_names], train[self.output_name])
         self.test_scores.append(tree.score(
             test[self.model_feature_names], test[self.output_name]
@@ -139,13 +147,15 @@ class Model:
         return data
 
     def query(self, expression):
-        """Return the predicted mean and variance for the given condition
+        """Return the predicted mean and variance for the given condition.
 
         Arguments:
         expression -- an Expression
         Returns:
         A Prediction object that contains the predicted mean and variance of
         samples matching the given conditions.
+        Throws:
+        NoMatch when no rows match the expression.
         """
         if not isinstance(expression, Expression):
             raise TypeError('expression must be an Expression')
@@ -168,7 +178,10 @@ class Model:
                 condition.threshold = 1.0
 
         results = [
-            query_one_tree(decision_tree, expression, self.model_feature_names)
+            query_one_tree(
+                decision_tree, expression, self.model_feature_names,
+                self.feature_min_max_count
+            )
             for decision_tree in self.trees
         ]
         mean = sum([result[0] for result in results]) / len(results)
@@ -195,6 +208,69 @@ class Model:
             for tree in self.trees
         ]
 
+    def visualize_decision(
+        self, feature, axis, expression=None,
+        prediction_style='b-', actual_style='r.',
+        query_points=100, param_dict={}
+    ):
+        """Plot the prediction with some real data points.
+
+        Plots query(Feature(feature) == x) for points in the range of the
+        feature. Also plots 100 points per chunk of actual data passed to
+        the Model constructor. By default the prediction is plotted with a
+        blue line and the actual points are plotted as red dots. It's
+        recommended to plot the actual points with points, as their order
+        in the dataset is arbitrary.
+
+        Parameters:
+        feature: str
+            The feature to plot.
+        axis: matplotlib.axes.Axes object
+            The axis object the plot is made to.
+        expression: Expression
+            An expression limiting the query range. Only query points and
+            actual points that match the expression are plotted. If the
+            expression is very restrictive compared to the range of the
+            plotted feature, ensure that query_points is set high enough to
+            get an appropriate number of points in the plot.
+        prediction_style: str
+            The style of the prediction. Default blue line (b-)
+        actual_style: str
+            The style of the actual points. Default red dot (r.)
+        query_points: int
+            The number of points the model is queried at. Default 100
+        param_dict:
+            Extra arguments passed to the axis object for plotting.
+
+        Example:
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        model.visualize_decision('age', ax)
+        fig.show()
+        """
+        min_max = self.feature_min_max_count[feature]
+        min = min_max['min']
+        max = min_max['max']
+        xs = np.linspace(min, max, query_points)
+        if expression is not None:
+            xs = [x for x in xs if expression.match(feature, x)]
+            matching_rows = self.plot_data[
+                self.plot_data.apply(
+                    lambda row: expression.match(feature, row[feature]),
+                    axis=1
+                )
+            ]
+        else:
+            matching_rows = self.plot_data
+        axis.plot(
+            xs, [self.query(Feature(feature) == x).result for x in xs],
+            prediction_style, **param_dict
+        )
+        axis.plot(
+            matching_rows[feature], matching_rows[self.output_name],
+            actual_style, **param_dict
+        )
+
     def _get_features(self):
         """Return a dict containing the type and columns of all features."""
         return self.features
@@ -207,6 +283,14 @@ class Model:
         """Return the categories for a categorical feature."""
         categories = []
         if feature_name in [*self.features]:
-            for col in self.features[feature_name]["columns"]:
-                categories.append(col.split(feature_name + "_", 1)[1])
+            columns = self.features[feature_name]['columns']
+            if len(columns) > 1:
+                for col in columns:
+                    categories.append(col.split(feature_name + "_", 1)[1])
+            else:
+                raise ValueError(
+                    '{0} is not categorical.'.format(feature_name)
+                )
+        else:
+            raise ValueError('{0} is not a feature.'.format(feature_name))
         return categories

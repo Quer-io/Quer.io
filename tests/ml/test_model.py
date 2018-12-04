@@ -5,6 +5,7 @@ from parameterized import parameterized
 import os.path
 
 from querio.ml import Model
+from querio.ml import NoMatch
 from querio.ml.expression.cond import Cond
 from querio.ml.expression.cond import Op
 from querio.ml.expression.feature import Feature
@@ -22,13 +23,13 @@ class ModelTest(unittest.TestCase):
         github_stars = [age * 20 + 10 for age in ages]
         professions = [
             'accountant', 'janitor', 'president', 'janitor',
-            'accountant', 'programmer', 'janitor', 'programmer'
+            'accountant', 'programmer', 'janitor', 'account_manager'
         ]
         is_client = [True, True, False, True, False, False, False, True]
         self.data = pd.DataFrame({
             'age': ages, 'income': incomes, 'height': heights,
             'github_stars': github_stars, 'profession': professions,
-            'is_client': is_client
+            'is_client': is_client, 'prof_with_underscore': professions
         })
         self.models = {
             'One feature': Model(self.data, 'age', 'income'),
@@ -37,6 +38,12 @@ class ModelTest(unittest.TestCase):
             ),
             'One feature with categorical': Model(
                 self.data, 'profession', 'income'
+            ),
+            'One feature with categorical_underscore': Model(
+                self.data, 'prof_with_underscore', 'income'
+            ),
+            'Two features with categorical': Model(
+                self.data, ['age', 'profession'], 'income'
             ),
             'Two features': Model(
                 self.data, ['age', 'height'], 'income'
@@ -54,16 +61,22 @@ class ModelTest(unittest.TestCase):
         ('One feature with boolean', Cond('is_client', Op.eq, True)),
         ('One feature with boolean', Feature('is_client') == 1),
         ('One feature with categorical', Cond('profession', Op.eq, 'janitor')),
+        ('One feature with categorical_underscore', (
+            Feature('prof_with_underscore') == 'janitor'
+        )),
+        ('One feature with categorical_underscore', (
+            Feature('prof_with_underscore') == 'account_manager'
+        )),
         ('One feature with categorical', Feature('profession') == 'janitor'),
         ('Two features', ExpressionTreeNode(
-            Cond('age', Op.eq, 35), BoolOp.and_, Cond('height', Op.eq, 120)
+            Cond('age', Op.eq, 35), BoolOp.and_, Cond('height', Op.eq, 700)
         )),
-        ('Two features', (Feature('age') == 20) & (Feature('height') == 160)),
-        ('Two features', (Feature('age') == 20) | (Feature('height') == 160)),
-        ('Three features',
-            ((Feature('age') == 20) | (Feature('height') == 160)) &
-            (Feature('github_stars') == 50)
-         ),
+        ('Two features', (Feature('age') == 20) & (Feature('height') == 800)),
+        ('Two features', (Feature('age') == 20) | (Feature('height') == 800)),
+        ('Three features', (
+            ((Feature('age') == 20) | (Feature('height') == 800))
+            & (Feature('github_stars') == 300)
+        )),
     ])
     def test_query_gives_value_in_correct_range(self, name, test_conditions):
         prediction = self.models[name].query(
@@ -89,6 +102,20 @@ class ModelTest(unittest.TestCase):
             ]])[0],
             prediction.result
         )
+
+    @parameterized.expand([
+        ('Too old', Feature('age') > 100),
+        ('Contradiction', (
+            (Feature('height') > 1000) & (Feature('height') < 900)
+        )),
+        ('Too few github stars', Feature('github_stars') == 100)
+    ])
+    def test_query_raises_NoMatch_when_no_rows_match(
+        self, name, test_condition
+    ):
+        with self.assertRaises(NoMatch):
+            model = self.models['Three features']
+            model.query(test_condition)
 
     def test_query_raises_ValueError_with_bad_feature_names(self):
         with self.assertRaises(ValueError):
@@ -133,6 +160,34 @@ class ModelTest(unittest.TestCase):
         model = Model(data, ['age', 'height'], 'income')
         pred = model.query(Feature('age') > 20)
         self.assertEqual(len(model.trees), 10)
+        self.assertEqual(len(model.plot_data), 990)
+
+    @parameterized.expand([
+        ('Two features with categorical', 'profession'),
+        ('One feature with categorical_underscore', 'prof_with_underscore')
+    ])
+    def test_get_categories_for_feature_returns_categories(self, model, feat):
+        model = self.models[model]
+        categories = model.get_categories_for_feature(feat)
+        true_categories = [
+            'accountant', 'janitor', 'president',
+            'programmer', 'account_manager'
+        ]
+        true_categories.sort()
+        categories.sort()
+        self.assertEqual(categories, true_categories)
+
+    @parameterized.expand([
+        ('age'),
+        ('income'),
+        ('not_feature')
+    ])
+    def test_get_categories_for_feature_raises_with_not_categorical(
+        self, feature
+    ):
+        model = self.models['Two features with categorical']
+        with self.assertRaises(ValueError):
+            model.get_categories_for_feature(feature)
 
     def __render_graph(self, model, name):
         import graphviz

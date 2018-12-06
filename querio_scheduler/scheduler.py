@@ -7,7 +7,7 @@ import logging
 
 class Scheduler:
 
-    def __init__(self, save_path: str = "", time_string: str = "02:00"):
+    def __init__(self, save_path: str = os.path.join(os.getcwd(), ""), time_string: str = "02:00"):
         self.save_path = save_path
         self.time_string = time_string
         self.logger = logging.getLogger("QuerioScheduler")
@@ -16,7 +16,7 @@ class Scheduler:
         self.time_string = time_string
 
     def set_path(self, save_path: str):
-        self.save_path = save_path
+        self.save_path = os.path.join(os.path.normpath(save_path), "")
 
     def retrain(self):
         ss = q.service.save_service.SaveService(self.save_path)
@@ -36,14 +36,10 @@ class Scheduler:
                 self.logger.error("""Encountered an error when retraining model '{}'."""
                                   .format(f))
             continue
-        print("Retraining completed")
-
-    def get_complete_path(self):
-        return os.path.join(os.getcwd(), self.save_path)
 
     def run(self):
         schedule.every().day.at(self.time_string).do(self.retrain)
-        print("Saved models path: " + self.get_complete_path()
+        print("Saved models path: " + self.save_path
               + "\nKeep this script running to retrain models every day at " + self.time_string
               + "\nYou can stop the script by pressing CTRL + C")
         try:
@@ -51,14 +47,14 @@ class Scheduler:
                 schedule.run_pending()
                 time.sleep(60)
         except KeyboardInterrupt:
-            print("Stopped")
+            print("\nStopped")
             pass
 
 
 if __name__ == '__main__':
     import sys
     s = Scheduler()
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         try:
             if '--help' in sys.argv:
                 print("This script is made for retraining saved Querio models periodically.\n"
@@ -71,15 +67,17 @@ if __name__ == '__main__':
                       "--help   (for help)")
                 exit()
             if '-t' in sys.argv:
-                time = sys.argv[sys.argv.index('-t') + 1]
-                s.set_time(time)
+                time_string = sys.argv[sys.argv.index('-t') + 1]
+                s.set_time(time_string)
             if '-p' in sys.argv:
-                path = sys.argv[sys.argv.index('-p') + 1]
-                s.set_path(path)
+                path_string = sys.argv[sys.argv.index('-p') + 1]
+                s.set_path(path_string)
             if '--now' in sys.argv:
                 s.retrain()
                 exit()
         except IndexError:
             print("Invalid arguments provided. Try running with the argument --help")
             exit()
+    else:
+        print("Run with argument --help for more information.\n")
     s.run()

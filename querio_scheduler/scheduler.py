@@ -67,11 +67,11 @@ if __name__ == '__main__':
                       "--help   (for help)")
                 exit()
             if '-t' in sys.argv:
-                time_string = sys.argv[sys.argv.index('-t') + 1]
-                s.set_time(time_string)
+                time_input = sys.argv[sys.argv.index('-t') + 1]
+                s.set_time(time_input)
             if '-p' in sys.argv:
-                path_string = sys.argv[sys.argv.index('-p') + 1]
-                s.set_path(path_string)
+                path_input = sys.argv[sys.argv.index('-p') + 1]
+                s.set_path(path_input)
             if '--now' in sys.argv:
                 s.retrain()
                 exit()

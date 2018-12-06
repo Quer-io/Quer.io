@@ -41,6 +41,23 @@ i = querio.Interface(db_address, 'person')
 
 Now we have an interface! Next we'll see how to make queries.
 
+## Tables and views
+
+Due to the nature of the packages utilized by Querio, it is currently not possible to initialize machine learning processes to multiple tables at the same time. In practice this means that the data should be stored in a single table, though this is not practical in most production databases. This can be circumvented by creating database views that store the the desired data in a single searchable object. Types of views differ between different database systems, but in general if the database is in a stable form and Querio is used on a predetermined set of columns, a materialized view might be a suitable solution. For quick usage normal static views and even temporary views that are deleted after each session.
+
+Creating views with (postgreSQL) is simple, a desired query written and stored as a database view, which can then be queried just like a standard table would be queried. For example:
+
+```sql
+CREATE OR REPLACE TEMP VIEW querio_view AS (
+   SELECT x.a
+          y.b
+          z.c
+   FROM   x
+    INNER JOIN y USING (key)
+    INNER JOIN z USING (key)
+  );
+```
+
 ## Making queries
 
 Queries are made by passing a **QueryObject**

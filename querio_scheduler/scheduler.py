@@ -53,3 +53,33 @@ class Scheduler:
         except KeyboardInterrupt:
             print("Stopped")
             pass
+
+
+if __name__ == '__main__':
+    import sys
+    s = Scheduler()
+    if len(sys.argv) > 0:
+        try:
+            if '--help' in sys.argv:
+                print("This script is made for retraining saved Querio models periodically.\n"
+                      "By default the script uses its parent folder as path and 02:00 as the time to run.\n"
+                      "\n"
+                      "Arguments:\n"
+                      "-t [time in HH:MM]   (example: -t 23:15)\n"
+                      "-p [path]   (example: -p 'home/username/Querio Files')\n"
+                      "--now   (to retrain all the models in the folder immediately and then exit)\n"
+                      "--help   (for help)")
+                exit()
+            if '-t' in sys.argv:
+                time = sys.argv[sys.argv.index('-t') + 1]
+                s.set_time(time)
+            if '-p' in sys.argv:
+                path = sys.argv[sys.argv.index('-p') + 1]
+                s.set_path(path)
+            if '--now' in sys.argv:
+                s.retrain()
+                exit()
+        except IndexError:
+            print("Invalid arguments provided. Try running with the argument --help")
+            exit()
+    s.run()

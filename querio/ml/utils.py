@@ -1,9 +1,11 @@
 
-def make_into_list_if_scalar(list_or_scalar):
-    if isinstance(list_or_scalar, list):
-        return list_or_scalar
+def make_into_set(value):
+    if isinstance(value, set):
+        return value
+    elif isinstance(value, list):
+        return set(value)
     else:
-        return [list_or_scalar]
+        return {value}
 
 
 class Population:

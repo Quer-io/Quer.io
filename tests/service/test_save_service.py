@@ -10,6 +10,7 @@ class SaveServiceTest(unittest.TestCase):
 
     def setUp(self):
         self.save_service = SaveService()
+        self.save_service.clear_querio_files()
         ages = [22, 44, 36, 64, 32, 86, 11, 45]
         incomes = [age * 301 for age in ages]
         heights = [age * 50 for age in ages]
@@ -19,7 +20,7 @@ class SaveServiceTest(unittest.TestCase):
             'github_stars': github_stars
         })
         generated_name = self.save_service.generate_querio_name('income', ['height', 'age'], "")
-        self.test_model = Model(self.data, 'table', generated_name, ['height', 'age'], 'income')
+        self.test_model = Model(self.data, 'table', generated_name, ['height', 'age'], 'income', 'path')
 
     def tearDown(self):
         self.save_service.clear_querio_files()
@@ -27,7 +28,7 @@ class SaveServiceTest(unittest.TestCase):
     def test_name_is_generated_correctly(self):
         model_name = ""
         generated_name = self.save_service.generate_querio_name(self.test_model.output_name, self.test_model.get_feature_names(), model_name)
-        expected_name = 'QUERI_income_IN_height_age.querio'
+        expected_name = 'QUERI_income_IN_age_height.querio'
 
         self.assertEqual(expected_name, generated_name)
 
@@ -48,7 +49,7 @@ class SaveServiceTest(unittest.TestCase):
                                                                 self.test_model.get_feature_names(), model_name)
         self.save_service.save_model(self.test_model, generated_name)
 
-        loaded_model = self.save_service.load_model(self.test_model.output_name, self.test_model.feature_names, model_name)
+        loaded_model = self.save_service.load_model(self.test_model.output_name, list(self.test_model.feature_names), model_name)
 
         self.assertEqual(self.test_model.get_score_for_test(), loaded_model.get_score_for_test())
         self.assertEqual(self.test_model.get_score_for_train(), loaded_model.get_score_for_train())

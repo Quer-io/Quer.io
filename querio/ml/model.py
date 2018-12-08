@@ -48,9 +48,13 @@ class Model:
     (Feature('height') > 180) | ((Feature('age') < 50) & (Feature('age') > 40))
     """
 
-    def __init__(self, data, table_name, model_name, feature_names, output_name, max_depth=None, db_path=""):
+    def __init__(
+        self, data, table_name, model_name, feature_names,
+        output_name, db_path, max_depth=None
+    ):
+
         """Initialize the Model."""
-        feature_names = make_into_list_if_scalar(feature_names)
+        feature_names = make_into_set(feature_names)
         self.table_name = table_name
         self.model_name = model_name
         self.output_name = output_name

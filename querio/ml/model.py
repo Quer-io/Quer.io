@@ -50,7 +50,7 @@ class Model:
 
     def __init__(
         self, data, table_name, model_name, feature_names,
-        output_name, max_depth=None
+        output_name, db_path, max_depth=None
     ):
 
         """Initialize the Model."""

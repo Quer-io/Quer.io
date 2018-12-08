@@ -20,7 +20,7 @@ class SaveServiceTest(unittest.TestCase):
             'github_stars': github_stars
         })
         generated_name = self.save_service.generate_querio_name('income', ['height', 'age'], "")
-        self.test_model = Model(self.data, 'table', generated_name, ['height', 'age'], 'income')
+        self.test_model = Model(self.data, 'table', generated_name, ['height', 'age'], 'income', 'path')
 
     def tearDown(self):
         self.save_service.clear_querio_files()

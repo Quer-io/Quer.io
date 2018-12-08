@@ -59,7 +59,7 @@ class Interface:
                                     model_name,
                                     features,
                                     query_target,
-                                    db_path=self.dbpath)
+                                    self.dbpath)
         self.__ss__.save_model(self.models[model_name], model_name)
         return self.models[model_name]
 

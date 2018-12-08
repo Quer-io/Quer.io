@@ -12,9 +12,18 @@ pytz==2018.5
 scikit-learn==0.19.2
 scipy==1.1.0
 six==1.11.0
+python-intervals==1.6.0
+
+#Visualization
+matplotlib==2.2.3
 
 #Style
 pycodestyle==2.4.0
 
 #Tests
 parameterized==0.6.1
+pg8000==1.10
+testing.postgresql==1.3.0
+
+#Scheduling
+schedule==0.5.0

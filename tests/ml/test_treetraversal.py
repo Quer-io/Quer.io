@@ -26,41 +26,52 @@ class TreeTraversalTest(unittest.TestCase):
             random_state=42,
         )
         self.feature_names = ['age', 'height', 'github_stars']
+        self.feature_min_maxes = {
+            'age': {'min': min(ages), 'max': max(ages)},
+            'height': {'min': min(heights), 'max': max(heights)},
+            'github_stars': {
+                'min': min(github_stars), 'max': max(github_stars)
+            }
+        }
         train, test = sklearn.model_selection.train_test_split(
             self.data, random_state=42
         )
         self.tree.fit(train[self.feature_names], train['income'])
 
     @parameterized.expand([
-        ('1', Cond('age', Op.eq, 42), 10535),
+        ('0', Cond('age', Op.eq, 42), 10535),
+        ('1', ExpressionTreeNode(
+            Cond('age', Op.eq, 33), BoolOp.and_, Cond('height', Op.eq, 600)
+        ), 5191.320987654321),
         ('2', ExpressionTreeNode(
-            Cond('age', Op.eq, 33), BoolOp.and_, Cond('height', Op.eq, 100)
-        ), 7926.333333333333333),
-        ('3', ExpressionTreeNode(
-            Cond('height', Op.eq, 120), BoolOp.and_,
-            Cond('github_stars', Op.eq, 54)
+            Cond('height', Op.eq, 700), BoolOp.and_,
+            Cond('github_stars', Op.eq, 350)
         ), 3311),
-        ('4', Cond('github_stars', Op.eq, 42), 10685.5),
-        ('5', Feature('age') == 42, 10535),
-        ('6', Feature('height') > 2500, 16404.5),
-        ('7', Feature('github_stars') > 700, 14548.333333333333333333),
-        ('8', Feature('age') > 40, 10535),
-        ('9', ExpressionTreeNode(
+        ('3', Cond('github_stars', Op.eq, 420), 6977.576923076923),
+        ('4', Feature('age') == 42, 10535),
+        ('5', Feature('height') > 2500, 17872.891891891893),
+        ('6', Feature('github_stars') > 700, 14071.329608938544),
+        ('7', Feature('age') > 40, 10535),
+        ('8', ExpressionTreeNode(
             Feature('height') < 1000, BoolOp.and_,
             Feature('github_stars') > 700
         ), 10836),
-        ('10', (
-            (Feature('height') == 1000) | (Feature('github_stars') == 100)
-        ), 10535),
-        ('11', (Feature('github_stars') == 100) | (
+        ('9', (
+            (Feature('height') == 1000) | (Feature('github_stars') == 250)
+        ), 7399.2865474884),
+        ('10', (Feature('github_stars') == 100) | (
                 (Feature('github_stars') == 700) & (Feature('height') == 1500)
-        ), 10715.6),
+        ), 10836),
+        ('11', (Feature('github_stars') < 250) | (
+            (Feature('github_stars') == 700) & (Feature('height') == 1500)
+        ), 6977.5935071991),
     ])
     def test_query_same_value_as_pre_calculated(
         self, name, test_conditions, true_result
     ):
         prediction = query_one_tree(
-            self.tree, test_conditions, self.feature_names
+            self.tree, test_conditions, self.feature_names,
+            self.feature_min_maxes
         )
         self.assertAlmostEqual(true_result, prediction[0])
 

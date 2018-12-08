@@ -6,10 +6,16 @@
 ## Documentation links
 See [Documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/) for Documentation
 
-See [Database Schema](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for Database Schema
+See [Usage guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/querio101.md) for a basic rundown on how to use Quer.io
+
+See [Database Schema 1](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/schema.md) for single table sample database schema
+
+See [Database Schema 2](https://github.com/Quer-io/Quer.io/blob/db/normalized/documentation/database/normalized_schema.md) for normalized sample database schema
 
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 of the machine learning model quer.io uses
+
+See [Scheduler usage](https://github.com/Quer-io/Quer.io/tree/master/documentation/scheduler/scheduler.md) for a guide on how to use the scheduler to retrain models periodically
 
 ## Project description
 
@@ -23,7 +29,7 @@ Chosen implementation is Python for the application and Postgres for the databas
 
 This project is done with Python version 3.6
 
-See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install PostgreSQL database dumps as local databases.
+See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install the sample databases this application was tested on.
 
 See [Application Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/install.md) for information how to install the application and all its dependencies.
 
@@ -35,23 +41,6 @@ Currently the project contains tests that are done using the [unittest](https://
 This command will find every test from the project and run it. If you want to run an individual test script it can be done with the following command
 
 `python3 -m unittest [path to file]`
-
-## FAQ
-
-#### Is this a commercial product?
-No, the rights for this project have been relinquished to the University Of Helsinki as per a mutual agreement. The project is also assessed as course work and as of such is a lab project to begin with. The creators of this project do not claim any commercial interest in the final product.
-
-#### Can I use this project for my own purposes?
-YES! This project is distributed with The MIT Open Source Licence, which allows usage without restrictions for your own purposes. Read more at [The MIT Licence](https://opensource.org/licenses/MIT).
-
-#### Will you guarantee that the product is operational at all times and all systems?
-Unfortunately this is an ongoing project with changing requirements, so usage will depend on how the product evolves. Generally speaking all code that is pushed to GitHub should keep the product operational, but this can not be guaranteed. Your system settings and specs might also affect the use of this project. As per the MIT licence, there is no warranty or responsibility from our side. While we might provide some support if asked, this will be an exception.
-
-#### Can I use your Heroku -database?
-No, you will have to requisiton your own database and install from the dump, or install a local database on your computer.
-
-#### Can I contribute to the project?
-As for now, no outside contributions will be allowed due to course work assessments.
 
 ## Contributors
 - [Dennis Ahlfors](https://github.com/Dforssi)

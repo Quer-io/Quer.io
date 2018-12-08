@@ -1,0 +1,39 @@
+CREATE TABLE public.person_profession(profession_id INT PRIMARY KEY NOT NULL, 
+				      profession_name VARCHAR NOT NULL, 
+				      description VARCHAR);
+
+CREATE TABLE public.github(github_id INT PRIMARY KEY, 
+			   stars DECIMAL NOT NULL, 
+                           link VARCHAR);
+
+CREATE TABLE public.person(person_id INT PRIMARY KEY, 
+                           age DECIMAL NOT NULL, 
+                           height DECIMAL NOT NULL, 
+                           income DECIMAL NOT NULL, 
+                           is_client BOOLEAN NOT NULL, 
+                           profession_id INT NOT NULL,
+			   CONSTRAINT person_profession_id_fkey FOREIGN KEY (profession_id)
+				REFERENCES public.person_profession (profession_id) MATCH SIMPLE
+				ON UPDATE NO ACTION ON DELETE NO ACTION);
+
+CREATE TABLE public.person_github(github_id INT NOT NULL,
+				  person_id INT NOT NULL,
+				  CONSTRAINT person_github_github_id_fkey FOREIGN KEY (github_id)
+					REFERENCES public.github (github_id) MATCH SIMPLE
+					ON UPDATE NO ACTION ON DELETE NO ACTION,
+				CONSTRAINT person_github_person_id_fkey FOREIGN KEY (person_id)
+					REFERENCES public.person (person_id) MATCH SIMPLE
+					ON UPDATE NO ACTION ON DELETE NO ACTION);
+
+CREATE OR REPLACE VIEW querio_view AS
+	SELECT 	age,
+		height,
+		income,
+		is_client,
+		profession_name,
+		stars
+	FROM	public.person
+		INNER JOIN public.person_profession USING (profession_id)
+		INNER JOIN public.person_github USING (person_id)
+		INNER JOIN public.github USING (github_id)
+	);

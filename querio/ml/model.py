@@ -52,6 +52,7 @@ class Model:
         self, data, table_name, model_name, feature_names,
         output_name, max_depth=None
     ):
+
         """Initialize the Model."""
         feature_names = make_into_set(feature_names)
         self.table_name = table_name
@@ -62,6 +63,7 @@ class Model:
         self.model_feature_names = []
         self.test_scores = []
         self.train_scores = []
+        self.db_path = db_path
         if max_depth is None:
             self.max_depth = sys.getrecursionlimit()
         else:

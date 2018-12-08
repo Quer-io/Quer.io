@@ -231,7 +231,7 @@ class Interface:
         return self.__ss__.get_querio_files()
 
     def frequency(self, values):
-        data = self.accessor.get_all_data()
+        data = self.accessor.get_all_data(False)
         if type(values) != list:
             values = [values]
         self._validate_columns(values)

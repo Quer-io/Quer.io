@@ -11,6 +11,8 @@ In this example we will work with a database table called **person** which has t
  height       | numeric           |  
  profession   | character varying |
  is_client    | boolean   |
+ 
+ This also corresponds to the sample database this application has been tested with and is provided with the repo as a psql dump file.
 
  And we have the table in a Postgresql-database which is running with the following settings:
 

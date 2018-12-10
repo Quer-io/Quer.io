@@ -15,6 +15,7 @@ interfere with the rest of the database.
 Let's create such a view in PostgreSQL.
 The example database contains a table person with
 the following columns:
+
 | Column | Type |
 | --- | --- |
 | id | integer |
@@ -24,6 +25,7 @@ the following columns:
 
 For our queries, we need a table like the
 this:
+
 | Column | Type |
 | --- | --- |
 | id | integer |

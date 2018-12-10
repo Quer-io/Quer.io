@@ -8,12 +8,16 @@ from querio.ml.utils import *
 
 class UtilsTest(unittest.TestCase):
 
-    def test_make_into_lest_if_scalar_makes_scalar_into_list(self):
-        self.assertListEqual([3], make_into_list_if_scalar(3))
+    def test_make_into_set_makes_scalar_into_set(self):
+        self.assertSetEqual({3}, make_into_set(3))
 
-    def test_make_into_lest_if_scalar_keeps_list_unchanged(self):
+    def test_make_into_set_makes_list_into_set(self):
         list = [1, 2, 3, 4]
-        self.assertListEqual(list, make_into_list_if_scalar(list))
+        self.assertSetEqual({1, 2, 3, 4}, make_into_set(list))
+
+    def test_make_into_set_keeps_set_unchanged(self):
+        set = {1, 2, 3, 4}
+        self.assertSetEqual(set, make_into_set(set))
 
     @parameterized.expand([
         ('1', [[1, 2, 3], [4, 5, 6]]),

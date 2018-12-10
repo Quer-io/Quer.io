@@ -11,7 +11,6 @@ from querio.ml.expression.cond import Op
 from querio.ml.expression.feature import Feature
 from querio.ml.expression.expressionnode import BoolOp
 from querio.ml.expression.expressionnode import ExpressionTreeNode
-from querio.ml.utils import make_into_list_if_scalar
 
 
 class ModelTest(unittest.TestCase):
@@ -32,27 +31,28 @@ class ModelTest(unittest.TestCase):
             'is_client': is_client, 'prof_with_underscore': professions
         })
         self.models = {
-            'One feature': Model(self.data, 'table', "", 'age', 'income'),
+            'One feature': Model(self.data, 'table', "", 'age', 'income', ''),
             'One feature with boolean': Model(
-                self.data, 'table', "", 'is_client', 'income'
+                self.data, 'table', "", 'is_client', 'income', ''
             ),
             'One feature with categorical': Model(
-                self.data, 'table', "", 'profession', 'income'
+                self.data, 'table', "", 'profession', 'income', ''
             ),
             'One feature with categorical_underscore': Model(
-                self.data,'table', "", 'prof_with_underscore', 'income'
+                self.data, 'table', "", 'prof_with_underscore', 'income', ''
             ),
             'Two features with categorical': Model(
-                self.data,'table', "", ['age', 'profession'], 'income'
+                self.data, 'table', "", ['age', 'profession'], 'income', ''
             ),
             'Two features': Model(
-                self.data, 'table', "", ['age', 'height'], 'income'
+                self.data, 'table', "", ['age', 'height'], 'income', ''
             ),
             'Two features reverse': Model(
-                self.data, 'table', "", ['height', 'age'], 'income'
+                self.data, 'table', "", ['height', 'age'], 'income', ''
             ),
             'Three features': Model(
-                self.data, 'table', "", ['age', 'height', 'github_stars'], 'income'
+                self.data, 'table', "", ['age', 'height', 'github_stars'],
+                'income', ''
             )
         }
 
@@ -157,7 +157,7 @@ class ModelTest(unittest.TestCase):
         data = pd.read_csv(
             os.path.join(os.path.dirname(__file__), '1000.csv'), chunksize=100
         )
-        model = Model(data, 'table', "", ['age', 'height'], 'income')
+        model = Model(data, 'table', "", ['age', 'height'], 'income', '')
         pred = model.query(Feature('age') > 20)
         self.assertEqual(len(model.trees), 10)
         self.assertEqual(len(model.plot_data), 990)

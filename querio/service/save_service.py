@@ -46,7 +46,7 @@ class SaveService:
         file.close()
         self.logger.debug("Saved a model to {}".format(dir_relative_path))
 
-    def load_model(self, output_name, feature_names, model_name = ""):
+    def load_model(self, output_name, feature_names, model_name=""):
         """Loads specific Model
 
          :param output_name: string
@@ -193,6 +193,7 @@ class SaveService:
                                   ". Model name: '" + model_name + "'")
 
     def _generate_name_for_model_attributes(self, output_name, feature_names):
+        feature_names = sorted(feature_names)
         name = 'QUERI_'  # for attribute outputname
 
         name += output_name + '_IN'  # for attribute featurenames

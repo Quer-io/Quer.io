@@ -1,11 +1,6 @@
 import sqlalchemy
-import psycopg2
 from sqlalchemy import exc
-import math
-import configparser
-import os
 import pandas as pd
-import sys
 import logging
 
 from .exceptions.querio_database_error import QuerioDatabaseError
@@ -45,11 +40,11 @@ class DataAccessor:
             self.logger.debug(self.get_null_count())
         except exc.OperationalError as e:
             self.connected = False
-            self.logger.critical("""Could not connect to the database.
-                                Check database settings or that the
-                                database is running""")
-            raise QuerioDatabaseError("""Could not form a connection
-                                     to the database""") from e
+            self.logger.critical("Could not connect to the database." +
+                                 "Check database settings or that the " +
+                                 "database is running")
+            raise QuerioDatabaseError("Could not form a connection " +
+                                      "to the database") from e
 
     def get_example_row_from_db(self):
         """ Gets the first row of the database
@@ -66,10 +61,10 @@ class DataAccessor:
                                    .format(self.table_name)).fetchone()
 
         if result is None:
-            self.logger.error("""Error when fetching example row
-                                from the database""")
-            raise QuerioDatabaseError("""Could not fetch an example row
-                                     from table '{}'"""
+            self.logger.error("Error when fetching example row " +
+                              "from the database")
+            raise QuerioDatabaseError("Could not fetch an example row " +
+                                      "from table '{}'"
                                       .format(self.table_name))
 
         return {(column_name, result[column_name]) for column_name in
@@ -83,7 +78,7 @@ class DataAccessor:
         """
         return self.table.columns.keys()
 
-    def get_population_variance_from_db(self, column):
+    def get_population_variance_from_db(self, query_column):
         """ Gets the variance for all the rows in the specified column
 
         :param column: string
@@ -91,27 +86,37 @@ class DataAccessor:
         :return:
             value of the variance as float
         """
+
+        columns = self.get_table_column_names()
+
+        if query_column not in columns:
+            self.logger.error("No column '{}'".format(query_column))
+            raise QuerioDatabaseError("No column '{}'".format(query_column))
+
         try:
             self.logger.debug("Getting variance from column '{}'"
-                              .format(column))
-            result = self.conn.execute("SELECT var_pop({}) FROM {}"
-                                       .format(column, self.table_name))
+                              .format(query_column))
+
+            result = self.conn.execute("SELECT var_pop({}) FROM {}".format(query_column, self.table_name))
         except exc.ProgrammingError as e:
             self.logger.error("Could not fetch variance for column '{}'"
-                              .format(column))
-            raise QuerioDatabaseError("""Invalid column type for '{}'.
-                                      Could not get population variance"""
-                                      .format(column)) from e
+                              .format(query_column))
+            raise QuerioDatabaseError("Invalid column type for '{}'. " +
+                                      "Could not get population variance"
+                                      .format(query_column)) from e
 
         value = result.fetchone()
         return value[0]
 
-    def get_all_data(self):
+    def get_all_data(self, as_chunk=True):
         """ Gets all the data from the database table
 
         :return:
             table data as (pandas) DataFrame
         """
+        if as_chunk is False:
+            return pd.read_sql('SELECT * FROM {} WHERE age IS NOT NULL AND income IS NOT NULL'.format(self.table_name),
+                               self.engine)
         self.logger.debug("Getting all data from table '{}'"
                           .format(self.table_name))
         column_names = self.get_table_column_names()
@@ -146,5 +151,5 @@ class DataAccessor:
         nulls = pd.read_sql((query_start + query_end)
                             .format(self.table_name), self.engine)
         value = nulls['count'].to_string(index=False)
-        return "There are " + value + """ rows with null values.
-                                     These rows have been ignored."""
+        return ("There are " + value + " rows with null values. " +
+                "These rows have been ignored.")

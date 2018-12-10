@@ -13,20 +13,22 @@ def get_frequency_count(data, values):
     """
     result_list = []
     for value in values:
-        list_item = data['%s' % value].values.tolist()
-        item_type = type(list_item[0])
+        values_list = data['%s' % value].values.tolist()
+        item_type = type(values_list[0])
         if item_type is int or item_type is float:
-            result_list.append(get_frequency_count_int(data, value))
+            result_list.append(get_frequency_count_int(values_list, value))
         elif item_type is str:
-            result_list.append(get_frequency_count_str(data, value))
+            result_list.append(get_frequency_count_str(values_list, value))
+        elif item_type is bool:
+            result_list.append(get_frequency_count_bool(values_list, value))
     return result_list
 
 
-def get_frequency_count_int(data, value):
+def get_frequency_count_int(values_list, value):
     """Counts frequency columns containing int or float numbers
 
-     :param data: (Pandas) DataFrame
-        data from database
+     :param values_list: list
+        list of all the values
     :param value: string
         name of the column
     :return:
@@ -34,8 +36,7 @@ def get_frequency_count_int(data, value):
         for rows as integer values
     """
     frequency_values_dict = {}
-    feature_list = data['%s' % value].values.tolist()
-    y = np.bincount(np.array(feature_list, dtype=int))
+    y = np.bincount(np.array(values_list, dtype=int))
     ii = np.nonzero(y)[0]
     tmp_dict = {}
     for val in ii:
@@ -44,11 +45,11 @@ def get_frequency_count_int(data, value):
     return frequency_values_dict
 
 
-def get_frequency_count_str(data, value):
+def get_frequency_count_str(values_list, value):
     """Counts frequency for columns containing strings
 
-     :param data: (Pandas) DataFrame
-        data from database
+     :param values_list: list
+        list of all the values
     :param value: string
         name of the column
     :return:
@@ -58,11 +59,32 @@ def get_frequency_count_str(data, value):
     frequency_values_dict = {}
     tmp_dict = {}
     tmp_set_of_str = {""}
-    feature_list = data['%s' % value].values.tolist()
-    for feature in feature_list:
+    for feature in values_list:
         if feature not in tmp_set_of_str:
             tmp_dict[feature] = 1
             tmp_set_of_str.add(feature)
+        else:
+            tmp_dict[feature] = tmp_dict.get(feature) + 1
+    frequency_values_dict["{} frequencies".format(value)] = tmp_dict
+    return frequency_values_dict
+
+
+def get_frequency_count_bool(values_list, value):
+    """Counts frequency for columns containing type boolean
+
+         :param values_list: list
+        list of all the values
+        :param value: string
+            name of the column
+        :return:
+            dictionary named by the value name and containing all frequencies
+            for rows as integer values
+        """
+    frequency_values_dict = {}
+    tmp_dict = {}
+    for feature in values_list:
+        if feature not in tmp_dict:
+            tmp_dict[feature] = 1
         else:
             tmp_dict[feature] = tmp_dict.get(feature) + 1
     frequency_values_dict["{} frequencies".format(value)] = tmp_dict

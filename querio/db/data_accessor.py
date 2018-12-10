@@ -66,8 +66,7 @@ class DataAccessor:
             raise QuerioDatabaseError("Could not fetch an example row " +
                                       "from table '{}'"
                                       .format(self.table_name))
-
-        return {(column_name, result[column_name]) for column_name in
+        return {column_name: result[column_name] for column_name in
                 column_names}
 
     def get_table_column_names(self):

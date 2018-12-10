@@ -36,6 +36,20 @@ class Interface:
         self.__ss__ = SaveService(savepath)
         self._load_models()
 
+    def train_all(self):
+        row = self.accessor.get_example_row_from_db()
+        for col in self.columns:
+            if isinstance(row[col], str) or isinstance(row[col], bool):
+                continue
+            features = []
+            for feat in self.columns:
+
+                if col is not feat:
+                    features.append(feat)
+            self.train(col,
+                       features,
+                       self.__ss__.generate_querio_name(col, features, ""))
+
     def train(self, query_target: str, features: list, model_name: str):
         """Trains a new model for given data using the features provided.
 
@@ -218,7 +232,7 @@ class Interface:
     def list_columns(self):
         return self.columns
 
-    def _validate_columns(self, to_check: Set[str]):
+    def _validate_columns(self, to_check: List[str]):
         for check in to_check:
             if check not in self.columns:
                 self.logger.error("No column called '{}' in database"

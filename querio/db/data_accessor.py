@@ -77,7 +77,7 @@ class DataAccessor:
             list of strings as table column names
         """
         columns = self.table.columns.keys()
-        if self.conn.dialect.name == 'mysql':
+        if self.conn.dialect.name == 'mysql' or self.conn.dialect.name == 'sqlite':
             columns.remove('index')
         return columns
 

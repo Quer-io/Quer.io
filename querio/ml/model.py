@@ -34,8 +34,10 @@ class Model:
     output_name: string
         The name of the column used to calculate the mean and the variance in
         queries.
-    max_depth: int, optional
-        A limit to the maximum depth of the underlying decision tree.
+    model_params: dict, optional
+        A keyword arguments dict used to pass arguments to the decision tree
+        model. See Scikit Learn documentation on decision tree regressors for
+        accepted parameters and theirs function.
 
     Queries:
     The queries can contain conditions for equalities and inequalities
@@ -50,7 +52,7 @@ class Model:
 
     def __init__(
         self, data, table_name, model_name, feature_names,
-        output_name, db_path, max_depth=None
+        output_name, db_path, model_params={}
     ):
 
         """Initialize the Model."""
@@ -64,10 +66,11 @@ class Model:
         self.test_scores = []
         self.train_scores = []
         self.db_path = db_path
-        if max_depth is None:
-            self.max_depth = sys.getrecursionlimit()
-        else:
-            self.max_depth = max_depth
+        self.model_params = model_params
+        # if max_depth is None:
+        #     self.max_depth = sys.getrecursionlimit()
+        # else:
+        #     self.max_depth = max_depth
 
         self.trees = []
 
@@ -79,7 +82,6 @@ class Model:
             for chunk in data:
                 self.process_chunk(chunk)
         self.plot_data = pd.concat(self.plot_data_frames, ignore_index=True)
-        # del self.plot_data_frames
 
     def process_chunk(self, chunk):
         def update_min_max_count_dict(key, dict1, dict2):
@@ -105,7 +107,7 @@ class Model:
         tree = sklearn.tree.DecisionTreeRegressor(
             criterion='mse',
             random_state=42,
-            max_depth=min(self.max_depth, sys.getrecursionlimit() / 2 - 10),
+            **self.model_params
         )
         train, test = sklearn.model_selection.train_test_split(
             chunk, random_state=42

@@ -9,7 +9,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 dB = "postgres://otoihucuckhivv:7b93b9777ab13649dc0af7ef499a699a307c7ffd5ca1733389e1dfb1dac5253a@ec2-54-217-250-0.eu-west-1.compute.amazonaws.com:5432/dab0467utv53cp"
-i = q.Interface(dB, "person")
+i = q.Interface(dB, "person", model_params={'min_samples_split': 10})
 object1 = QueryObject("height")
 object1.add((Feature('age') > 30) & (Feature('income') > 6000))
 object2 = QueryObject("income")

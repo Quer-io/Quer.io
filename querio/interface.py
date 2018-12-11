@@ -23,13 +23,18 @@ class Interface:
     savepath: string, optional
         The path that you wish to save the files into.
         If left blank will be the path from which the program was called.
+    model_params: dict, optional
+        A keyword arguments dict used to pass arguments to the decision tree
+        model. See Scikit Learn documentation on decision tree regressors for
+        accepted parameters and theirs function.
 
     """
-    def __init__(self, dbpath,  table_name, savepath=""):
+    def __init__(self, dbpath,  table_name, savepath="", model_params={}):
         """Initialize Interface."""
         self.table_name = table_name
         self.logger = logging.getLogger("QuerioInterface")
         self.accessor = da.DataAccessor(dbpath, table_name)
+        self.model_params = model_params
         self.dbpath = dbpath
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
@@ -59,7 +64,8 @@ class Interface:
                                     model_name,
                                     features,
                                     query_target,
-                                    self.dbpath)
+                                    self.dbpath,
+                                    self.model_params)
         self.__ss__.save_model(self.models[model_name], model_name)
         return self.models[model_name]
 

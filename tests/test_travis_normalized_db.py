@@ -1,6 +1,6 @@
 import os
 import unittest
-from querio import Interface
+import querio as q
 from querio.ml.expression.feature import Feature
 from querio.queryobject import QueryObject
 
@@ -16,7 +16,7 @@ class TravisNormalizedDatabaseTest(unittest.TestCase):
         if not is_travis:
             return
         
-        i = Interface(self.db_uri, 'querio_view')
+        i = q.Interface(self.db_uri, 'querio_view')
 
         object1 = QueryObject('height')
         object1.add((Feature('profession_name') == 'programmer'))

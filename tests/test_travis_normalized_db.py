@@ -16,7 +16,7 @@ class TravisNormalizedDatabaseTest(unittest.TestCase):
         if not is_travis:
             return
         
-        i = Interface(dB, 'querio_view')
+        i = Interface(self.db_uri, 'querio_view')
 
         object1 = QueryObject('height')
         object1.add((Feature('profession_name') == 'programmer'))

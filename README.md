@@ -13,7 +13,7 @@ See [Database Schema 1](https://github.com/Quer-io/Quer.io/tree/master/documenta
 See [Database Schema 2](https://github.com/Quer-io/Quer.io/blob/db/normalized/documentation/database/normalized_schema.md) for normalized sample database schema
 
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
-of the machine learning model quer.io uses
+on the machine learning model
 
 See [Scheduler usage](https://github.com/Quer-io/Quer.io/tree/master/documentation/scheduler/scheduler.md) for a guide on how to use the scheduler to retrain models periodically
 
@@ -23,11 +23,11 @@ This project is built to the specifications and requirements provided by Prof. M
 
 The aim of this project is to build an Approximate Query Processing (AQP) engine -- i.e., a software layer on top of a relational database, that allows us to obtain fast, approximate answers to aggregate queries, with the help of Machine Learning models.
 
-Chosen implementation is Python for the application and Postgres for the database. The Querio library will be importable as a Library. Machine learning components are built using Scikit Learn and the optional graphical user interface and application is build using Kivy.
+Chosen implementation is a Python library that can be used with multiple different database systems. Machine learning components are built using Scikit Learn.
 
 ## Installation
 
-This project is done with Python version 3.6
+This project is done with Python 3.6
 
 See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install the sample databases this application was tested on.
 

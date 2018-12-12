@@ -14,8 +14,8 @@ install:
   - pip install -r requirements.txt
 
 before_script: 
-  - psql -c 'create database queriodb;' -U postgres
-  - python travis_data_setup/travis_init_database.py 500000 trows.csv
+  - psql -c 'create database normaldb;' -U postgres
+  - python travis_data_setup/travis_init_database.py 10000
 
 script:
   - python -m unittest discover

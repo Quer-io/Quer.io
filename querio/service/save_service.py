@@ -119,13 +119,14 @@ class SaveService:
             shutil.rmtree(querio_file_folder)
 
     def rename_querio_file(self, old_name, new_name):
+        """replaces old querio file and folder with new one"""
         path = os.path.join(os.getcwd(), self._src_folder)
         querio_files = self.get_querio_files()
 
         for file in querio_files:
             if file == old_name:
                 old_querio_file_directory = path + file[:len(file) - 7]
-                new_querio_file_directory = path + new_name[:len(file) - 7]
+                new_querio_file_directory = path + new_name[:len(new_name) - 7]
                 os.rename(old_querio_file_directory, new_querio_file_directory)
                 old_file_path = os.path.join(new_querio_file_directory, file)
                 new_file_path = os.path.join(new_querio_file_directory, new_name)
@@ -166,6 +167,18 @@ class SaveService:
         return re.match(folder_name_pattern, folder_name)
 
     def generate_querio_name(self, output_name: str, feature_names: list, model_name: str):
+        """Public class for generating querio name. Also checks that file is named correctly
+        with querio file naming rules
+
+        :param output_name: string
+            output name of the querio object
+        :param feature_names: set
+            set of the querio objects feature names
+        :param model_name: string
+            name of the model
+        :return:
+            name of the querio file
+        """
         if output_name != "" and len(feature_names) > 0:
             return self._generate_name_for_model_attributes(output_name, feature_names)
         elif model_name != "":
@@ -177,7 +190,6 @@ class SaveService:
                     invalid_characters_string = "'" + ", ".join(invalid_char_list) + "'"
                     raise QuerioFileError("The file name contains following illegal characters: " +
                                           str(invalid_characters_string))
-            #match = re.match(r"^(?P<start>QUERI_)*.*(?P<end>.querio){1}$", model_name)
             if re.match('^(QUERI_)+(\S)*(.querio){1}$', model_name):
                 return model_name
             elif re.match('^(QUERI_)+(\S)*', model_name):

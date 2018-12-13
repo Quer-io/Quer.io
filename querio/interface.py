@@ -16,22 +16,22 @@ class Interface:
     It is recomended to use this class for queries, since it handles all
     necessary functions for the user.
 
-
-    """
-    def __init__(self, dbpath,  table_name, savepath=""):
+    def __init__(self, dbpath,  table_name, savepath="", model_params={}):
         """Initialize Interface.
+           :param dbpath: string
+               The path to the database in the form
+               postgres://username:password@DatabaseAddress:Port/DatabaseName
+           :param table_name:
+               The name of the table in the database for which this interface is created.
+           :param savepath: string, optional
+               The path that you wish to save the files into.
+               If left blank will be the path from which the program was called.
+           :param model_params: list"""
 
-    :param dbpath: string
-        The path to the database in the form
-        postgres://username:password@DatabaseAddress:Port/DatabaseName
-    :param table_name:
-        The name of the table in the database for which this interface is created.
-    :param savepath: string, optional
-        The path that you wish to save the files into.
-        If left blank will be the path from which the program was called."""
         self.table_name = table_name
         self.logger = logging.getLogger("QuerioInterface")
         self.accessor = da.DataAccessor(dbpath, table_name)
+        self.model_params = model_params
         self.dbpath = dbpath
         self.models = {}
         self.columns = self.accessor.get_table_column_names()
@@ -85,7 +85,8 @@ class Interface:
                                     model_name,
                                     features,
                                     query_target,
-                                    self.dbpath)
+                                    self.dbpath,
+                                    self.model_params)
         self.__ss__.save_model(self.models[model_name], model_name)
 
         return self.models[model_name]
@@ -131,7 +132,16 @@ class Interface:
         else:
             for model in self.models.values():
                 if model.output_name == target:
-                    if feature_names.issubset(set(model.feature_names)):
+                    if feature_names == set(model.feature_names):
+                        old_name = model.model_name
+                        model.model_name = model_name
+                        self.__ss__.rename_querio_file(old_name, model_name)
+                        self.models.pop(old_name)
+                        self.models[model_name] = self.__ss__.load_model("", [], model_name)
+                        self.models[model_name].model_name = model_name
+                        self.__ss__.save_model(self.models[model_name], model_name)
+                        return model.query(expression)
+                    elif feature_names.issubset(set(model.feature_names)):
                         return model.query(expression)
 
             self.logger.info(
@@ -163,23 +173,13 @@ class Interface:
 
         return self.expression_query(target, exp, model_name)
 
-    def save_models(self, names=None):
+    def save_models(self):
         """Saves the models of this interface as .querio files in the path
         specified by savepath.
         These can later be loaded to another interface with the load_models
-        command. Can be given a list of strings to give custom names for
-        models."""
-        if names is None:
-            for m in self.models:
-                self.__ss__.save_model(self.models[m])
-        elif len(names) != len(self.models):
-            logging.warning(
-                "List length does not match number of models. Length is {}, "
-                "it should be {}".format(len(names), len(self.models))
-            )
-        else:
-            for m, n in zip(self.models, names):
-                self.__ss__.save_model(self.models[m], n)
+        command."""
+        for model in self.get_models():
+            self.__ss__.save_model(model, model.model_name)
 
     def get_models(self):
         """Returns the models in this interface."""
@@ -241,7 +241,7 @@ class Interface:
         return self.__ss__.get_querio_files()
 
     def frequency(self, values):
-        data = self.accessor.get_all_data(False)
+        data = self.accessor.get_all_data()
         if type(values) != list:
             values = [values]
         self._validate_columns(values)

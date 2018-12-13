@@ -75,7 +75,10 @@ class DataAccessor:
         :return:
             list of strings as table column names
         """
-        return self.table.columns.keys()
+        columns = self.table.columns.keys()
+        if self.conn.dialect.name == 'mysql' or self.conn.dialect.name == 'sqlite':
+            columns.remove('index')
+        return columns
 
     def get_population_variance_from_db(self, query_column):
         """ Gets the variance for all the rows in the specified column
@@ -107,15 +110,12 @@ class DataAccessor:
         value = result.fetchone()
         return value[0]
 
-    def get_all_data(self, as_chunk=True):
+    def get_all_data(self):
         """ Gets all the data from the database table
 
         :return:
             table data as (pandas) DataFrame
         """
-        if as_chunk is False:
-            return pd.read_sql('SELECT * FROM {} WHERE age IS NOT NULL AND income IS NOT NULL'.format(self.table_name),
-                               self.engine)
         self.logger.debug("Getting all data from table '{}'"
                           .format(self.table_name))
         column_names = self.get_table_column_names()
@@ -139,7 +139,7 @@ class DataAccessor:
             result defined as string
         """
         column_names = self.get_table_column_names()
-        query_start = 'SELECT count(*) FROM {} WHERE'
+        query_start = 'SELECT count(*) AS cnt FROM {} WHERE'
         query_end = []
         for column in column_names:
             if column_names.index(column) is 0:
@@ -149,6 +149,6 @@ class DataAccessor:
         query_end = ''.join(query_end)
         nulls = pd.read_sql((query_start + query_end)
                             .format(self.table_name), self.engine)
-        value = nulls['count'].to_string(index=False)
+        value = nulls['cnt'].to_string(index=False)
         return ("There are " + value + " rows with null values. " +
                 "These rows have been ignored.")

@@ -28,7 +28,8 @@ def mock_constructor(self, data):
     self.accessor = MockDataAccessor(data)
     self.table_name = 'table'
     self.models = {}
-    self.dbpath= ""
+    self.dbpath = ""
+    self.model_params = {}
     self.columns = self.accessor.get_table_column_names()
     self.logger = logging.getLogger("QuerioInterface")
 
@@ -50,6 +51,7 @@ class ModelTest(unittest.TestCase):
             'github_stars': github_stars, 'profession': professions,
             'is_client': is_client
         })
+        self.original_interface_constructor = Interface.__init__
         Interface.__init__ = mock_constructor
         self.i = Interface(data)
         self.i.__ss__ = SaveService()
@@ -58,6 +60,7 @@ class ModelTest(unittest.TestCase):
         self.i.train("github_stars", ["profession", "is_client", "income", "age"], self.model_name)
 
     def tearDown(self):
+        Interface.__init__ = self.original_interface_constructor
         self.i.clear_saved_models()
 
     def test_query_works_with_valid_number_columns(self):

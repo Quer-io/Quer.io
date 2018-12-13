@@ -62,12 +62,18 @@ class DataAccessorTest(unittest.TestCase):
         with self.assertRaises(QuerioDatabaseError):
             da.get_population_variance_from_db("car_price; DROP TABLE shop;")
 
+    def test_null_count(self):
+        da = DataAccessor(self.postgresql.url(), "car")
+        nullmsg = da.get_null_count()
+        self.assertEqual("There are 1 rows with null values. These rows have been ignored.", nullmsg)
+
+
     def commands(self):
         return ("""
             CREATE TABLE car (
                 car_id SERIAL PRIMARY KEY,
                 car_name VARCHAR(255) NOT NULL,
-                car_price INTEGER NOT NULL
+                car_price INTEGER
             )
             """,
                 """
@@ -82,5 +88,11 @@ class DataAccessorTest(unittest.TestCase):
                     1,
                     'subaru impreza',
                     20000
+                )""",
+                """
+                INSERT INTO car
+                VALUES (
+                    2,
+                    'toyota yaris'
                 )
                 """)

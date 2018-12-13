@@ -15,8 +15,6 @@ See [Database Schema 2](https://github.com/Quer-io/Quer.io/blob/db/normalized/do
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 of the machine learning model quer.io uses
 
-See [Scheduler usage](https://github.com/Quer-io/Quer.io/tree/master/documentation/scheduler/scheduler.md) for a guide on how to use the scheduler to retrain models periodically
-
 ## Project description
 
 This project is built to the specifications and requirements provided by Prof. Michael Mathioudakis and is a course work project for course TKT20007 Software Engineering Lab at the University of Helsinki, department of Computer Science.
@@ -32,6 +30,10 @@ This project is done with Python version 3.6
 See [Database Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/database/db_readme.md) for information how to install the sample databases this application was tested on.
 
 See [Application Installation guide](https://github.com/Quer-io/Quer.io/tree/master/documentation/install.md) for information how to install the application and all its dependencies.
+
+### Optional installation
+
+See [Querio Scheduler](https://github.com/Quer-io/Quer.io-scheduler) for how to install and use a scheduler for periodical model retraining.
 
 ### Tests
 Currently the project contains tests that are done using the [unittest](https://docs.python.org/3/library/unittest.html) library. Tests can be run with the following command from the project root

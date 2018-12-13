@@ -12,15 +12,41 @@ def get_frequency_count(data, values):
         list containing dictionaries for values
     """
     result_list = []
-    for value in values:
-        values_list = data['%s' % value].values.tolist()
-        item_type = type(values_list[0])
-        if item_type is int or item_type is float:
-            result_list.append(get_frequency_count_int(values_list, value))
-        elif item_type is str:
-            result_list.append(get_frequency_count_str(values_list, value))
-        elif item_type is bool:
-            result_list.append(get_frequency_count_bool(values_list, value))
+    for chunk in data:
+        for value in values:
+            values_list = chunk['%s' % value].values.tolist()
+            item_type = type(values_list[0])
+            if item_type is int or item_type is float:
+                if len(result_list) > 0:
+                    for freq_dict in result_list:
+                        if "{} frequencies".format(value) in freq_dict.keys():
+                            tmp_dict = get_frequency_count_int(values_list, value)
+                            freq_dict["{} frequencies".format(value)] = dict(
+                                list(freq_dict["{} frequencies".format(value)].items()) + list(tmp_dict["{} frequencies".format(value)].items()))
+                    else:
+                        result_list.append(get_frequency_count_int(values_list, value))
+                else:
+                    result_list.append(get_frequency_count_int(values_list, value))
+            elif item_type is str:
+                if len(result_list) > 0:
+                    if "{} frequencies".format(value) in freq_dict:
+                        tmp_dict = get_frequency_count_str(values_list, value)
+                        freq_dict["{} frequencies".format(value)] = dict(
+                            list(freq_dict["{} frequencies".format(value)].items()) + list(tmp_dict["{} frequencies".format(value)].items()))
+                    else:
+                        result_list.append(get_frequency_count_str(values_list, value))
+                else:
+                    result_list.append(get_frequency_count_str(values_list, value))
+            elif item_type is bool:
+                if len(result_list) > 0:
+                    if "{} frequencies".format(value) in freq_dict:
+                        tmp_dict = get_frequency_count_bool(values_list, value)
+                        freq_dict["{} frequencies".format(value)] = dict(
+                            list(freq_dict["{} frequencies".format(value)].items()) + list(tmp_dict["{} frequencies".format(value)].items()))
+                    else:
+                        result_list.append(get_frequency_count_bool(values_list, value))
+                else:
+                    result_list.append(get_frequency_count_bool(values_list, value))
     return result_list
 
 

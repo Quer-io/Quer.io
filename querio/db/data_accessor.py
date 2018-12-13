@@ -7,7 +7,7 @@ from .exceptions.querio_database_error import QuerioDatabaseError
 
 
 class DataAccessor:
-    """ Class that allows communication with the defined database
+    """Class that connects to the defined database
 
         Parameters:
         address: string
@@ -47,7 +47,7 @@ class DataAccessor:
                                       "to the database") from e
 
     def get_example_row_from_db(self):
-        """ Gets the first row of the database
+        """Returns the first row of the connected database
 
         :return:
             A dictionary.
@@ -71,7 +71,7 @@ class DataAccessor:
                 column_names}
 
     def get_table_column_names(self):
-        """ Gets the names of the table columns
+        """Returns the names of the table columns
 
         :return:
             list of strings as table column names
@@ -82,7 +82,7 @@ class DataAccessor:
         return columns
 
     def get_population_variance_from_db(self, query_column):
-        """ Gets the variance for all the rows in the specified column
+        """Returns the variance for all the rows in the specified column
 
         :param column: string
             user defined column from the table
@@ -112,7 +112,7 @@ class DataAccessor:
         return value[0]
 
     def get_all_data(self, as_chunk=True):
-        """ Gets all the data from the database table
+        """Returns all the data from the database table
 
         :return:
             table data as (pandas) DataFrame
@@ -137,7 +137,7 @@ class DataAccessor:
         )
 
     def get_null_count(self):
-        """ Gets the count of rows with null values from database table
+        """Returns the count of rows with null values from database table
 
         :return:
             result defined as string

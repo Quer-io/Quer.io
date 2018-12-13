@@ -111,15 +111,12 @@ class DataAccessor:
         value = result.fetchone()
         return value[0]
 
-    def get_all_data(self, as_chunk=True):
+    def get_all_data(self):
         """Returns all the data from the database table
 
         :return:
             table data as (pandas) DataFrame
         """
-        if as_chunk is False:
-            return pd.read_sql('SELECT * FROM {} WHERE age IS NOT NULL AND income IS NOT NULL'.format(self.table_name),
-                               self.engine)
         self.logger.debug("Getting all data from table '{}'"
                           .format(self.table_name))
         column_names = self.get_table_column_names()

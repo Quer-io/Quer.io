@@ -1,5 +1,3 @@
-Cython==0.28.2
-
 #database
 psycopg2==2.7.5
 SQLAlchemy==1.2.11

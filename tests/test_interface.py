@@ -18,6 +18,11 @@ class MockDataAccessor:
     def get_all_data(self):
         return self.db
 
+    def get_example_row_from_db(self):
+        return {'age': 22, 'income': 22*301, 'height': 22*50,
+                'github_stars': 22*20+10, 'profession': 'accountant',
+                'is_client': True}
+
 
 def mock_constructor(self, data):
     self.accessor = MockDataAccessor(data)
@@ -110,3 +115,8 @@ class ModelTest(unittest.TestCase):
         qo = QueryObject("github_stars")
         qo.add((Feature('age') > 30) & (Feature('is_client') > False) & (Feature('profession') == 'janitor'))
         self.i.object_query(qo)
+
+    def test_all_model_training(self):
+        self.i.clear_models()
+        self.i.train_all()
+        self.assertEqual(len(self.i.models), 4)

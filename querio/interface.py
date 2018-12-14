@@ -12,7 +12,7 @@ import logging
 
 
 class Interface:
-    """The base class through which the Querio library can be used effectively.
+    """The base class through which the Querio library is used.
     It is recomended to use this class for queries, since it handles all
     necessary functions for the user.
 
@@ -21,8 +21,8 @@ class Interface:
         The path to the database in the form
         postgres://username:password@DatabaseAddress:Port/DatabaseName
     savepath: string, optional
-        The path that you wish to save the files into.
-        If left blank will be the path from which the program was called.
+        The path that you wish to save the files to.
+        If left blank the path from which the program was called will be used.
     model_params: dict, optional
         A keyword arguments dict used to pass arguments to trained models.
         See Scikit Learn documentation on decision tree regressors for
@@ -72,8 +72,8 @@ class Interface:
     def object_query(self, q_object: QueryObject, model_name=""):
         """Run new query from models using a QueryObject.
         This will run a query from an existing model,
-        or if no such model is found will train a new one
-        and then query from that.
+        or if no such model is found a new model will be trained
+        and a query performed with it.
 
         :param q_object: QueryObject
             user defined QueryObject.
@@ -161,10 +161,10 @@ class Interface:
     def _load_models(self):
         """Loads models from the savepath to the interface.
         Will only load models that are from a table with the same name as
-        current and with the same columns
+        current and with the same columns.
 
         Will ignore any files that do not belong to current table.
-        If two tables share same table name and same column names will
+        If two tables share same table name and same column names it will
         load the model."""
         names = self.__ss__.get_querio_files()
         for n in names:

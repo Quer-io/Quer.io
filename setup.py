@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="querio",
-    version="0.0.1",
+    version="0.0.2",
     author="",
     author_email="",
     description="A python library for quickly estimating database results",

@@ -15,6 +15,8 @@ See [Database Schema 2](https://github.com/Quer-io/Quer.io/blob/db/normalized/do
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 on the machine learning model
 
+See[Product backlog](https://docs.google.com/spreadsheets/d/1zoZrZ76nHl1ytfHcbrPXzbQAAnYuDqROq3syIgq6yv4/edit?usp=sharing) 
+
 ## Project description
 
 This project is built to the specifications and requirements provided by Prof. Michael Mathioudakis and is a course work project for course TKT20007 Software Engineering Lab at the University of Helsinki, department of Computer Science.

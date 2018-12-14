@@ -10,7 +10,7 @@ class SaveService:
     """Saves and loads created querio models. User can define the path where
         these models are stored.
         Created files have their own naming convention and
-        also unique file name.
+        also a unique file name.
 
         Parameters:
         path: string
@@ -23,7 +23,7 @@ class SaveService:
         self.logger = logging.getLogger("QuerioSaveService")
 
     def save_model(self, model, name=None):
-        """Saves the model into a querio file.
+        """Saves the model into a .querio file.
 
         :param model: Model
             Created/ modified Model that the users wants to save
@@ -110,7 +110,7 @@ class SaveService:
         return model
 
     def clear_querio_files(self):
-        """Delete all querio files from the path folder"""
+        """Delete all .querio files from the path folder"""
         path = os.path.join(os.getcwd(), self._src_folder)
         querio_files = self.get_querio_files()
 
@@ -144,9 +144,9 @@ class SaveService:
         """Checks if the model is saved in path folder
 
          :param model_name: string
-            name of the saved model
+            Name of the saved model
         :return:
-            true if model exists else return false
+           True if model exists else return false
         """
         querio_files = self.get_querio_files()
 
@@ -217,7 +217,7 @@ class SaveService:
         return name
 
     def get_querio_files(self):
-        """Return all querio files in path folder
+        """Return all .querio files in path folder
 
          :return:
             list of querio files

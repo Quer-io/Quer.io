@@ -42,7 +42,7 @@ class Model:
     Queries:
     The queries can contain conditions for equalities and inequalities
     between the features and constant real numbers. The conditions can be
-    combined with arbitrarily nested or and and operation.
+    combined with arbitrarily nested 'or' and 'and' operations.
 
     Example queries:
     Feature('age') == 30 -- find the mean and the variance of all 30 year olds.

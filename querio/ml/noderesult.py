@@ -24,9 +24,9 @@ class NodeResultRange:
     Contains the minimum and maximum values of the condition's feature in the
     samples this node contains and the interval that matches the condition.
 
-    Supports & and | operators with other NodeResultRanges.
-    nrr1 & nrr2 and nrr1 | nrr2 evaluate to a NodeResultRange if both
-    nrr1.feature_name == nrr2.feature_name. Otherwise, they evaluate into a
+    Supports '&' and '|' operators with other NodeResultRanges. Both
+    nrr1 & nrr2 and nrr1 | nrr2 evaluate to a NodeResultRange if
+    nrr1.feature_name == nrr2.feature_name, else they evaluate into a
     NodeResult object.
     """
     EqInterval = EqIntervalClass()

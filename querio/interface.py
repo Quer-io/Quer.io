@@ -12,9 +12,9 @@ import logging
 
 
 class Interface:
-    """The base class through which the Querio library can be used effectively.
+    """The base class through which the Querio library is used.
     It is recomended to use this class for queries, since it handles all
-    necessary functions for the user.
+    necessary functions for the user."""
 
     def __init__(self, dbpath,  table_name, savepath="", model_params={}):
         """Initialize Interface.
@@ -94,8 +94,8 @@ class Interface:
     def object_query(self, q_object: QueryObject, model_name=""):
         """Run new query from models using a QueryObject.
         This will run a query from an existing model,
-        or if no such model is found will train a new one
-        and then query from that.
+        or if no such model is found a new model will be trained
+        and a query performed with it.
 
         :param q_object: QueryObject
             user defined QueryObject.
@@ -188,10 +188,10 @@ class Interface:
     def _load_models(self):
         """Loads models from the savepath to the interface.
         Will only load models that are from a table with the same name as
-        current and with the same columns
+        current and with the same columns.
 
         Will ignore any files that do not belong to current table.
-        If two tables share same table name and same column names will
+        If two tables share same table name and same column names it will
         load the model."""
         names = self.__ss__.get_querio_files()
         for n in names:

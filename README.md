@@ -15,7 +15,7 @@ See [Database Schema 2](https://github.com/Quer-io/Quer.io/blob/db/normalized/do
 See [ML documentation](https://github.com/Quer-io/Quer.io/tree/master/documentation/ml/model.md) for documentation
 on the machine learning model
 
-See[Product backlog](https://docs.google.com/spreadsheets/d/1zoZrZ76nHl1ytfHcbrPXzbQAAnYuDqROq3syIgq6yv4/edit?usp=sharing) 
+See [Product backlog](https://docs.google.com/spreadsheets/d/1zoZrZ76nHl1ytfHcbrPXzbQAAnYuDqROq3syIgq6yv4/edit?usp=sharing) for product backlog
 
 ## Project description
 

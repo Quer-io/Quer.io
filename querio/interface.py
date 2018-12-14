@@ -26,7 +26,11 @@ class Interface:
            :param savepath: string, optional
                The path that you wish to save the files into.
                If left blank will be the path from which the program was called.
-           :param model_params: list"""
+           :param model_params: dict, optional
+               A keyword arguments dict used to pass arguments to the decision tree
+               model. See Scikit Learn documentation on decision tree regressors for
+               accepted parameters and theirs function.
+        """
 
         self.table_name = table_name
         self.logger = logging.getLogger("QuerioInterface")
